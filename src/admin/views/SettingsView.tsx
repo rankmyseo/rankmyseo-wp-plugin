@@ -199,7 +199,7 @@ export function SettingsView(): JSX.Element {
 							'rankmyseo'
 						) }
 						help={ __(
-							'When turned off, uninstalling RankMySEO removes its custom tables, options, and post meta.',
+							'On by default. Turn this off to delete RankMySEO tables, options, transients, scheduled tasks, and saved SEO fields when the plugin is deleted.',
 							'rankmyseo'
 						) }
 						checked={ keepData }

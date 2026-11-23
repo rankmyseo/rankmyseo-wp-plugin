@@ -341,7 +341,7 @@ final class CloudClient {
 
 		$headers = array(
 			'Accept'     => 'application/json',
-			'User-Agent' => 'RankMySEO-WordPress/' . ( defined( 'RANKMYSEO_VERSION' ) ? RANKMYSEO_VERSION : '0.1.0' ),
+			'User-Agent' => 'RankMySEO-WordPress/' . ( defined( 'RANKMYSEO_VERSION' ) ? RANKMYSEO_VERSION : '1.0.0' ),
 		);
 		if ( null !== $body ) {
 			$headers['Content-Type'] = 'application/json; charset=utf-8';

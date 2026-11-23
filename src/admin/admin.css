@@ -1,5 +1,21 @@
 /* RankMySEO Admin SPA Layout & Components */
 
+.rms-skip-link {
+	position: absolute;
+	left: 8px;
+	top: -40px;
+	z-index: 100000;
+	padding: 8px 12px;
+	background: var(--rms-ink);
+	color: #fff;
+	border-radius: var(--rms-radius-sm);
+	text-decoration: none;
+}
+
+.rms-skip-link:focus {
+	top: 8px;
+}
+
 .rankmyseo-wrap {
 	margin: 0 0 0 -20px;
 }

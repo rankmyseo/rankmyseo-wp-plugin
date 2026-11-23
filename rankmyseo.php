@@ -3,7 +3,7 @@
  * Plugin Name:       RankMySEO
  * Plugin URI:        https://rankmyseo.com
  * Description:       Standalone WordPress SEO plugin with Simple and Advanced modes, optional RankMySEO Cloud insights, and safe human-approved AI actions.
- * Version:           0.1.0
+ * Version:           1.0.0
  * Requires at least: 6.4
  * Requires PHP:      8.0
  * Author:            RankMySEO
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'RANKMYSEO_VERSION', '0.1.0' );
+define( 'RANKMYSEO_VERSION', '1.0.0' );
 define( 'RANKMYSEO_DB_VERSION', 1 );
 define( 'RANKMYSEO_FILE', __FILE__ );
 define( 'RANKMYSEO_DIR', plugin_dir_path( __FILE__ ) );
@@ -66,6 +66,13 @@ if ( file_exists( RANKMYSEO_DIR . 'vendor/autoload.php' ) ) {
 
 register_activation_hook( RANKMYSEO_FILE, [ \RankMySEO\Core\Activator::class, 'activate' ] );
 register_deactivation_hook( RANKMYSEO_FILE, [ \RankMySEO\Core\Deactivator::class, 'deactivate' ] );
+
+add_action(
+	'init',
+	static function (): void {
+		load_plugin_textdomain( 'rankmyseo', false, dirname( RANKMYSEO_BASENAME ) . '/languages' );
+	}
+);
 
 add_action(
 	'plugins_loaded',

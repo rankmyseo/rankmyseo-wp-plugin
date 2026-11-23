@@ -42,6 +42,7 @@ final class SettingsTest extends TestCase {
 		$this->assertSame( 'Acme & Co', $sanitized['site_name'] );
 		$this->assertSame( '|', $sanitized['title_separator'] );
 		$this->assertFalse( $sanitized['keep_data_on_uninstall'] );
+		$this->assertTrue( $sanitized['delete_data_on_uninstall'] );
 		$this->assertTrue( $sanitized['telemetry_opt_in'] );
 		$this->assertFalse( $sanitized['modules']['meta'] );
 		$this->assertTrue( $sanitized['modules']['schema'] );

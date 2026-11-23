@@ -4,6 +4,7 @@
 
 # Build output (generated via npm run build; packaged for WP.org releases)
 /build/
+/dist/
 
 # Testing & caches
 /.phpunit.result.cache

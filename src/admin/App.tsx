@@ -10,7 +10,6 @@ import { ConnectView } from './views/ConnectView';
 import { AiQueueView } from './views/AiQueueView';
 import { DashboardView } from './views/DashboardView';
 import { ImporterView } from './views/ImporterView';
-import { ModulePlaceholderView } from './views/ModulePlaceholderView';
 import { RedirectsView } from './views/redirects/RedirectsView';
 import { SchemaView } from './views/SchemaView';
 import { SettingsView } from './views/SettingsView';
@@ -56,15 +55,18 @@ function AdminShell(): JSX.Element {
 		if ( activePage === 'ai-queue' ) {
 			return <AiQueueView />;
 		}
-		return <ModulePlaceholderView pageId={ activePage } />;
+		return <DashboardView />;
 	};
 
 	return (
 		<div className={ `rms-shell${ isChatOpen ? ' is-drawer-open' : '' }` }>
+			<a className="rms-skip-link" href="#rms-main">
+				{ __( 'Skip to content', 'rankmyseo' ) }
+			</a>
 			<Header />
 			<Navigation />
 
-			<main className="rms-main">
+			<main id="rms-main" className="rms-main" tabIndex={ -1 }>
 				{ notice && (
 					<div
 						className={ `rms-toast rms-toast-${ notice.tone }` }

@@ -49,8 +49,6 @@ final class Monitor404 {
 		'crawl',
 		'spider',
 		'slurp',
-		'semrush',
-		'ahrefs',
 		'mj12bot',
 		'dotbot',
 		'petalbot',

@@ -65,6 +65,8 @@ export function CommandBar(): JSX.Element | null {
 		}
 
 		setQuery( '' );
+		const active = inputRef.current?.ownerDocument.activeElement;
+		const returnFocus = active instanceof HTMLElement ? active : null;
 		inputRef.current?.focus();
 
 		const onKeyDown = ( event: KeyboardEvent ): void => {
@@ -76,7 +78,10 @@ export function CommandBar(): JSX.Element | null {
 		};
 
 		document.addEventListener( 'keydown', onKeyDown, true );
-		return () => document.removeEventListener( 'keydown', onKeyDown, true );
+		return () => {
+			document.removeEventListener( 'keydown', onKeyDown, true );
+			returnFocus?.focus();
+		};
 	}, [ open ] );
 
 	const commands = useMemo< CommandItem[] >( () => {

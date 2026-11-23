@@ -1,18 +1,20 @@
 <?php
 /**
- * Stub module for AI Approval Queue and Auto-Apply Controls.
+ * AI Approval Queue module.
  *
  * @package RankMySEO
  */
 
 declare(strict_types=1);
 
-namespace RankMySEO\Modules\Stubs;
+namespace RankMySEO\Modules\AiActions;
 
 use RankMySEO\Modules\AbstractModule;
 
 /**
- * AI Approval Queue. REST routes are registered with the other controllers.
+ * Registers the approval queue in the module catalog.
+ *
+ * REST routes and the auto-apply cron live on AiActionsController.
  */
 final class AiQueueModule extends AbstractModule {
 	/**

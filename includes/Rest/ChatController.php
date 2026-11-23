@@ -18,10 +18,10 @@ use WP_REST_Server;
 /**
  * Exposes POST /rankmyseo/v1/chat/local.
  *
- * The connected Operator proxy and inline action approvals are intentionally
- * not implemented here. Responses include an empty action_cards list and a
- * disabled operator_slot so a later PR can fill them through the
- * rankmyseo_chat_local_response filter.
+ * This route is the offline assistant. Connected Operator chat is proxied by
+ * AiActionsController under /rankmyseo/v1/cloud/chat and makes no outbound
+ * request while the site is disconnected. The rankmyseo_chat_local_response
+ * filter can add a local operator slot to the offline reply.
  */
 final class ChatController extends AbstractController {
 	/**

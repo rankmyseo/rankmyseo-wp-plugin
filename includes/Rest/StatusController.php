@@ -104,7 +104,7 @@ final class StatusController extends AbstractController {
 
 		return $this->success_response(
 			[
-				'plugin_version' => defined( 'RANKMYSEO_VERSION' ) ? RANKMYSEO_VERSION : '0.1.0',
+				'plugin_version' => defined( 'RANKMYSEO_VERSION' ) ? RANKMYSEO_VERSION : '1.0.0',
 				'php_version'    => PHP_VERSION,
 				'wp_version'     => is_string( $wp_version ) ? $wp_version : '',
 				'site'           => [

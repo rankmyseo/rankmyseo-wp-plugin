@@ -16,6 +16,7 @@ export function Header(): JSX.Element {
 				<button
 					type="button"
 					className="rms-brand-button"
+					aria-label={ __( 'RankMySEO home', 'rankmyseo' ) }
 					onClick={ () => navigateTo( 'dashboard' ) }
 				>
 					<BrandMark size={ 28 } />

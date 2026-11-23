@@ -26,7 +26,7 @@ if ( ! defined( 'DAY_IN_SECONDS' ) ) {
 }
 
 if ( ! defined( 'RANKMYSEO_VERSION' ) ) {
-	define( 'RANKMYSEO_VERSION', '0.1.0' );
+	define( 'RANKMYSEO_VERSION', '1.0.0' );
 }
 
 if ( ! defined( 'RANKMYSEO_DB_VERSION' ) ) {

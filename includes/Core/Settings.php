@@ -56,15 +56,16 @@ final class Settings {
 	 */
 	public function get_defaults(): array {
 		return [
-			'default_ui_mode'        => 'simple',
-			'site_type'              => 'organization',
-			'site_name'              => '',
-			'title_separator'        => '|',
-			'keep_data_on_uninstall' => true,
-			'telemetry_opt_in'       => false,
-			'wizard_completed'       => false,
-			'wizard_dismissed'       => false,
-			'modules'                => [
+			'default_ui_mode'          => 'simple',
+			'site_type'                => 'organization',
+			'site_name'                => '',
+			'title_separator'          => '|',
+			'keep_data_on_uninstall'   => true,
+			'delete_data_on_uninstall' => false,
+			'telemetry_opt_in'         => false,
+			'wizard_completed'         => false,
+			'wizard_dismissed'         => false,
+			'modules'                  => [
 				'meta'      => true,
 				'analyzer'  => true,
 				'schema'    => true,
@@ -220,10 +221,18 @@ final class Settings {
 			}
 		}
 
-		foreach ( [ 'keep_data_on_uninstall', 'telemetry_opt_in', 'wizard_completed', 'wizard_dismissed' ] as $bool_key ) {
+		foreach ( [ 'keep_data_on_uninstall', 'delete_data_on_uninstall', 'telemetry_opt_in', 'wizard_completed', 'wizard_dismissed' ] as $bool_key ) {
 			if ( array_key_exists( $bool_key, $input ) ) {
 				$state[ $bool_key ] = $this->to_bool( $input[ $bool_key ] );
 			}
+		}
+
+		if ( array_key_exists( 'delete_data_on_uninstall', $input ) && ! array_key_exists( 'keep_data_on_uninstall', $input ) ) {
+			$state['keep_data_on_uninstall'] = ! $state['delete_data_on_uninstall'];
+		}
+
+		if ( array_key_exists( 'keep_data_on_uninstall', $input ) ) {
+			$state['delete_data_on_uninstall'] = ! $state['keep_data_on_uninstall'];
 		}
 
 		$default_modules = is_array( $defaults['modules'] ) ? $defaults['modules'] : [];
