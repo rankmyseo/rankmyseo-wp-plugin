@@ -228,6 +228,7 @@ final class RankMySEO_Test_State {
 			'editor'        => new WP_Role( 'editor', [ 'edit_posts' => true ] ),
 			'subscriber'    => new WP_Role( 'subscriber', [ 'read' => true ] ),
 		];
+		$GLOBALS['wpdb']         = new wpdb();
 	}
 }
 
@@ -830,9 +831,18 @@ if ( ! function_exists( 'wp_clear_scheduled_hook' ) ) {
 	/** @param array<int, mixed> $args */
 	function wp_clear_scheduled_hook( string $hook, array $args = [] ): int {
 		unset( $args );
-		$count = isset( RankMySEO_Test_State::$cron[ $hook ] ) ? count( RankMySEO_Test_State::$cron[ $hook ] ) : 0;
+		$count = isset( RankMySEO_Test_State::$cron[ $hook ] ) ? count( (array) RankMySEO_Test_State::$cron[ $hook ] ) : 0;
 		unset( RankMySEO_Test_State::$cron[ $hook ] );
-		return $count;
+		$before = count( RankMySEO_Test_State::$scheduled );
+		RankMySEO_Test_State::$scheduled = array_values(
+			array_filter(
+				RankMySEO_Test_State::$scheduled,
+				static function ( array $event ) use ( $hook ): bool {
+					return $event['hook'] !== $hook;
+				}
+			)
+		);
+		return $count + ( $before - count( RankMySEO_Test_State::$scheduled ) );
 	}
 }
 
@@ -1297,11 +1307,19 @@ if ( ! function_exists( 'get_queried_object_id' ) ) {
 if ( ! function_exists( 'get_post' ) ) {
 	/** @param mixed $post */
 	function get_post( $post = null ) {
-		if ( $post instanceof WP_Post ) {
+		if ( is_object( $post ) ) {
 			return $post;
 		}
 		$id = (int) $post;
-		return RankMySEO_Test_State::$posts[ $id ] ?? null;
+		if ( isset( RankMySEO_Test_State::$posts[ $id ] ) && is_object( RankMySEO_Test_State::$posts[ $id ] ) ) {
+			return RankMySEO_Test_State::$posts[ $id ];
+		}
+		foreach ( RankMySEO_Test_State::$posts as $item ) {
+			if ( is_object( $item ) && (int) ( $item->ID ?? 0 ) === $id ) {
+				return $item;
+			}
+		}
+		return null;
 	}
 }
 
@@ -1322,6 +1340,10 @@ if ( ! function_exists( 'get_post_meta' ) ) {
 if ( ! function_exists( 'get_permalink' ) ) {
 	/** @param mixed $post */
 	function get_permalink( $post = 0 ): string {
+		if ( is_object( $post ) && ! $post instanceof WP_Post ) {
+			$slug = (string) ( $post->post_name ?? 'post' );
+			return home_url( ( '' !== $slug ? $slug : 'post' ) . '/' );
+		}
 		$resolved = get_post( $post );
 		if ( ! $resolved instanceof WP_Post ) {
 			return '';
@@ -1458,16 +1480,16 @@ if ( ! function_exists( 'wp_create_nonce' ) ) {
 }
 
 if ( ! function_exists( 'wp_is_post_revision' ) ) {
-	function wp_is_post_revision( int $post_id ): bool {
-		unset( $post_id );
-		return false;
+	/** @param mixed $post */
+	function wp_is_post_revision( $post ) {
+		return is_object( $post ) && isset( $post->post_type ) && 'revision' === $post->post_type;
 	}
 }
 
 if ( ! function_exists( 'wp_is_post_autosave' ) ) {
-	function wp_is_post_autosave( int $post_id ): bool {
-		unset( $post_id );
-		return false;
+	/** @param mixed $post */
+	function wp_is_post_autosave( $post ): bool {
+		return is_object( $post ) && isset( $post->post_name ) && str_contains( (string) $post->post_name, 'autosave' );
 	}
 }
 
