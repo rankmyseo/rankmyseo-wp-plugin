@@ -252,7 +252,9 @@ final class OnboardingDashboardChatTest extends TestCase {
 					'mode'    => 'cloud',
 				];
 				return $response;
-			}
+			},
+			10,
+			2
 		);
 
 		$filtered = $this->ask( $controller, 'How is my site SEO?' );
