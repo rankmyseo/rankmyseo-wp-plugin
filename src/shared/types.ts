@@ -284,5 +284,42 @@ export interface DashboardSummary {
 declare global {
 	interface Window {
 		rankmyseoAdmin?: BootstrapConfig;
+		rankmyseoEditor?: {
+			uiMode?: UiMode;
+			siteName?: string;
+			siteUrl?: string;
+			separator?: string;
+			tagline?: string;
+			variables?: Array< {
+				token: string;
+				label: string;
+				description?: string;
+			} >;
+			restRoot?: string;
+			nonce?: string;
+			askAiEvent?: string;
+		};
+		rankmyseoClassic?: Window[ 'rankmyseoEditor' ] & {
+			postId?: number;
+			postType?: string;
+			postTitle?: string;
+			permalink?: string;
+			fields?: Record< string, unknown >;
+		};
+		wp?: {
+			editor?: Record< string, unknown >;
+			editPost?: Record< string, unknown >;
+			media?: ( options: Record< string, unknown > ) => {
+				on: ( event: string, callback: () => void ) => void;
+				open: () => void;
+				state: () => {
+					get: ( key: string ) => {
+						first: () => {
+							toJSON: () => { id?: number; url?: string };
+						};
+					};
+				};
+			};
+		};
 	}
 }

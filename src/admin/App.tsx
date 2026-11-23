@@ -13,6 +13,7 @@ import { RedirectsView } from './views/redirects/RedirectsView';
 import { SchemaView } from './views/SchemaView';
 import { SettingsView } from './views/SettingsView';
 import { SitemapsView } from './views/SitemapsView';
+import { TitlesMetaView } from './views/TitlesMetaView';
 
 function AdminShell(): JSX.Element {
 	const {
@@ -43,6 +44,9 @@ function AdminShell(): JSX.Element {
 		}
 		if ( activePage === 'import' ) {
 			return <ImporterView />;
+		}
+		if ( activePage === 'meta' ) {
+			return <TitlesMetaView />;
 		}
 		return <ModulePlaceholderView pageId={ activePage } />;
 	};
