@@ -60,6 +60,10 @@ delete_option( \RankMySEO\Modules\Sitemaps\SitemapSettings::LOG_OPTION_KEY );
 delete_option( \RankMySEO\Modules\Sitemaps\SitemapSettings::QUEUE_OPTION_KEY );
 delete_option( \RankMySEO\Modules\Sitemaps\SitemapSettings::CACHE_GEN_OPTION_KEY );
 delete_option( \RankMySEO\Modules\Sitemaps\SitemapSettings::ATTEMPTS_OPTION_KEY );
+delete_option( 'rankmyseo_cloud_connection' );
+delete_option( 'rankmyseo_cloud_settings' );
+delete_transient( 'rankmyseo_cloud_insights' );
+delete_transient( 'rankmyseo_cloud_sync_lock' );
 
 delete_metadata( 'user', 0, \RankMySEO\Core\Settings::USER_META_UI_MODE, '', true );
 delete_metadata( 'user', 0, \RankMySEO\Core\Settings::USER_META_WIZARD_DISMISSED, '', true );
