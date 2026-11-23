@@ -1,0 +1,20 @@
+# Dependencies
+/vendor/
+/node_modules/
+
+# Build output (generated via npm run build; packaged for WP.org releases)
+/build/
+
+# Testing & caches
+/.phpunit.result.cache
+/coverage/
+/playwright-report/
+/test-results/
+/.wp-env/
+
+# Environment & IDE
+.env
+.env.local
+.DS_Store
+Thumbs.db
+*.log
