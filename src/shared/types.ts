@@ -156,6 +156,129 @@ export interface ChatMessage {
 	createdAt: string;
 	quickLinks?: ChatQuickLink[];
 	actionCards?: ChatActionCardData[];
+	items?: LocalChatItem[];
+	followUps?: LocalChatFollowUp[];
+	cloudHandoff?: LocalChatHandoff | null;
+	operatorEnabled?: boolean;
+}
+
+export interface LocalChatItem {
+	id: number;
+	title: string;
+	slug: string;
+	type: string;
+	edit_link: string;
+	page: string;
+	tip: string;
+	seo_score: number | null;
+	word_count: number | null;
+	hits: number | null;
+}
+
+export interface LocalChatFollowUp {
+	id: string;
+	label: string;
+	prompt: string;
+}
+
+export interface LocalChatHandoff {
+	title: string;
+	message: string;
+	page?: NavPageId;
+}
+
+export interface LocalChatResponse {
+	tier: 'local';
+	offline: boolean;
+	intent: string;
+	explanation: string;
+	items: LocalChatItem[];
+	follow_ups: LocalChatFollowUp[];
+	cloud_handoff: LocalChatHandoff | null;
+	action_cards: ChatActionCardData[];
+	operator_slot: {
+		enabled: boolean;
+		mode: string;
+	};
+}
+
+export interface OnboardingCompletePayload {
+	site_type: SiteType;
+	site_name: string;
+	title_separator: string;
+	logo_id: number;
+	logo_url: string;
+	modules: {
+		meta: boolean;
+		schema: boolean;
+		sitemaps: boolean;
+		redirects: boolean;
+	};
+	skip_cloud: boolean;
+}
+
+export interface SiteIdentity {
+	site_type: SiteType;
+	site_name: string;
+	logo_id: number;
+	logo_url: string;
+	title_separator: string;
+	skipped_cloud: boolean;
+}
+
+export interface OnboardingStateResponse {
+	completed: boolean;
+	site_identity: SiteIdentity;
+	modules: Record< string, boolean >;
+	blog_public: boolean;
+	cloud_connected: boolean;
+	skipped_cloud: boolean;
+}
+
+export interface OnboardingCompleteResponse extends OnboardingStateResponse {
+	onboarding_completed: boolean;
+	settings: PluginSettings;
+	module_catalog?: ModuleDescriptor[];
+}
+
+export interface DashboardFix {
+	id: string;
+	title: string;
+	detail: string;
+	count: number;
+	prompt: string;
+	page: NavPageId;
+}
+
+export interface DashboardSummary {
+	health: {
+		score: number;
+		label: string;
+		band: string;
+		summary: string;
+	};
+	blog_public: boolean;
+	onboarding_completed: boolean;
+	counts: {
+		missing_titles: number;
+		missing_descriptions: number;
+		thin_posts: number;
+		low_scores: number;
+		open_404s: number;
+		redirects_total: number;
+		redirects_active: number;
+	};
+	fixes: DashboardFix[];
+	modules: ModuleDescriptor[];
+	audit: {
+		tables_healthy: boolean;
+		tables: Record< string, { name?: string; exists?: boolean } >;
+		sitemaps_enabled: boolean;
+	};
+	cloud: {
+		connected: boolean;
+		tier: string;
+	};
 }
 
 declare global {

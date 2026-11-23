@@ -429,6 +429,16 @@ if ( ! class_exists( 'wpdb' ) ) {
 			return null;
 		}
 
+		/**
+		 * @param string $output Requested output format.
+		 * @return mixed
+		 */
+		public function get_row( string $query, string $output = 'OBJECT' ) {
+			unset( $output );
+			$this->queries[] = $query;
+			return null;
+		}
+
 		public function query( string $query ): int {
 			$this->queries[] = $query;
 			return 1;
@@ -1257,6 +1267,31 @@ if ( ! function_exists( 'get_comment_meta' ) ) {
 			return $single ? '' : [];
 		}
 		return $single ? $all[ $key ] : [ $all[ $key ] ];
+	}
+}
+
+
+if ( ! function_exists( 'absint' ) ) {
+	/** @param mixed $maybeint */
+	function absint( $maybeint ): int {
+		return abs( (int) $maybeint );
+	}
+}
+
+if ( ! function_exists( 'admin_url' ) ) {
+	function admin_url( string $path = '', string $scheme = 'admin' ): string {
+		unset( $scheme );
+		return 'https://example.com/wp-admin/' . ltrim( $path, '/' );
+	}
+}
+
+if ( ! function_exists( 'sanitize_title' ) ) {
+	function sanitize_title( string $title, string $fallback = '', string $context = 'save' ): string {
+		unset( $fallback, $context );
+		$title = strtolower( strip_tags( $title ) );
+		$title = (string) preg_replace( '/[^a-z0-9\s\-]/', '', $title );
+		$title = (string) preg_replace( '/[\s\-]+/', '-', $title );
+		return trim( $title, '-' );
 	}
 }
 

@@ -1,11 +1,42 @@
 import { Button, ToggleControl } from '@wordpress/components';
+import { useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { fetchDashboardSummary } from '../../shared/api';
 import {
 	SkeletonCard,
 	StatusBadge,
 } from '../../shared/components/StatePrimitives';
 import { Term } from '../../shared/components/Term';
+import type { GlossaryKey } from '../../shared/glossary';
+import type {
+	DashboardFix,
+	DashboardSummary,
+	NavPageId,
+} from '../../shared/types';
 import { useAdmin } from '../context/AdminContext';
+
+function termForFix( id: string ): GlossaryKey | null {
+	if ( id === 'missing_descriptions' ) {
+		return 'meta_description';
+	}
+	if ( id === 'missing_titles' ) {
+		return 'seo_title';
+	}
+	if ( id === 'open_404s' ) {
+		return 'redirect';
+	}
+	return null;
+}
+
+function scoreBandClass( band: string ): string {
+	if ( band === 'good' ) {
+		return 'is-good';
+	}
+	if ( band === 'poor' ) {
+		return 'is-poor';
+	}
+	return 'is-needs-work';
+}
 
 export function DashboardView(): JSX.Element {
 	const {
@@ -20,6 +51,25 @@ export function DashboardView(): JSX.Element {
 		openChat,
 		reopenWizard,
 	} = useAdmin();
+	const [ summary, setSummary ] = useState< DashboardSummary | null >( null );
+
+	useEffect( () => {
+		let active = true;
+		void fetchDashboardSummary()
+			.then( ( next ) => {
+				if ( active ) {
+					setSummary( next );
+				}
+			} )
+			.catch( () => {
+				if ( active ) {
+					setSummary( null );
+				}
+			} );
+		return () => {
+			active = false;
+		};
+	}, [] );
 
 	if ( loading && ! status ) {
 		return (
@@ -34,11 +84,22 @@ export function DashboardView(): JSX.Element {
 		settings?.site_name ||
 		status?.site.name ||
 		__( 'Your WordPress Site', 'rankmyseo' );
-	const blogPublic = status?.site.blog_public ?? true;
+	const blogPublic = summary?.blog_public ?? status?.site.blog_public ?? true;
 	const enabledCount = status?.modules.enabled_count ?? 0;
 	const totalCount = status?.modules.total_count ?? modules.length;
-	const tablesHealthy = status?.database.tables_healthy ?? true;
+	const tablesHealthy =
+		summary?.audit.tables_healthy ??
+		status?.database.tables_healthy ??
+		true;
 	const tableCount = Object.keys( status?.database.tables ?? {} ).length;
+
+	const openFix = ( fix: DashboardFix ): void => {
+		if ( fix.id === 'onboarding' ) {
+			reopenWizard();
+			return;
+		}
+		navigateTo( fix.page );
+	};
 
 	if ( uiMode === 'simple' ) {
 		return (
@@ -62,11 +123,32 @@ export function DashboardView(): JSX.Element {
 
 				<section className="rms-card rms-hero-card">
 					<div className="rms-hero-main">
-						<div className="rms-score-ring" aria-hidden="true">
-							<span className="rms-score-value rms-tabular">
-								{ blogPublic && tablesHealthy ? 'OK' : '!' }
-							</span>
-						</div>
+						{ summary ? (
+							<div
+								className={ `rms-score-ring ${ scoreBandClass(
+									summary.health.band
+								) }` }
+								role="img"
+								aria-label={ sprintf(
+									/* translators: %d: site health score from 0 to 100 */
+									__(
+										'Site health %d out of 100',
+										'rankmyseo'
+									),
+									summary.health.score
+								) }
+							>
+								<span className="rms-score-value rms-tabular">
+									{ summary.health.score }
+								</span>
+							</div>
+						) : (
+							<div className="rms-score-ring" aria-hidden="true">
+								<span className="rms-score-value rms-tabular">
+									{ blogPublic && tablesHealthy ? 'OK' : '!' }
+								</span>
+							</div>
+						) }
 						<div>
 							<h1 className="rms-page-title">
 								{ sprintf(
@@ -76,15 +158,17 @@ export function DashboardView(): JSX.Element {
 								) }
 							</h1>
 							<p className="rms-muted">
-								{ sprintf(
-									/* translators: 1: active module count, 2: total module count */
-									__(
-										'%1$d of %2$d SEO tools are turned on and running locally with zero external calls.',
-										'rankmyseo'
-									),
-									enabledCount,
-									totalCount
-								) }
+								{ summary
+									? summary.health.summary
+									: sprintf(
+											/* translators: 1: active module count, 2: total module count */
+											__(
+												'%1$d of %2$d SEO tools are turned on and running locally with zero external calls.',
+												'rankmyseo'
+											),
+											enabledCount,
+											totalCount
+									  ) }
 							</p>
 						</div>
 					</div>
@@ -123,129 +207,70 @@ export function DashboardView(): JSX.Element {
 					</div>
 
 					<div className="rms-action-list">
-						<article className="rms-card rms-next-action-card">
-							<div>
-								<h3 className="rms-card-title">
-									{ __(
-										'Set up your search titles and meta descriptions',
-										'rankmyseo'
-									) }
-								</h3>
-								<p className="rms-muted">
-									{ __(
-										'Choose a clear title separator and check how your',
-										'rankmyseo'
-									) }{ ' ' }
-									<Term term="meta_description" />{ ' ' }
-									{ __(
-										'appears in search results.',
-										'rankmyseo'
-									) }
-								</p>
-							</div>
-							<div className="rms-next-action-cta">
-								<Button
-									variant="secondary"
-									onClick={ () => navigateTo( 'meta' ) }
-								>
-									{ __( 'Review', 'rankmyseo' ) }
-								</Button>
-								<button
-									type="button"
-									className="rms-link-btn"
-									onClick={ () =>
-										openChat(
-											__(
-												'Fix missing meta descriptions',
-												'rankmyseo'
-											)
-										)
-									}
-								>
-									{ __( 'Ask AI', 'rankmyseo' ) }
-								</button>
-							</div>
-						</article>
-
-						<article className="rms-card rms-next-action-card">
-							<div>
-								<h3 className="rms-card-title">
-									{ __(
-										'Switching from another SEO plugin?',
-										'rankmyseo'
-									) }
-								</h3>
-								<p className="rms-muted">
-									{ __(
-										'Copy existing titles, descriptions, and redirects safely from Yoast SEO, Rank Math, or AIOSEO with one-click undo.',
-										'rankmyseo'
-									) }
-								</p>
-							</div>
-							<div className="rms-next-action-cta">
-								<Button
-									variant="secondary"
-									onClick={ () => navigateTo( 'import' ) }
-								>
-									{ __( 'Open Import', 'rankmyseo' ) }
-								</Button>
-								<button
-									type="button"
-									className="rms-link-btn"
-									onClick={ () =>
-										openChat(
-											__(
-												'Import from Yoast or Rank Math',
-												'rankmyseo'
-											)
-										)
-									}
-								>
-									{ __( 'Ask AI', 'rankmyseo' ) }
-								</button>
-							</div>
-						</article>
-
-						<article className="rms-card rms-next-action-card">
-							<div>
-								<h3 className="rms-card-title">
-									{ __(
-										'Keep broken links from costing visitors',
-										'rankmyseo'
-									) }
-								</h3>
-								<p className="rms-muted">
-									{ __( 'Use automatic', 'rankmyseo' ) }{ ' ' }
-									<Term term="redirect" />{ ' ' }
-									{ __(
-										'rules whenever a page address changes so visitors always land on a live page.',
-										'rankmyseo'
-									) }
-								</p>
-							</div>
-							<div className="rms-next-action-cta">
-								<Button
-									variant="secondary"
-									onClick={ () => navigateTo( 'redirects' ) }
-								>
-									{ __( 'Broken Links', 'rankmyseo' ) }
-								</Button>
-								<button
-									type="button"
-									className="rms-link-btn"
-									onClick={ () =>
-										openChat(
-											__(
-												'How do redirects and 404 tracking work?',
-												'rankmyseo'
-											)
-										)
-									}
-								>
-									{ __( 'Ask AI', 'rankmyseo' ) }
-								</button>
-							</div>
-						</article>
+						{ summary ? (
+							summary.fixes.map( ( fix ) => {
+								const term = termForFix( fix.id );
+								return (
+									<article
+										key={ fix.id }
+										className="rms-card rms-next-action-card"
+									>
+										<div>
+											<h3 className="rms-card-title">
+												{ fix.title }
+											</h3>
+											<p className="rms-muted">
+												{ fix.detail }
+												{ term && (
+													<>
+														{ ' ' }
+														<Term term={ term } />
+													</>
+												) }
+											</p>
+										</div>
+										<div className="rms-next-action-cta">
+											<Button
+												variant="secondary"
+												onClick={ () => openFix( fix ) }
+											>
+												{ fix.id === 'onboarding'
+													? __(
+															'Continue setup',
+															'rankmyseo'
+													  )
+													: __(
+															'Review',
+															'rankmyseo'
+													  ) }
+											</Button>
+											<button
+												type="button"
+												className="rms-link-btn"
+												aria-label={ sprintf(
+													/* translators: %s: fix title */
+													__(
+														'Ask AI: %s',
+														'rankmyseo'
+													),
+													fix.title
+												) }
+												onClick={ () =>
+													openChat( fix.prompt )
+												}
+											>
+												{ __( 'Ask AI', 'rankmyseo' ) }
+											</button>
+										</div>
+									</article>
+								);
+							} )
+						) : (
+							<FallbackActions
+								navigateTo={ navigateTo }
+								openChat={ openChat }
+							/>
+						) }
 					</div>
 				</section>
 
@@ -262,7 +287,7 @@ export function DashboardView(): JSX.Element {
 						</h2>
 						<p className="rms-muted">
 							{ __(
-								'All standalone on-page SEO tools stay free and local. Connect RankMySEO Cloud anytime for live Google keyword tracking, Search Console clicks, and approval-first AI recommendations.',
+								'All standalone on-page SEO tools stay free and local. Connect RankMySEO Cloud anytime for live keyword tracking and approval-first recommendations.',
 								'rankmyseo'
 							) }
 						</p>
@@ -370,6 +395,101 @@ export function DashboardView(): JSX.Element {
 				</div>
 			</section>
 
+			{ summary && (
+				<section
+					className="rms-section"
+					aria-label={ __( 'Site audit counts', 'rankmyseo' ) }
+				>
+					<div className="rms-section-header">
+						<h2 className="rms-section-title">
+							{ __( 'Site audit', 'rankmyseo' ) }
+						</h2>
+						<span className="rms-muted">
+							{ sprintf(
+								/* translators: %d: site health score */
+								__( 'Local score %d / 100', 'rankmyseo' ),
+								summary.health.score
+							) }
+						</span>
+					</div>
+					<ul className="rms-audit-grid">
+						<li>
+							{ sprintf(
+								/* translators: %d: count of published items missing a description */
+								__( '%d missing descriptions', 'rankmyseo' ),
+								summary.counts.missing_descriptions
+							) }
+						</li>
+						<li>
+							{ sprintf(
+								/* translators: %d: count of published items missing an SEO title */
+								__( '%d missing SEO titles', 'rankmyseo' ),
+								summary.counts.missing_titles
+							) }
+						</li>
+						<li>
+							{ sprintf(
+								/* translators: %d: count of thin published items */
+								__( '%d thin posts', 'rankmyseo' ),
+								summary.counts.thin_posts
+							) }
+						</li>
+						<li>
+							{ sprintf(
+								/* translators: %d: count of unresolved 404s */
+								__( '%d open 404s', 'rankmyseo' ),
+								summary.counts.open_404s
+							) }
+						</li>
+						<li>
+							{ sprintf(
+								/* translators: 1: active redirects, 2: total redirects */
+								__(
+									'%1$d active redirects of %2$d',
+									'rankmyseo'
+								),
+								summary.counts.redirects_active,
+								summary.counts.redirects_total
+							) }
+						</li>
+					</ul>
+				</section>
+			) }
+
+			<section className="rms-section">
+				<div className="rms-section-header">
+					<h2 className="rms-section-title">
+						{ __( 'Quick links', 'rankmyseo' ) }
+					</h2>
+				</div>
+				<div className="rms-quick-links">
+					<Button
+						variant="secondary"
+						onClick={ () => navigateTo( 'schema' ) }
+					>
+						{ __( 'Open Schema', 'rankmyseo' ) }
+					</Button>
+					<Button
+						variant="secondary"
+						onClick={ () => navigateTo( 'sitemaps' ) }
+					>
+						{ __( 'Open Sitemaps', 'rankmyseo' ) }
+					</Button>
+					<Button
+						variant="secondary"
+						onClick={ () => navigateTo( 'redirects' ) }
+					>
+						{ __( 'Open Redirects', 'rankmyseo' ) }
+					</Button>
+					<Button
+						variant="secondary"
+						onClick={ () => navigateTo( 'meta' ) }
+					>
+						{ __( 'Open Search Previews', 'rankmyseo' ) }
+					</Button>
+				</div>
+			</section>
+
 			<section className="rms-section">
 				<div className="rms-section-header">
 					<h2 className="rms-section-title">
@@ -431,5 +551,147 @@ export function DashboardView(): JSX.Element {
 				</div>
 			</section>
 		</div>
+	);
+}
+
+function FallbackActions( {
+	navigateTo,
+	openChat,
+}: {
+	navigateTo: ( pageId: NavPageId ) => void;
+	openChat: ( prompt?: string ) => void;
+} ): JSX.Element {
+	return (
+		<>
+			<article className="rms-card rms-next-action-card">
+				<div>
+					<h3 className="rms-card-title">
+						{ __(
+							'Set up your search titles and meta descriptions',
+							'rankmyseo'
+						) }
+					</h3>
+					<p className="rms-muted">
+						{ __(
+							'Choose a clear title separator and check how your',
+							'rankmyseo'
+						) }{ ' ' }
+						<Term term="meta_description" />{ ' ' }
+						{ __( 'appears in search results.', 'rankmyseo' ) }
+					</p>
+				</div>
+				<div className="rms-next-action-cta">
+					<Button
+						variant="secondary"
+						onClick={ () => navigateTo( 'meta' ) }
+					>
+						{ __( 'Review', 'rankmyseo' ) }
+					</Button>
+					<button
+						type="button"
+						className="rms-link-btn"
+						aria-label={ __(
+							'Ask AI about search titles',
+							'rankmyseo'
+						) }
+						onClick={ () =>
+							openChat(
+								__(
+									'Find posts missing meta descriptions',
+									'rankmyseo'
+								)
+							)
+						}
+					>
+						{ __( 'Ask AI', 'rankmyseo' ) }
+					</button>
+				</div>
+			</article>
+
+			<article className="rms-card rms-next-action-card">
+				<div>
+					<h3 className="rms-card-title">
+						{ __(
+							'Switching from another SEO plugin?',
+							'rankmyseo'
+						) }
+					</h3>
+					<p className="rms-muted">
+						{ __(
+							'Copy existing titles, descriptions, and redirects safely from Yoast SEO, Rank Math, or AIOSEO with one-click undo.',
+							'rankmyseo'
+						) }
+					</p>
+				</div>
+				<div className="rms-next-action-cta">
+					<Button
+						variant="secondary"
+						onClick={ () => navigateTo( 'import' ) }
+					>
+						{ __( 'Open Import', 'rankmyseo' ) }
+					</Button>
+					<button
+						type="button"
+						className="rms-link-btn"
+						aria-label={ __(
+							'Ask AI about importing',
+							'rankmyseo'
+						) }
+						onClick={ () =>
+							openChat(
+								__(
+									'Import from Yoast or Rank Math',
+									'rankmyseo'
+								)
+							)
+						}
+					>
+						{ __( 'Ask AI', 'rankmyseo' ) }
+					</button>
+				</div>
+			</article>
+
+			<article className="rms-card rms-next-action-card">
+				<div>
+					<h3 className="rms-card-title">
+						{ __(
+							'Keep broken links from costing visitors',
+							'rankmyseo'
+						) }
+					</h3>
+					<p className="rms-muted">
+						{ __( 'Use automatic', 'rankmyseo' ) }{ ' ' }
+						<Term term="redirect" />{ ' ' }
+						{ __(
+							'rules whenever a page address changes so visitors always land on a live page.',
+							'rankmyseo'
+						) }
+					</p>
+				</div>
+				<div className="rms-next-action-cta">
+					<Button
+						variant="secondary"
+						onClick={ () => navigateTo( 'redirects' ) }
+					>
+						{ __( 'Broken Links', 'rankmyseo' ) }
+					</Button>
+					<button
+						type="button"
+						className="rms-link-btn"
+						aria-label={ __(
+							'Ask AI about redirects',
+							'rankmyseo'
+						) }
+						onClick={ () =>
+							openChat(
+								__( 'Show recent unresolved 404s', 'rankmyseo' )
+							)
+						}
+					>
+						{ __( 'Ask AI', 'rankmyseo' ) }
+					</button>
+				</div>
+			</article>
+		</>
 	);
 }

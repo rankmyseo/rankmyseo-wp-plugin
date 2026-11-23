@@ -37,6 +37,19 @@ export function Header(): JSX.Element {
 						void setUiMode( nextMode );
 					} }
 				/>
+				{ uiMode === 'advanced' && (
+					<Button
+						variant="secondary"
+						aria-keyshortcuts="Control+K Meta+K"
+						onClick={ () => {
+							window.dispatchEvent(
+								new Event( 'rankmyseo-open-command' )
+							);
+						} }
+					>
+						{ __( 'Commands', 'rankmyseo' ) }
+					</Button>
+				) }
 				<Button
 					variant="primary"
 					className="rms-btn-primary rms-ask-ai-btn"

@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 
 export type GlossaryKey =
 	| 'meta_description'
+	| 'seo_title'
 	| 'canonical'
 	| 'noindex'
 	| 'schema'
@@ -26,6 +27,13 @@ export function getGlossaryTerms(): Record< GlossaryKey, GlossaryEntry > {
 			label: __( 'Meta description', 'rankmyseo' ),
 			definition: __(
 				'The short summary text shown under your page title in Google search results to help searchers decide whether to click.',
+				'rankmyseo'
+			),
+		},
+		seo_title: {
+			label: __( 'SEO title', 'rankmyseo' ),
+			definition: __(
+				'The clickable headline search engines show for a page. It can differ from the title visitors see on the page itself.',
 				'rankmyseo'
 			),
 		},

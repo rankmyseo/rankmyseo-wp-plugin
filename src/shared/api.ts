@@ -1,6 +1,11 @@
 import apiFetch from '@wordpress/api-fetch';
 import type { SitemapStatus } from './sitemaps';
 import type {
+	DashboardSummary,
+	LocalChatResponse,
+	OnboardingCompletePayload,
+	OnboardingCompleteResponse,
+	OnboardingStateResponse,
 	PluginSettings,
 	SettingsResponse,
 	StatusResponse,
@@ -114,5 +119,45 @@ export function pingIndexNow( url: string ): Promise< {
 		path: '/rankmyseo/v1/sitemaps/indexnow/ping',
 		method: 'POST',
 		data: { url },
+	} );
+}
+
+export function fetchOnboardingState(): Promise< OnboardingStateResponse > {
+	return apiFetch< OnboardingStateResponse >( {
+		path: '/rankmyseo/v1/onboarding/state',
+		method: 'GET',
+	} );
+}
+
+export function completeOnboarding(
+	payload: OnboardingCompletePayload
+): Promise< OnboardingCompleteResponse > {
+	return apiFetch< OnboardingCompleteResponse >( {
+		path: '/rankmyseo/v1/onboarding/complete',
+		method: 'POST',
+		data: payload,
+	} );
+}
+
+export function fetchDashboardSummary(): Promise< DashboardSummary > {
+	return apiFetch< DashboardSummary >( {
+		path: '/rankmyseo/v1/dashboard/summary',
+		method: 'GET',
+	} );
+}
+
+export interface LocalChatRequest {
+	message: string;
+	post_id?: number;
+	screen?: string;
+}
+
+export function sendLocalChat(
+	payload: LocalChatRequest
+): Promise< LocalChatResponse > {
+	return apiFetch< LocalChatResponse >( {
+		path: '/rankmyseo/v1/chat/local',
+		method: 'POST',
+		data: payload,
 	} );
 }
