@@ -104,18 +104,28 @@ final class ModuleManager {
 	 * @return void
 	 */
 	public function boot(): void {
-		foreach ( $this->modules as $id => $module ) {
-			if ( ! empty( $this->booted[ $id ] ) ) {
-				continue;
-			}
-
-			if ( ! $this->is_enabled( $id ) ) {
-				continue;
-			}
-
-			$module->register();
-			$this->booted[ $id ] = true;
+		foreach ( array_keys( $this->modules ) as $id ) {
+			$this->boot_one( $id );
 		}
+	}
+
+	/**
+	 * Boot one enabled module if it has not already registered.
+	 *
+	 * @param string $id Module identifier.
+	 * @return void
+	 */
+	public function boot_one( string $id ): void {
+		if ( ! isset( $this->modules[ $id ] ) || ! empty( $this->booted[ $id ] ) ) {
+			return;
+		}
+
+		if ( ! $this->is_enabled( $id ) ) {
+			return;
+		}
+
+		$this->modules[ $id ]->register();
+		$this->booted[ $id ] = true;
 	}
 
 	/**

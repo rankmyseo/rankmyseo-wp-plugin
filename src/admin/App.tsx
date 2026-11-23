@@ -6,6 +6,7 @@ import { Header } from './components/Header';
 import { Navigation } from './components/Navigation';
 import { SetupWizard } from './components/SetupWizard';
 import { AdminProvider, useAdmin } from './context/AdminContext';
+import { ConnectView } from './views/ConnectView';
 import { DashboardView } from './views/DashboardView';
 import { ImporterView } from './views/ImporterView';
 import { ModulePlaceholderView } from './views/ModulePlaceholderView';
@@ -47,6 +48,9 @@ function AdminShell(): JSX.Element {
 		}
 		if ( activePage === 'meta' ) {
 			return <TitlesMetaView />;
+		}
+		if ( activePage === 'cloud' ) {
+			return <ConnectView />;
 		}
 		return <ModulePlaceholderView pageId={ activePage } />;
 	};

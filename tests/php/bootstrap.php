@@ -61,6 +61,12 @@ final class RankMySEO_Test_State {
 	/** @var array<string, array<int, mixed>> */
 	public static array $filters = [];
 
+	/** @var list<array{url: string, args: array<string, mixed>}> */
+	public static array $http_log = [];
+
+	/** @var array<string, string> */
+	public static array $salts = [];
+
 	/** @var array<string, list<array{priority: int, accepted_args: int}>> */
 	public static array $filter_meta = [];
 
@@ -177,6 +183,11 @@ final class RankMySEO_Test_State {
 		self::$actions           = [];
 		self::$filters           = [];
 		self::$filter_meta       = [];
+		self::$http_log          = [];
+		self::$salts             = [
+			'auth'        => 'test-auth-salt',
+			'secure_auth' => 'test-secure-auth-salt',
+		];
 		self::$rewrites          = [];
 		self::$cron              = [];
 		self::$transients        = [];
@@ -217,6 +228,7 @@ final class RankMySEO_Test_State {
 			'editor'        => new WP_Role( 'editor', [ 'edit_posts' => true ] ),
 			'subscriber'    => new WP_Role( 'subscriber', [ 'read' => true ] ),
 		];
+		$GLOBALS['wpdb']         = new wpdb();
 	}
 }
 
@@ -396,6 +408,11 @@ if ( ! class_exists( 'wpdb' ) ) {
 	public string $users = 'wp_users';
 		/** @var list<string> */
 		public array $queries = [];
+
+		public int $insert_id = 0;
+
+		/** @var list<array<string, mixed>> */
+		public array $sync_rows = [];
 		/** @var list<string> */
 		public array $existing_tables = [];
 
@@ -430,7 +447,102 @@ if ( ! class_exists( 'wpdb' ) ) {
 		public function get_results( string $query, string $output = 'ARRAY_A' ): array {
 			unset( $output );
 			$this->queries[] = $query;
-			return [];
+			if ( ! str_contains( $query, 'rankmyseo_sync_queue' ) ) {
+				return [];
+			}
+			$rows = $this->sync_rows;
+			if ( preg_match_all( "/(\\w+)\\s*=\\s*'((?:\\\\'|[^'])*)'/", $query, $matches, PREG_SET_ORDER ) ) {
+				foreach ( $matches as $match ) {
+					$column = $match[1];
+					$value  = stripslashes( $match[2] );
+					$rows   = array_values(
+						array_filter(
+							$rows,
+							static function ( array $row ) use ( $column, $value ): bool {
+								return (string) ( $row[ $column ] ?? '' ) === $value;
+							}
+						)
+					);
+				}
+			}
+			if ( preg_match( '/\\bid\\s*=\\s*(\\d+)/', $query, $match ) ) {
+				$id   = (int) $match[1];
+				$rows = array_values(
+					array_filter(
+						$rows,
+						static function ( array $row ) use ( $id ): bool {
+							return (int) ( $row['id'] ?? 0 ) === $id;
+						}
+					)
+				);
+			}
+			if ( preg_match( "/scheduled_at\\s*<=\\s*'([^']+)'/", $query, $match ) ) {
+				$cutoff = $match[1];
+				$rows   = array_values(
+					array_filter(
+						$rows,
+						static function ( array $row ) use ( $cutoff ): bool {
+							return strcmp( (string) ( $row['scheduled_at'] ?? '' ), $cutoff ) <= 0;
+						}
+					)
+				);
+			}
+			usort(
+				$rows,
+				static function ( array $left, array $right ): int {
+					return (int) ( $left['id'] ?? 0 ) <=> (int) ( $right['id'] ?? 0 );
+				}
+			);
+			if ( preg_match( '/LIMIT\\s+(\\d+)/', $query, $match ) ) {
+				$rows = array_slice( $rows, 0, (int) $match[1] );
+			}
+			return $rows;
+		}
+
+		/**
+		 * @param array<string, mixed> $data
+		 * @param mixed                $format
+		 * @return int|false
+		 */
+		public function insert( string $table, array $data, $format = null ) {
+			unset( $format );
+			if ( ! str_contains( $table, 'rankmyseo_sync_queue' ) ) {
+				return false;
+			}
+			++$this->insert_id;
+			$row       = $data;
+			$row['id'] = $this->insert_id;
+			if ( ! isset( $row['locked_at'] ) ) {
+				$row['locked_at'] = '';
+			}
+			if ( ! isset( $row['last_error'] ) ) {
+				$row['last_error'] = '';
+			}
+			$this->sync_rows[] = $row;
+			return 1;
+		}
+
+		/**
+		 * @param array<string, mixed> $data
+		 * @param array<string, mixed> $where
+		 * @param mixed                $format
+		 * @param mixed                $where_format
+		 */
+		public function update( string $table, array $data, array $where, $format = null, $where_format = null ): int {
+			unset( $format, $where_format );
+			if ( ! str_contains( $table, 'rankmyseo_sync_queue' ) ) {
+				return 0;
+			}
+			$id    = isset( $where['id'] ) ? (int) $where['id'] : 0;
+			$count = 0;
+			foreach ( $this->sync_rows as $index => $row ) {
+				if ( (int) ( $row['id'] ?? 0 ) !== $id ) {
+					continue;
+				}
+				$this->sync_rows[ $index ] = array_merge( $row, $data );
+				++$count;
+			}
+			return $count;
 		}
 
 		public function get_var( string $query ): ?string {
@@ -719,9 +831,18 @@ if ( ! function_exists( 'wp_clear_scheduled_hook' ) ) {
 	/** @param array<int, mixed> $args */
 	function wp_clear_scheduled_hook( string $hook, array $args = [] ): int {
 		unset( $args );
-		$count = isset( RankMySEO_Test_State::$cron[ $hook ] ) ? count( RankMySEO_Test_State::$cron[ $hook ] ) : 0;
+		$count = isset( RankMySEO_Test_State::$cron[ $hook ] ) ? count( (array) RankMySEO_Test_State::$cron[ $hook ] ) : 0;
 		unset( RankMySEO_Test_State::$cron[ $hook ] );
-		return $count;
+		$before = count( RankMySEO_Test_State::$scheduled );
+		RankMySEO_Test_State::$scheduled = array_values(
+			array_filter(
+				RankMySEO_Test_State::$scheduled,
+				static function ( array $event ) use ( $hook ): bool {
+					return $event['hook'] !== $hook;
+				}
+			)
+		);
+		return $count + ( $before - count( RankMySEO_Test_State::$scheduled ) );
 	}
 }
 
@@ -770,7 +891,9 @@ if ( ! function_exists( 'wp_safe_remote_post' ) ) {
 if ( ! function_exists( 'wp_remote_retrieve_response_code' ) ) {
 	/** @param mixed $response */
 	function wp_remote_retrieve_response_code( $response ): int {
-		unset( $response );
+		if ( is_array( $response ) && isset( $response['response']['code'] ) ) {
+			return (int) $response['response']['code'];
+		}
 		return 0;
 	}
 }
@@ -1184,11 +1307,19 @@ if ( ! function_exists( 'get_queried_object_id' ) ) {
 if ( ! function_exists( 'get_post' ) ) {
 	/** @param mixed $post */
 	function get_post( $post = null ) {
-		if ( $post instanceof WP_Post ) {
+		if ( is_object( $post ) ) {
 			return $post;
 		}
 		$id = (int) $post;
-		return RankMySEO_Test_State::$posts[ $id ] ?? null;
+		if ( isset( RankMySEO_Test_State::$posts[ $id ] ) && is_object( RankMySEO_Test_State::$posts[ $id ] ) ) {
+			return RankMySEO_Test_State::$posts[ $id ];
+		}
+		foreach ( RankMySEO_Test_State::$posts as $item ) {
+			if ( is_object( $item ) && (int) ( $item->ID ?? 0 ) === $id ) {
+				return $item;
+			}
+		}
+		return null;
 	}
 }
 
@@ -1209,6 +1340,10 @@ if ( ! function_exists( 'get_post_meta' ) ) {
 if ( ! function_exists( 'get_permalink' ) ) {
 	/** @param mixed $post */
 	function get_permalink( $post = 0 ): string {
+		if ( is_object( $post ) && ! $post instanceof WP_Post ) {
+			$slug = (string) ( $post->post_name ?? 'post' );
+			return home_url( ( '' !== $slug ? $slug : 'post' ) . '/' );
+		}
 		$resolved = get_post( $post );
 		if ( ! $resolved instanceof WP_Post ) {
 			return '';
@@ -1345,16 +1480,16 @@ if ( ! function_exists( 'wp_create_nonce' ) ) {
 }
 
 if ( ! function_exists( 'wp_is_post_revision' ) ) {
-	function wp_is_post_revision( int $post_id ): bool {
-		unset( $post_id );
-		return false;
+	/** @param mixed $post */
+	function wp_is_post_revision( $post ) {
+		return is_object( $post ) && isset( $post->post_type ) && 'revision' === $post->post_type;
 	}
 }
 
 if ( ! function_exists( 'wp_is_post_autosave' ) ) {
-	function wp_is_post_autosave( int $post_id ): bool {
-		unset( $post_id );
-		return false;
+	/** @param mixed $post */
+	function wp_is_post_autosave( $post ): bool {
+		return is_object( $post ) && isset( $post->post_name ) && str_contains( (string) $post->post_name, 'autosave' );
 	}
 }
 
@@ -1640,6 +1775,85 @@ if ( ! function_exists( 'sanitize_title' ) ) {
 		$title = (string) preg_replace( '/[^a-z0-9\s\-]/', '', $title );
 		$title = (string) preg_replace( '/[\s\-]+/', '-', $title );
 		return trim( $title, '-' );
+	}
+}
+
+
+if ( ! function_exists( 'wp_salt' ) ) {
+	function wp_salt( string $scheme = 'auth' ): string {
+		return RankMySEO_Test_State::$salts[ $scheme ] ?? ( 'salt-' . $scheme );
+	}
+}
+
+if ( ! function_exists( 'wp_remote_request' ) ) {
+	/**
+	 * @param mixed                $url
+	 * @param array<string, mixed> $args
+	 * @return mixed
+	 */
+	function wp_remote_request( $url, array $args = [] ) {
+		RankMySEO_Test_State::$http_log[] = [
+			'url'  => (string) $url,
+			'args' => $args,
+		];
+		$pre = apply_filters( 'pre_http_request', false, $args, (string) $url );
+		if ( false !== $pre ) {
+			return $pre;
+		}
+		return new WP_Error( 'http_request_failed', 'A test blocked this HTTP request.' );
+	}
+}
+
+if ( ! function_exists( 'wp_remote_retrieve_body' ) ) {
+	/** @param mixed $response */
+	function wp_remote_retrieve_body( $response ): string {
+		return is_array( $response ) ? (string) ( $response['body'] ?? '' ) : '';
+	}
+}
+
+if ( ! function_exists( 'wp_remote_retrieve_header' ) ) {
+	/**
+	 * @param mixed  $response
+	 * @param string $header
+	 * @return string
+	 */
+	function wp_remote_retrieve_header( $response, string $header ): string {
+		if ( ! is_array( $response ) || ! isset( $response['headers'] ) || ! is_array( $response['headers'] ) ) {
+			return '';
+		}
+		foreach ( $response['headers'] as $name => $value ) {
+			if ( strtolower( (string) $name ) === strtolower( $header ) ) {
+				return is_array( $value ) ? (string) reset( $value ) : (string) $value;
+			}
+		}
+		return '';
+	}
+}
+
+if ( ! function_exists( 'is_post_type_viewable' ) ) {
+	/** @param mixed $post_type */
+	function is_post_type_viewable( $post_type ): bool {
+		$type = is_object( $post_type ) ? (string) ( $post_type->name ?? '' ) : (string) $post_type;
+		return in_array( $type, [ 'post', 'page' ], true );
+	}
+}
+
+if ( ! function_exists( 'rankmyseo_test_http_response' ) ) {
+	/**
+	 * @param array<string, mixed>  $body
+	 * @param array<string, string> $headers
+	 * @return array<string, mixed>
+	 */
+	function rankmyseo_test_http_response( int $status, array $body, array $headers = [] ): array {
+		return [
+			'headers'  => $headers,
+			'body'     => (string) json_encode( $body ),
+			'response' => [
+				'code'    => $status,
+				'message' => 'OK',
+			],
+			'cookies'  => [],
+		];
 	}
 }
 

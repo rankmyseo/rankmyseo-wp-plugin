@@ -17,9 +17,10 @@ use RankMySEO\Modules\Analyzer\AnalyzerModule;
 use RankMySEO\Modules\Chat\ChatModule;
 use RankMySEO\Modules\Chat\LocalAssistant;
 use RankMySEO\Modules\Chat\WordPressSiteIndex;
+use RankMySEO\Modules\Cloud\CloudModule;
+use RankMySEO\Modules\Cloud\CloudServices;
 use RankMySEO\Modules\ModuleManager;
 use RankMySEO\Modules\Stubs\AiQueueModule;
-use RankMySEO\Modules\Stubs\CloudModule;
 use RankMySEO\Modules\Importer\ImporterModule;
 use RankMySEO\Modules\Meta\ConflictGuard;
 use RankMySEO\Modules\Meta\DocumentBuilder;
@@ -35,6 +36,7 @@ use RankMySEO\Modules\Sitemaps\SitemapsModule;
 use RankMySEO\Modules\Sitemaps\WordPressSitemapSource;
 use RankMySEO\Modules\Sitemaps\WpIndexNowTransport;
 use RankMySEO\Rest\ChatController;
+use RankMySEO\Rest\CloudController;
 use RankMySEO\Rest\MetaController;
 use RankMySEO\Rest\DashboardController;
 use RankMySEO\Rest\OnboardingController;
@@ -218,6 +220,8 @@ final class Plugin {
 				return new ModuleManager( $settings );
 			}
 		);
+
+		CloudServices::register( $this->container );
 
 		$this->container->singleton(
 			SitemapSettings::class,
@@ -409,6 +413,21 @@ final class Plugin {
 		);
 
 		$this->container->singleton(
+			CloudController::class,
+			static function ( Container $container ): CloudController {
+				$vault = $container->get( \RankMySEO\Modules\Cloud\TokenVault::class );
+				assert( $vault instanceof \RankMySEO\Modules\Cloud\TokenVault );
+				$pairing = $container->get( \RankMySEO\Modules\Cloud\PairingService::class );
+				assert( $pairing instanceof \RankMySEO\Modules\Cloud\PairingService );
+				$worker = $container->get( \RankMySEO\Modules\Cloud\SyncWorker::class );
+				assert( $worker instanceof \RankMySEO\Modules\Cloud\SyncWorker );
+				$insights = $container->get( \RankMySEO\Modules\Cloud\InsightsCache::class );
+				assert( $insights instanceof \RankMySEO\Modules\Cloud\InsightsCache );
+				return new CloudController( $vault, $pairing, $worker, $insights );
+			}
+		);
+
+		$this->container->singleton(
 			RestRegistry::class,
 			static function ( Container $container ): RestRegistry {
 				$settings_controller = $container->get( SettingsController::class );
@@ -427,6 +446,8 @@ final class Plugin {
 				assert( $chat_controller instanceof ChatController );
 				$meta_controller = $container->get( MetaController::class );
 				assert( $meta_controller instanceof MetaController );
+				$cloud_controller = $container->get( CloudController::class );
+				assert( $cloud_controller instanceof CloudController );
 
 				return new RestRegistry(
 					[
@@ -438,6 +459,7 @@ final class Plugin {
 						$dashboard_controller,
 						$chat_controller,
 						$meta_controller,
+						$cloud_controller,
 					]
 				);
 			}

@@ -35,7 +35,22 @@ final class Deactivator {
 			wp_clear_scheduled_hook( $hook );
 		}
 
+		self::unschedule_action_scheduler( 'unschedule_all_actions' );
+
 		delete_option( 'rankmyseo_flush_rewrite_rules' );
 		flush_rewrite_rules( false );
+	}
+
+	/**
+	 * Unschedule one Action Scheduler hook when that plugin is active.
+	 *
+	 * @param string $suffix Function suffix after as_.
+	 * @return void
+	 */
+	private static function unschedule_action_scheduler( string $suffix ): void {
+		$function = 'as_' . $suffix;
+		if ( function_exists( $function ) && is_callable( $function ) ) {
+			$function( 'rankmyseo_process_sync_queue', array(), 'rankmyseo' );
+		}
 	}
 }

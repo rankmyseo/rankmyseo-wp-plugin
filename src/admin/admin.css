@@ -1058,6 +1058,70 @@
 	gap: 8px;
 }
 
+/* Cloud connection */
+.rms-root :focus-visible {
+	outline: 2px solid var(--rms-accent);
+	outline-offset: 2px;
+}
+
+.rms-cloud-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+.rms-cloud-code {
+	margin: 0;
+	font-family: var(--rms-font-mono);
+	font-size: 28px;
+	letter-spacing: 0.08em;
+	color: var(--rms-ink);
+}
+
+.rms-cloud-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 16px;
+}
+
+.rms-cloud-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.rms-cloud-list li {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	align-items: baseline;
+}
+
+.rms-cloud-dialog-backdrop {
+	position: fixed;
+	inset: 0;
+	background: rgba(27, 30, 36, 0.45);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 100000;
+	padding: 16px;
+}
+
+.rms-cloud-dialog {
+	width: 100%;
+	max-width: 440px;
+	background: var(--rms-card);
+	color: var(--rms-ink);
+	border: 1px solid var(--rms-rule);
+	border-radius: var(--rms-radius-card);
+	padding: 20px;
+}
+
 /* Responsive Breakpoints */
 @media (max-width: 1100px) {
 
@@ -1083,7 +1147,8 @@
 	.rms-wizard-two-col,
 	.rms-form-grid,
 	.rms-kv-grid,
-	.rms-metric-strip {
+	.rms-metric-strip,
+	.rms-cloud-grid {
 		grid-template-columns: 1fr;
 	}
 

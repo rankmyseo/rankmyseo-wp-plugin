@@ -296,7 +296,9 @@ export function DashboardView(): JSX.Element {
 						variant="secondary"
 						onClick={ () => navigateTo( 'cloud' ) }
 					>
-						{ __( 'Learn about Cloud', 'rankmyseo' ) }
+						{ status?.cloud.connected
+							? __( 'View insights', 'rankmyseo' )
+							: __( 'Connect to RankMySEO', 'rankmyseo' ) }
 					</Button>
 				</section>
 			</div>
@@ -390,7 +392,12 @@ export function DashboardView(): JSX.Element {
 							: __( 'Local Only', 'rankmyseo' ) }
 					</strong>
 					<span className="rms-metric-sub">
-						{ __( 'Zero outbound calls', 'rankmyseo' ) }
+						{ status?.cloud.connected
+							? __( 'Rankings available', 'rankmyseo' )
+							: __(
+									'Stays on this site until you connect',
+									'rankmyseo'
+							  ) }
 					</span>
 				</div>
 			</section>
