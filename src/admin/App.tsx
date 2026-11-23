@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { ErrorBanner } from '../shared/components/StatePrimitives';
-import { ChatDrawer } from './components/ChatDrawer';
+import { AskAiDrawer } from './components/AskAiDrawer';
+import { CommandBar } from './components/CommandBar';
 import { Header } from './components/Header';
 import { Navigation } from './components/Navigation';
 import { SetupWizard } from './components/SetupWizard';
@@ -84,7 +85,8 @@ function AdminShell(): JSX.Element {
 				{ renderActiveView() }
 			</main>
 
-			<ChatDrawer />
+			<AskAiDrawer />
+			<CommandBar />
 		</div>
 	);
 }

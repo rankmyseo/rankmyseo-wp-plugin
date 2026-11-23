@@ -6,6 +6,60 @@ import { useAdmin } from '../context/AdminContext';
 
 const SEPARATORS = [ '|', '-', '·', '—', '/', '•' ];
 
+interface WizardModules {
+	meta: boolean;
+	schema: boolean;
+	sitemaps: boolean;
+	redirects: boolean;
+}
+
+interface MediaAttachment {
+	id?: number;
+	url?: string;
+}
+
+interface MediaFrame {
+	on: ( event: 'select', callback: () => void ) => void;
+	open: () => void;
+	state: () => {
+		get: ( key: 'selection' ) => {
+			first: () => { toJSON: () => MediaAttachment };
+		};
+	};
+}
+
+function openLogoPicker(
+	onPick: ( logoId: number, logoUrl: string ) => void
+): void {
+	const media = (
+		window as Window & {
+			wp?: {
+				media?: ( options: {
+					title: string;
+					button: { text: string };
+					multiple: boolean;
+				} ) => MediaFrame;
+			};
+		}
+	 ).wp?.media;
+
+	if ( ! media ) {
+		return;
+	}
+
+	const frame = media( {
+		title: __( 'Choose a logo', 'rankmyseo' ),
+		button: { text: __( 'Use this logo', 'rankmyseo' ) },
+		multiple: false,
+	} );
+
+	frame.on( 'select', () => {
+		const attachment = frame.state().get( 'selection' ).first().toJSON();
+		onPick( attachment.id ?? 0, attachment.url ?? '' );
+	} );
+	frame.open();
+}
+
 export function SetupWizard(): JSX.Element {
 	const {
 		bootstrap,
@@ -26,23 +80,68 @@ export function SetupWizard(): JSX.Element {
 	const [ separator, setSeparator ] = useState< string >(
 		settings?.title_separator ?? '|'
 	);
+	const [ logoUrl, setLogoUrl ] = useState< string >( '' );
+	const [ logoId, setLogoId ] = useState< number >( 0 );
+	const [ modulesOn, setModulesOn ] = useState< WizardModules >( {
+		meta: settings?.modules.meta ?? true,
+		schema: settings?.modules.schema ?? true,
+		sitemaps: settings?.modules.sitemaps ?? true,
+		redirects: settings?.modules.redirects ?? true,
+	} );
 
-	const handleFinishLocal = async (): Promise< void > => {
+	const finish = async ( skipCloud: boolean ): Promise< void > => {
 		await completeWizard( {
 			site_type: siteType,
 			site_name: siteName,
 			title_separator: separator,
+			logo_id: logoId,
+			logo_url: logoUrl,
+			modules: modulesOn,
+			skip_cloud: skipCloud,
 		} );
+		if ( ! skipCloud ) {
+			navigateTo( 'cloud' );
+		}
 	};
 
-	const handleFinishAndOpenCloud = async (): Promise< void > => {
-		await completeWizard( {
-			site_type: siteType,
-			site_name: siteName,
-			title_separator: separator,
-		} );
-		navigateTo( 'cloud' );
-	};
+	const moduleChoices: Array< {
+		id: keyof WizardModules;
+		label: string;
+		help: string;
+	} > = [
+		{
+			id: 'meta',
+			label: __( 'Search titles and social previews', 'rankmyseo' ),
+			help: __(
+				'Set the headline and short description people see in search and when a page is shared.',
+				'rankmyseo'
+			),
+		},
+		{
+			id: 'schema',
+			label: __( 'Structured data for your business', 'rankmyseo' ),
+			help: __(
+				'Tell search engines whether this site represents an organization or a person.',
+				'rankmyseo'
+			),
+		},
+		{
+			id: 'sitemaps',
+			label: __( 'XML sitemap for search engines', 'rankmyseo' ),
+			help: __(
+				'Publish a list of public pages so new and updated content is easier to find.',
+				'rankmyseo'
+			),
+		},
+		{
+			id: 'redirects',
+			label: __( 'Redirects and broken-link monitor', 'rankmyseo' ),
+			help: __(
+				'Send visitors from old addresses to a live page and keep a log of missing pages.',
+				'rankmyseo'
+			),
+		},
+	];
 
 	return (
 		<section
@@ -189,32 +288,83 @@ export function SetupWizard(): JSX.Element {
 							</p>
 						</div>
 					</div>
+
+					<div className="rms-wizard-logo">
+						<TextControl
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
+							label={ __( 'Logo URL', 'rankmyseo' ) }
+							value={ logoUrl }
+							onChange={ ( next ) => {
+								setLogoUrl( next );
+								setLogoId( 0 );
+							} }
+							help={ __(
+								'Optional. Used as the default brand image. Stored with site identity, separate from other SEO settings.',
+								'rankmyseo'
+							) }
+							type="url"
+						/>
+						<Button
+							variant="secondary"
+							onClick={ () =>
+								openLogoPicker( ( nextId, nextUrl ) => {
+									setLogoId( nextId );
+									if ( nextUrl ) {
+										setLogoUrl( nextUrl );
+									}
+								} )
+							}
+						>
+							{ __( 'Choose from Media Library', 'rankmyseo' ) }
+						</Button>
+					</div>
 				</div>
 			) }
 
 			{ step === 2 && (
 				<div className="rms-wizard-body">
 					<h2 id="rms-wizard-heading" className="rms-wizard-title">
-						{ __( '2. Import Existing SEO', 'rankmyseo' ) }
+						{ __( '2. Core modules and indexing', 'rankmyseo' ) }
 					</h2>
 					<p className="rms-wizard-desc">
 						{ __(
-							'Switching from Yoast SEO, Rank Math, or AIOSEO? RankMySEO keeps your old plugin data untouched and creates rollback backups before importing.',
+							'Turn on the local tools you want. Search indexing still follows the Reading setting in WordPress, and every tool here runs on this site.',
 							'rankmyseo'
 						) }
 					</p>
-
-					<div className="rms-surface-panel">
-						<p className="rms-surface-panel-title">
-							{ __( 'Ready for safe migration', 'rankmyseo' ) }
-						</p>
-						<p className="rms-surface-panel-text">
-							{ __(
-								'All standalone SEO modules (Titles, Analyzer, Schema, Sitemaps, Redirects & 404s, and Importer) are enabled with safe local defaults. You can run a dry-run preview anytime from the Import tab.',
-								'rankmyseo'
-							) }
-						</p>
-					</div>
+					<ul className="rms-wizard-toggles">
+						{ moduleChoices.map( ( choice ) => (
+							<li key={ choice.id }>
+								<label
+									className="rms-wizard-toggle"
+									htmlFor={ `rms-wizard-${ choice.id }` }
+								>
+									<input
+										id={ `rms-wizard-${ choice.id }` }
+										type="checkbox"
+										checked={ modulesOn[ choice.id ] }
+										aria-describedby={ `rms-wizard-${ choice.id }-help` }
+										onChange={ ( event ) => {
+											const checked =
+												event.target.checked;
+											setModulesOn( ( prev ) => ( {
+												...prev,
+												[ choice.id ]: checked,
+											} ) );
+										} }
+									/>
+									<strong>{ choice.label }</strong>
+								</label>
+								<span
+									id={ `rms-wizard-${ choice.id }-help` }
+									className="rms-muted"
+								>
+									{ choice.help }
+								</span>
+							</li>
+						) ) }
+					</ul>
 				</div>
 			) }
 
@@ -233,11 +383,14 @@ export function SetupWizard(): JSX.Element {
 					<div className="rms-choice-grid">
 						<div className="rms-info-box">
 							<strong>
-								{ __( 'Start Free Locally', 'rankmyseo' ) }
+								{ __(
+									'Keep using this site locally',
+									'rankmyseo'
+								) }
 							</strong>
 							<p>
 								{ __(
-									'Use all standalone on-page SEO modules right inside WordPress with zero external account or network calls.',
+									'Use search titles, structured data, sitemaps, and redirects inside WordPress. Nothing is sent off this site.',
 									'rankmyseo'
 								) }
 							</p>
@@ -251,7 +404,7 @@ export function SetupWizard(): JSX.Element {
 							</strong>
 							<p>
 								{ __(
-									'Pair your site later to track Google keyword rankings, see Search Console clicks, and review AI proposals with one-click rollback.',
+									'Pair this site later to track keyword rankings and review suggested edits before anything changes.',
 									'rankmyseo'
 								) }
 							</p>
@@ -290,7 +443,7 @@ export function SetupWizard(): JSX.Element {
 								variant="secondary"
 								disabled={ saving }
 								onClick={ () => {
-									void handleFinishAndOpenCloud();
+									void finish( false );
 								} }
 							>
 								{ __( 'Review Cloud Setup', 'rankmyseo' ) }
@@ -301,10 +454,13 @@ export function SetupWizard(): JSX.Element {
 								isBusy={ saving }
 								disabled={ saving }
 								onClick={ () => {
-									void handleFinishLocal();
+									void finish( true );
 								} }
 							>
-								{ __( 'Start Free Locally', 'rankmyseo' ) }
+								{ __(
+									'Skip for now — keep using locally',
+									'rankmyseo'
+								) }
 							</Button>
 						</>
 					) }

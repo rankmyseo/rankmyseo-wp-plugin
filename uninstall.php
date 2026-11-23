@@ -50,6 +50,8 @@ $rankmyseo_migrator = new \RankMySEO\Database\Migrator( $wpdb );
 $rankmyseo_migrator->drop_tables();
 
 delete_option( \RankMySEO\Core\Settings::OPTION_KEY );
+delete_option( \RankMySEO\Core\OnboardingStore::OPTION_COMPLETED );
+delete_option( \RankMySEO\Core\OnboardingStore::OPTION_IDENTITY );
 delete_option( \RankMySEO\Database\Migrator::OPTION_DB_VERSION );
 delete_option( 'rankmyseo_flush_rewrite_rules' );
 delete_option( \RankMySEO\Modules\Sitemaps\SitemapSettings::OPTION_KEY );

@@ -9,6 +9,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import type { ReactNode } from 'react';
 import {
+	completeOnboarding,
 	fetchSettings,
 	fetchStatus,
 	fetchUiPreferences,
@@ -21,6 +22,7 @@ import type {
 	ModuleDescriptor,
 	ModuleId,
 	NavPageId,
+	OnboardingCompletePayload,
 	PluginSettings,
 	StatusResponse,
 	UiMode,
@@ -52,7 +54,7 @@ interface AdminContextValue {
 	) => Promise< boolean >;
 	toggleModule: ( moduleId: ModuleId, enabled: boolean ) => Promise< void >;
 	showWizard: boolean;
-	completeWizard: ( payload?: SettingsUpdatePayload ) => Promise< void >;
+	completeWizard: ( payload: OnboardingCompletePayload ) => Promise< void >;
 	dismissWizard: ( switchToAdvanced?: boolean ) => Promise< void >;
 	reopenWizard: () => void;
 	isChatOpen: boolean;
@@ -308,29 +310,22 @@ export function AdminProvider( {
 	);
 
 	const completeWizard = useCallback(
-		async ( payload?: SettingsUpdatePayload ): Promise< void > => {
+		async ( payload: OnboardingCompletePayload ): Promise< void > => {
 			setSaving( true );
 			try {
-				if ( payload ) {
-					const res = await saveSettingsRequest( {
-						...payload,
-						wizard_completed: true,
-						wizard_dismissed: true,
-					} );
-					setSettings( res.settings );
-					setModules( res.modules );
+				const res = await completeOnboarding( payload );
+				setSettings( res.settings );
+				if ( res.module_catalog && res.module_catalog.length > 0 ) {
+					setModules( res.module_catalog );
 				} else {
-					const res = await saveSettingsRequest( {
-						wizard_completed: true,
-						wizard_dismissed: true,
-					} );
-					setSettings( res.settings );
-					setModules( res.modules );
+					setModules( ( prev ) =>
+						prev.map( ( item ) => ( {
+							...item,
+							enabled:
+								res.settings.modules[ item.id ] ?? item.enabled,
+						} ) )
+					);
 				}
-				await saveUiPreferencesRequest( {
-					wizard_completed: true,
-					wizard_dismissed: true,
-				} );
 				setWizardDismissed( true );
 				setWizardForcedOpen( false );
 				showNotice(
