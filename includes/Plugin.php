@@ -16,8 +16,12 @@ use RankMySEO\Modules\ModuleManager;
 use RankMySEO\Modules\Stubs\AiQueueModule;
 use RankMySEO\Modules\Stubs\AnalyzerModule;
 use RankMySEO\Modules\Stubs\CloudModule;
+use RankMySEO\Modules\Meta\ConflictGuard;
+use RankMySEO\Modules\Meta\DocumentBuilder;
+use RankMySEO\Modules\Meta\MetaModule;
+use RankMySEO\Modules\Meta\MetaStore;
+use RankMySEO\Modules\Meta\TitleSettings;
 use RankMySEO\Modules\Stubs\ImporterModule;
-use RankMySEO\Modules\Stubs\MetaModule;
 use RankMySEO\Modules\Redirects\RedirectsModule;
 use RankMySEO\Modules\Schema\SchemaModule;
 use RankMySEO\Modules\Sitemaps\IndexNow;
@@ -26,6 +30,7 @@ use RankMySEO\Modules\Sitemaps\SitemapSettings;
 use RankMySEO\Modules\Sitemaps\SitemapsModule;
 use RankMySEO\Modules\Sitemaps\WordPressSitemapSource;
 use RankMySEO\Modules\Sitemaps\WpIndexNowTransport;
+use RankMySEO\Rest\MetaController;
 use RankMySEO\Rest\RestRegistry;
 use RankMySEO\Rest\SitemapsController;
 use RankMySEO\Rest\SettingsController;
@@ -288,6 +293,33 @@ final class Plugin {
 		);
 
 		$this->container->singleton(
+			TitleSettings::class,
+			static function ( Container $container ): TitleSettings {
+				$settings = $container->get( Settings::class );
+				assert( $settings instanceof Settings );
+				return new TitleSettings( $settings );
+			}
+		);
+
+		$this->container->singleton(
+			MetaController::class,
+			static function ( Container $container ): MetaController {
+				$settings = $container->get( Settings::class );
+				assert( $settings instanceof Settings );
+				$titles = $container->get( TitleSettings::class );
+				assert( $titles instanceof TitleSettings );
+
+				return new MetaController(
+					$settings,
+					$titles,
+					new MetaStore(),
+					new ConflictGuard( $titles ),
+					new DocumentBuilder()
+				);
+			}
+		);
+
+		$this->container->singleton(
 			RestRegistry::class,
 			static function ( Container $container ): RestRegistry {
 				$settings_controller = $container->get( SettingsController::class );
@@ -298,6 +330,8 @@ final class Plugin {
 				assert( $ui_preferences_controller instanceof UiPreferencesController );
 				$sitemaps_controller = $container->get( SitemapsController::class );
 				assert( $sitemaps_controller instanceof SitemapsController );
+				$meta_controller = $container->get( MetaController::class );
+				assert( $meta_controller instanceof MetaController );
 
 				return new RestRegistry(
 					[
@@ -305,6 +339,7 @@ final class Plugin {
 						$status_controller,
 						$ui_preferences_controller,
 						$sitemaps_controller,
+						$meta_controller,
 					]
 				);
 			}
