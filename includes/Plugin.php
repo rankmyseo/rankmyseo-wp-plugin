@@ -21,7 +21,11 @@ use RankMySEO\Modules\Stubs\AiQueueModule;
 use RankMySEO\Modules\Stubs\AnalyzerModule;
 use RankMySEO\Modules\Stubs\CloudModule;
 use RankMySEO\Modules\Importer\ImporterModule;
-use RankMySEO\Modules\Stubs\MetaModule;
+use RankMySEO\Modules\Meta\ConflictGuard;
+use RankMySEO\Modules\Meta\DocumentBuilder;
+use RankMySEO\Modules\Meta\MetaModule;
+use RankMySEO\Modules\Meta\MetaStore;
+use RankMySEO\Modules\Meta\TitleSettings;
 use RankMySEO\Modules\Redirects\RedirectsModule;
 use RankMySEO\Modules\Schema\SchemaModule;
 use RankMySEO\Modules\Sitemaps\IndexNow;
@@ -31,6 +35,7 @@ use RankMySEO\Modules\Sitemaps\SitemapsModule;
 use RankMySEO\Modules\Sitemaps\WordPressSitemapSource;
 use RankMySEO\Modules\Sitemaps\WpIndexNowTransport;
 use RankMySEO\Rest\ChatController;
+use RankMySEO\Rest\MetaController;
 use RankMySEO\Rest\DashboardController;
 use RankMySEO\Rest\OnboardingController;
 use RankMySEO\Rest\RestRegistry;
@@ -299,6 +304,33 @@ final class Plugin {
 		);
 
 		$this->container->singleton(
+			TitleSettings::class,
+			static function ( Container $container ): TitleSettings {
+				$settings = $container->get( Settings::class );
+				assert( $settings instanceof Settings );
+				return new TitleSettings( $settings );
+			}
+		);
+
+		$this->container->singleton(
+			MetaController::class,
+			static function ( Container $container ): MetaController {
+				$settings = $container->get( Settings::class );
+				assert( $settings instanceof Settings );
+				$titles = $container->get( TitleSettings::class );
+				assert( $titles instanceof TitleSettings );
+
+				return new MetaController(
+					$settings,
+					$titles,
+					new MetaStore(),
+					new ConflictGuard( $titles ),
+					new DocumentBuilder()
+				);
+			}
+		);
+
+		$this->container->singleton(
 			OnboardingStore::class,
 			static function ( Container $container ): OnboardingStore {
 				$settings = $container->get( Settings::class );
@@ -393,6 +425,8 @@ final class Plugin {
 				assert( $dashboard_controller instanceof DashboardController );
 				$chat_controller = $container->get( ChatController::class );
 				assert( $chat_controller instanceof ChatController );
+				$meta_controller = $container->get( MetaController::class );
+				assert( $meta_controller instanceof MetaController );
 
 				return new RestRegistry(
 					[
@@ -403,6 +437,7 @@ final class Plugin {
 						$onboarding_controller,
 						$dashboard_controller,
 						$chat_controller,
+						$meta_controller,
 					]
 				);
 			}

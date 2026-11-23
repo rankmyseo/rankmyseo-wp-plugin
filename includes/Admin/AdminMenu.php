@@ -71,8 +71,8 @@ final class AdminMenu {
 			[
 				'slug'       => 'rankmyseo-meta',
 				'page_id'    => 'meta',
-				'title'      => __( 'On-Page & Titles — RankMySEO', 'rankmyseo' ),
-				'menu_title' => __( 'On-Page & Titles', 'rankmyseo' ),
+				'title'      => __( 'Titles & Meta — RankMySEO', 'rankmyseo' ),
+				'menu_title' => __( 'Titles & Meta', 'rankmyseo' ),
 				'capability' => Capabilities::CAP_MANAGE,
 			],
 			[

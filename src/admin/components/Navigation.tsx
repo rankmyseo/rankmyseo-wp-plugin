@@ -18,7 +18,7 @@ const NAV_ITEMS: NavItem[] = [
 	},
 	{
 		id: 'meta',
-		label: __( 'On-Page & Titles', 'rankmyseo' ),
+		label: __( 'Titles & Meta', 'rankmyseo' ),
 		simpleLabel: __( 'Search Previews', 'rankmyseo' ),
 		showInSimple: true,
 	},
