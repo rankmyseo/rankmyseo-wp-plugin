@@ -61,6 +61,9 @@ final class RankMySEO_Test_State {
 	/** @var array<string, array<int, mixed>> */
 	public static array $filters = [];
 
+	/** @var array<string, list<array{priority: int, accepted_args: int}>> */
+	public static array $filter_meta = [];
+
 	/** @var list<array{regex: string, query: string, after: string}> */
 	public static array $rewrites = [];
 
@@ -79,9 +82,61 @@ final class RankMySEO_Test_State {
 	/** @var list<string> */
 	public static array $remote_bodies = [];
 
+	/** @var list<array{hook: string, callback: mixed, priority: int}> */
+	public static array $removed_actions = [];
+
+	/** @var array<int, WP_Post> */
+	public static array $posts = [];
+
+	/** @var array<int, array<string, mixed>> */
+	public static array $post_meta = [];
+
+	/** @var array<int, array<string, string>> */
+	public static array $users = [];
+
+	/** @var array<int, string> */
+	public static array $permalinks = [];
+
+	/** @var array<int, array<int, WP_Term>> */
+	public static array $categories = [];
+
+	/** @var array<int, string> */
+	public static array $thumbnails = [];
+
+	/** @var list<WP_Comment> */
+	public static array $comments = [];
+
+	/** @var array<int, array<string, mixed>> */
+	public static array $comment_meta = [];
+
+	/** @var list<array<string, mixed>> */
+	public static array $registered_meta = [];
+
+	/** @var bool */
+	public static bool $is_admin = false;
+
+	/** @var bool */
+	public static bool $is_singular = false;
+
+	/** @var bool */
+	public static bool $is_feed = false;
+
+	/** @var bool */
+	public static bool $is_404 = false;
+
+	/** @var bool */
+	public static bool $doing_ajax = false;
+
+	/** @var bool */
+	public static bool $doing_cron = false;
+
+	/** @var int */
+	public static int $queried_object_id = 0;
+
 	/** @var array<string, string> */
 	public static array $bloginfo = [
-		'name' => 'Test Site',
+		'name'        => 'Test Site',
+		'description' => 'A test site',
 	];
 
 	public static function reset(): void {
@@ -97,13 +152,34 @@ final class RankMySEO_Test_State {
 		self::$registered_routes = [];
 		self::$actions           = [];
 		self::$filters           = [];
+		self::$filter_meta       = [];
 		self::$rewrites          = [];
 		self::$cron              = [];
 		self::$transients        = [];
 		self::$query_vars        = [];
 		self::$remote_posts      = 0;
 		self::$remote_bodies     = [];
-		self::$bloginfo          = [ 'name' => 'Test Site' ];
+		self::$removed_actions   = [];
+		self::$posts             = [];
+		self::$post_meta         = [];
+		self::$users             = [];
+		self::$permalinks        = [];
+		self::$categories        = [];
+		self::$thumbnails        = [];
+		self::$comments          = [];
+		self::$comment_meta      = [];
+		self::$registered_meta   = [];
+		self::$is_admin          = false;
+		self::$is_singular       = false;
+		self::$is_feed           = false;
+		self::$is_404            = false;
+		self::$doing_ajax        = false;
+		self::$doing_cron        = false;
+		self::$queried_object_id = 0;
+		self::$bloginfo          = [
+			'name'        => 'Test Site',
+			'description' => 'A test site',
+		];
 		self::$roles             = [
 			'administrator' => new WP_Role( 'administrator', [ 'manage_options' => true, 'edit_posts' => true ] ),
 			'editor'        => new WP_Role( 'editor', [ 'edit_posts' => true ] ),
@@ -192,10 +268,12 @@ if ( ! class_exists( 'WP_REST_Server' ) ) {
 
 if ( ! class_exists( 'WP_REST_Request' ) ) {
 	class WP_REST_Request {
-		/** @var array<string, mixed> */
-		private array $json_params = [];
-		/** @var array<string, mixed> */
-		private array $body_params = [];
+	/** @var array<string, mixed> */
+	private array $json_params = [];
+	/** @var array<string, mixed> */
+	private array $body_params = [];
+	/** @var array<string, mixed> */
+	private array $params = [];
 
 		/** @param array<string, mixed> $json_params */
 		public function set_json_params( array $json_params ): void {
@@ -215,6 +293,25 @@ if ( ! class_exists( 'WP_REST_Request' ) ) {
 		/** @return array<string, mixed> */
 		public function get_body_params(): array {
 			return $this->body_params;
+		}
+
+		/**
+		 * @param mixed $value
+		 */
+		public function set_param( string $key, $value ): void {
+			$this->params[ $key ] = $value;
+		}
+
+		/** @return mixed */
+		public function get_param( string $key ) {
+			if ( array_key_exists( $key, $this->params ) ) {
+				return $this->params[ $key ];
+			}
+			if ( array_key_exists( $key, $this->json_params ) ) {
+				return $this->json_params[ $key ];
+			}
+
+			return null;
 		}
 	}
 }
@@ -408,7 +505,9 @@ if ( ! function_exists( 'get_current_user_id' ) ) {
 }
 
 if ( ! function_exists( 'current_user_can' ) ) {
-	function current_user_can( string $capability ): bool {
+	/** @param mixed ...$args */
+	function current_user_can( string $capability, ...$args ): bool {
+		unset( $args );
 		return ! empty( RankMySEO_Test_State::$current_user_caps[ $capability ] );
 	}
 }
@@ -446,19 +545,30 @@ if ( ! function_exists( 'add_action' ) ) {
 }
 
 if ( ! function_exists( 'remove_action' ) ) {
-	function remove_action( string $hook_name, callable $callback, int $priority = 10 ): bool {
-		unset( $hook_name, $callback, $priority );
+	/** @param mixed $callback */
+	function remove_action( string $hook_name, $callback, int $priority = 10 ): bool {
+		RankMySEO_Test_State::$removed_actions[] = [
+			'hook'     => $hook_name,
+			'callback' => $callback,
+			'priority' => $priority,
+		];
 		return true;
 	}
 }
 
 if ( ! function_exists( 'add_filter' ) ) {
 	/**
+	 * Store the callback itself so registration assertions can see it, and
+	 * keep priority metadata so apply_filters honors accepted argument counts.
+	 *
 	 * @param mixed $callback
 	 */
 	function add_filter( string $hook_name, $callback, int $priority = 10, int $accepted_args = 1 ): bool {
-		unset( $priority, $accepted_args );
-		RankMySEO_Test_State::$filters[ $hook_name ][] = $callback;
+		RankMySEO_Test_State::$filters[ $hook_name ][]     = $callback;
+		RankMySEO_Test_State::$filter_meta[ $hook_name ][] = [
+			'priority'      => $priority,
+			'accepted_args' => $accepted_args,
+		];
 		return true;
 	}
 }
@@ -539,16 +649,6 @@ if ( ! function_exists( 'get_query_var' ) ) {
 	}
 }
 
-if ( ! function_exists( 'esc_url_raw' ) ) {
-	function esc_url_raw( string $url ): string {
-		$url = trim( $url );
-		if ( ! preg_match( '#^https?://#i', $url ) ) {
-			return '';
-		}
-		return $url;
-	}
-}
-
 if ( ! function_exists( 'wp_parse_url' ) ) {
 	/**
 	 * @param string $url
@@ -563,38 +663,22 @@ if ( ! function_exists( 'wp_parse_url' ) ) {
 	}
 }
 
-if ( ! function_exists( 'wp_json_encode' ) ) {
-	/**
-	 * @param mixed $data
-	 */
-	function wp_json_encode( $data, int $options = 0, int $depth = 512 ): string|false {
-		return json_encode( $data, $options, $depth );
-	}
-}
-
 if ( ! function_exists( 'sanitize_textarea_field' ) ) {
 	function sanitize_textarea_field( string $str ): string {
 		return trim( (string) preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', strip_tags( $str ) ) );
 	}
 }
 
-if ( ! function_exists( 'is_wp_error' ) ) {
-	/** @param mixed $thing */
-	function is_wp_error( $thing ): bool {
-		return $thing instanceof WP_Error;
-	}
-}
-
 if ( ! function_exists( 'wp_safe_remote_post' ) ) {
 	/**
-	 * @param mixed $url
+	 * @param mixed                $url
 	 * @param array<string, mixed> $args
 	 * @return WP_Error
 	 */
 	function wp_safe_remote_post( $url, array $args = [] ): WP_Error {
 		unset( $url );
 		++RankMySEO_Test_State::$remote_posts;
-		$body = isset( $args['body'] ) ? (string) $args['body'] : '';
+		$body                                  = isset( $args['body'] ) ? (string) $args['body'] : '';
 		RankMySEO_Test_State::$remote_bodies[] = $body;
 		return new WP_Error( 'http_request_failed', 'External HTTP is stubbed in tests.' );
 	}
@@ -615,7 +699,36 @@ if ( ! function_exists( 'apply_filters' ) ) {
 	 * @return mixed
 	 */
 	function apply_filters( string $hook_name, $value, ...$args ) {
-		unset( $hook_name, $args );
+		if ( empty( RankMySEO_Test_State::$filters[ $hook_name ] ) ) {
+			return $value;
+		}
+
+		$hooks = [];
+		foreach ( RankMySEO_Test_State::$filters[ $hook_name ] as $index => $callback ) {
+			$meta    = RankMySEO_Test_State::$filter_meta[ $hook_name ][ $index ] ?? [
+				'priority'      => 10,
+				'accepted_args' => 1,
+			];
+			$hooks[] = [
+				'callback'      => $callback,
+				'priority'      => (int) $meta['priority'],
+				'accepted_args' => (int) $meta['accepted_args'],
+			];
+		}
+
+		usort(
+			$hooks,
+			static function ( array $left, array $right ): int {
+				return $left['priority'] <=> $right['priority'];
+			}
+		);
+
+		foreach ( $hooks as $hook ) {
+			$accepted = max( 1, (int) $hook['accepted_args'] );
+			$call     = array_slice( array_merge( [ $value ], $args ), 0, $accepted );
+			$value    = $hook['callback']( ...$call );
+		}
+
 		return $value;
 	}
 }
@@ -629,6 +742,301 @@ if ( ! function_exists( 'register_rest_route' ) ) {
 			'args'      => $args,
 		];
 		return true;
+	}
+}
+
+if ( ! class_exists( 'WP_Post' ) ) {
+	class WP_Post {
+		public int $ID = 0;
+		public string $post_title = '';
+		public string $post_content = '';
+		public string $post_excerpt = '';
+		public string $post_type = 'post';
+		public string $post_status = 'publish';
+		public string $post_date_gmt = '2026-01-01 00:00:00';
+		public string $post_modified_gmt = '2026-01-02 00:00:00';
+		public string $post_name = '';
+		public int $post_author = 1;
+		public int $post_parent = 0;
+	}
+}
+
+if ( ! class_exists( 'WP_Term' ) ) {
+	class WP_Term {
+		public int $term_id = 0;
+		public string $name = '';
+		public string $slug = '';
+		public string $taxonomy = 'category';
+	}
+}
+
+if ( ! class_exists( 'WP_Comment' ) ) {
+	class WP_Comment {
+		public int $comment_ID = 0;
+		public string $comment_author = '';
+		public string $comment_content = '';
+		public string $comment_date_gmt = '';
+		public int $comment_post_ID = 0;
+	}
+}
+
+if ( ! function_exists( 'is_wp_error' ) ) {
+	/** @param mixed $thing */
+	function is_wp_error( $thing ): bool {
+		return $thing instanceof WP_Error;
+	}
+}
+
+if ( ! function_exists( 'wp_json_encode' ) ) {
+	/**
+	 * @param mixed $data
+	 * @return string|false
+	 */
+	function wp_json_encode( $data, int $options = 0, int $depth = 512 ) {
+		$json = json_encode( $data, $options, $depth );
+		return false === $json ? false : $json;
+	}
+}
+
+if ( ! function_exists( 'wp_unslash' ) ) {
+	/** @param mixed $value */
+	function wp_unslash( $value ) {
+		if ( is_string( $value ) ) {
+			return stripslashes( $value );
+		}
+		if ( is_array( $value ) ) {
+			return array_map( 'wp_unslash', $value );
+		}
+		return $value;
+	}
+}
+
+if ( ! function_exists( 'wp_strip_all_tags' ) ) {
+	function wp_strip_all_tags( string $text, bool $remove_breaks = false ): string {
+		$stripped = preg_replace( '@<(script|style)[^>]*?>.*?</\\1>@si', '', $text );
+		$text     = strip_tags( is_string( $stripped ) ? $stripped : $text );
+		if ( $remove_breaks ) {
+			$collapsed = preg_replace( '/[\r\n\t ]+/', ' ', $text );
+			$text      = is_string( $collapsed ) ? $collapsed : $text;
+		}
+		return trim( $text );
+	}
+}
+
+if ( ! function_exists( 'esc_url' ) ) {
+	function esc_url( string $url ): string {
+		return str_replace( [ '"', "'", '<', '>' ], '', $url );
+	}
+}
+
+if ( ! function_exists( 'esc_url_raw' ) ) {
+	function esc_url_raw( string $url ): string {
+		$url = trim( $url );
+		if ( 1 !== preg_match( '#^https?://#i', $url ) ) {
+			return '';
+		}
+		return esc_url( $url );
+	}
+}
+
+if ( ! function_exists( 'trailingslashit' ) ) {
+	function trailingslashit( string $string ): string {
+		return rtrim( $string, "/\\" ) . '/';
+	}
+}
+
+if ( ! function_exists( 'untrailingslashit' ) ) {
+	function untrailingslashit( string $string ): string {
+		return rtrim( $string, "/\\" );
+	}
+}
+
+if ( ! function_exists( 'get_locale' ) ) {
+	function get_locale(): string {
+		return 'en_US';
+	}
+}
+
+if ( ! function_exists( 'is_admin' ) ) {
+	function is_admin(): bool {
+		return RankMySEO_Test_State::$is_admin;
+	}
+}
+
+if ( ! function_exists( 'is_singular' ) ) {
+	function is_singular(): bool {
+		return RankMySEO_Test_State::$is_singular;
+	}
+}
+
+if ( ! function_exists( 'is_search' ) ) {
+	function is_search(): bool {
+		return false;
+	}
+}
+
+if ( ! function_exists( 'is_archive' ) ) {
+	function is_archive(): bool {
+		return false;
+	}
+}
+
+if ( ! function_exists( 'is_feed' ) ) {
+	function is_feed(): bool {
+		return RankMySEO_Test_State::$is_feed;
+	}
+}
+
+if ( ! function_exists( 'is_404' ) ) {
+	function is_404(): bool {
+		return RankMySEO_Test_State::$is_404;
+	}
+}
+
+if ( ! function_exists( 'wp_doing_ajax' ) ) {
+	function wp_doing_ajax(): bool {
+		return RankMySEO_Test_State::$doing_ajax;
+	}
+}
+
+if ( ! function_exists( 'wp_doing_cron' ) ) {
+	function wp_doing_cron(): bool {
+		return RankMySEO_Test_State::$doing_cron;
+	}
+}
+
+if ( ! function_exists( 'get_queried_object_id' ) ) {
+	function get_queried_object_id(): int {
+		return RankMySEO_Test_State::$queried_object_id;
+	}
+}
+
+if ( ! function_exists( 'get_post' ) ) {
+	/** @param mixed $post */
+	function get_post( $post = null ) {
+		if ( $post instanceof WP_Post ) {
+			return $post;
+		}
+		$id = (int) $post;
+		return RankMySEO_Test_State::$posts[ $id ] ?? null;
+	}
+}
+
+if ( ! function_exists( 'get_post_meta' ) ) {
+	/** @return mixed */
+	function get_post_meta( int $post_id, string $key = '', bool $single = false ) {
+		$all = RankMySEO_Test_State::$post_meta[ $post_id ] ?? [];
+		if ( '' === $key ) {
+			return $all;
+		}
+		if ( ! array_key_exists( $key, $all ) ) {
+			return $single ? '' : [];
+		}
+		return $single ? $all[ $key ] : [ $all[ $key ] ];
+	}
+}
+
+if ( ! function_exists( 'get_permalink' ) ) {
+	/** @param mixed $post */
+	function get_permalink( $post = 0 ): string {
+		$resolved = get_post( $post );
+		if ( ! $resolved instanceof WP_Post ) {
+			return home_url( '/' );
+		}
+		if ( isset( RankMySEO_Test_State::$permalinks[ $resolved->ID ] ) ) {
+			return RankMySEO_Test_State::$permalinks[ $resolved->ID ];
+		}
+		$slug = '' !== $resolved->post_name ? $resolved->post_name : (string) $resolved->ID;
+		return home_url( $slug . '/' );
+	}
+}
+
+if ( ! function_exists( 'get_the_author_meta' ) ) {
+	function get_the_author_meta( string $field, int $user_id = 0 ): string {
+		return (string) ( RankMySEO_Test_State::$users[ $user_id ][ $field ] ?? '' );
+	}
+}
+
+if ( ! function_exists( 'get_the_category' ) ) {
+	/** @return array<int, WP_Term> */
+	function get_the_category( int $post_id = 0 ): array {
+		return RankMySEO_Test_State::$categories[ $post_id ] ?? [];
+	}
+}
+
+if ( ! function_exists( 'get_category_link' ) ) {
+	/** @param mixed $term */
+	function get_category_link( $term ): string {
+		$slug = $term instanceof WP_Term ? $term->slug : 'category';
+		return home_url( 'category/' . $slug . '/' );
+	}
+}
+
+if ( ! function_exists( 'get_post_ancestors' ) ) {
+	/** @param mixed $post */
+	function get_post_ancestors( $post ): array {
+		$resolved = get_post( $post );
+		if ( ! $resolved instanceof WP_Post ) {
+			return [];
+		}
+		$ancestors = [];
+		$parent    = $resolved->post_parent;
+		$guard     = 0;
+		while ( $parent > 0 && $guard < 20 ) {
+			$ancestors[] = $parent;
+			$parent_post = get_post( $parent );
+			$parent      = $parent_post instanceof WP_Post ? $parent_post->post_parent : 0;
+			++$guard;
+		}
+		return $ancestors;
+	}
+}
+
+if ( ! function_exists( 'get_the_post_thumbnail_url' ) ) {
+	function get_the_post_thumbnail_url( int $post_id, string $size = 'post-thumbnail' ): string {
+		unset( $size );
+		return RankMySEO_Test_State::$thumbnails[ $post_id ] ?? '';
+	}
+}
+
+if ( ! function_exists( 'wp_get_attachment_image_url' ) ) {
+	function wp_get_attachment_image_url( int $attachment_id, string $size = 'thumbnail' ): string {
+		unset( $size );
+		return RankMySEO_Test_State::$thumbnails[ $attachment_id ] ?? '';
+	}
+}
+
+if ( ! function_exists( 'register_meta' ) ) {
+	/** @param array<string, mixed> $args */
+	function register_meta( string $object_type, string $meta_key, array $args = [] ): bool {
+		RankMySEO_Test_State::$registered_meta[] = [
+			'object_type' => $object_type,
+			'meta_key'    => $meta_key,
+			'args'        => $args,
+		];
+		return true;
+	}
+}
+
+if ( ! function_exists( 'get_comments' ) ) {
+	/** @param array<string, mixed> $args */
+	function get_comments( array $args = [] ): array {
+		unset( $args );
+		return RankMySEO_Test_State::$comments;
+	}
+}
+
+if ( ! function_exists( 'get_comment_meta' ) ) {
+	/** @return mixed */
+	function get_comment_meta( int $comment_id, string $key = '', bool $single = false ) {
+		$all = RankMySEO_Test_State::$comment_meta[ $comment_id ] ?? [];
+		if ( '' === $key ) {
+			return $all;
+		}
+		if ( ! array_key_exists( $key, $all ) ) {
+			return $single ? '' : [];
+		}
+		return $single ? $all[ $key ] : [ $all[ $key ] ];
 	}
 }
 

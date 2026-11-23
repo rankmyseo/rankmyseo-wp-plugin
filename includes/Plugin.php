@@ -19,13 +19,13 @@ use RankMySEO\Modules\Stubs\CloudModule;
 use RankMySEO\Modules\Stubs\ImporterModule;
 use RankMySEO\Modules\Stubs\MetaModule;
 use RankMySEO\Modules\Stubs\RedirectsModule;
+use RankMySEO\Modules\Schema\SchemaModule;
 use RankMySEO\Modules\Sitemaps\IndexNow;
 use RankMySEO\Modules\Sitemaps\RobotsTxt;
 use RankMySEO\Modules\Sitemaps\SitemapSettings;
 use RankMySEO\Modules\Sitemaps\SitemapsModule;
 use RankMySEO\Modules\Sitemaps\WordPressSitemapSource;
 use RankMySEO\Modules\Sitemaps\WpIndexNowTransport;
-use RankMySEO\Modules\Stubs\SchemaModule;
 use RankMySEO\Rest\RestRegistry;
 use RankMySEO\Rest\SitemapsController;
 use RankMySEO\Rest\SettingsController;
@@ -353,6 +353,9 @@ final class Plugin {
 
 		foreach ( $modules as $module ) {
 			$manager->add( $module );
+			if ( $module instanceof SchemaModule ) {
+				$module->register_integrations();
+			}
 		}
 	}
 }

@@ -1094,4 +1094,71 @@
 	.rms-chat-drawer {
 		width: 100%;
 	}
+
+	.rms-hours-row {
+		grid-template-columns: 1fr;
+	}
+}
+
+.rms-schema-preview {
+	margin: 0;
+	max-height: 360px;
+	overflow: auto;
+	padding: 12px;
+	background: var(--rms-surface);
+	border-radius: var(--rms-radius-sm);
+	font-family: var(--rms-font-mono);
+	font-size: 12px;
+	line-height: 1.45;
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.rms-schema-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.rms-schema-table th,
+.rms-schema-table td {
+	padding: 8px 10px;
+	border-bottom: 1px solid var(--rms-rule);
+	text-align: left;
+	font-size: 13px;
+	vertical-align: middle;
+}
+
+.rms-notice {
+	border: 1px solid var(--rms-rule);
+	border-radius: var(--rms-radius-card);
+	padding: 12px 14px;
+	background: var(--rms-card);
+	color: var(--rms-ink);
+}
+
+.rms-notice p {
+	margin: 0;
+}
+
+.rms-notice-warn {
+	background: var(--rms-signal-warn-bg);
+}
+
+.rms-notice-info {
+	background: var(--rms-accent-soft);
+}
+
+.rms-hours-row {
+	display: grid;
+	grid-template-columns: 1.2fr 0.8fr 0.8fr auto;
+	gap: 8px;
+	align-items: end;
+	margin-bottom: 8px;
+}
+
+.rms-filter-list {
+	margin: 0;
+	padding-left: 18px;
+	font-family: var(--rms-font-mono);
+	font-size: 12.5px;
 }
