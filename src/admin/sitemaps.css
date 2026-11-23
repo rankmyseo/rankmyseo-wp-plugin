@@ -1,0 +1,112 @@
+.rms-sitemap-status.is-active {
+	background: #e8f7f0;
+	border-color: #1f9d64;
+}
+
+.rms-sitemap-url {
+	color: var(--rms-ink);
+	display: inline-block;
+	font-family: ui-monospace, SFMono-Regular, menlo, consolas, monospace;
+	font-size: 13px;
+	font-variant-numeric: tabular-nums;
+	margin-top: 8px;
+	word-break: break-all;
+}
+
+.rms-sitemap-grid {
+	display: grid;
+	gap: 12px;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.rms-warning {
+	background: #fef3c7;
+	border: 1px solid #b45309;
+	border-radius: 8px;
+	color: var(--rms-ink);
+	padding: 12px 14px;
+}
+
+.rms-warning-danger {
+	background: #fdecec;
+	border-color: #e24b4a;
+}
+
+.rms-sitemap-note {
+	margin: 8px 0 0;
+}
+
+.rms-sitemap-matrix {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.rms-sitemap-matrix th,
+.rms-sitemap-matrix td {
+	border-bottom: 1px solid var(--rms-rule);
+	padding: 8px 4px;
+	text-align: left;
+	vertical-align: middle;
+}
+
+.rms-field-label {
+	display: block;
+	font-size: 13px;
+	font-weight: 600;
+	margin-bottom: 6px;
+}
+
+.rms-robots-editor,
+.rms-sitemap-input,
+.rms-robots-preview,
+.rms-sitemap-key {
+	font-family: ui-monospace, SFMono-Regular, menlo, consolas, monospace;
+	font-size: 12.5px;
+}
+
+.rms-robots-editor,
+.rms-sitemap-input {
+	background: var(--rms-card);
+	border: 1px solid var(--rms-rule);
+	border-radius: 8px;
+	box-sizing: border-box;
+	color: var(--rms-ink);
+	padding: 10px 12px;
+	width: 100%;
+}
+
+.rms-robots-editor {
+	min-height: 220px;
+	resize: vertical;
+}
+
+.rms-robots-preview {
+	background: var(--rms-surface);
+	border-radius: 8px;
+	margin: 12px 0 0;
+	overflow: auto;
+	padding: 12px;
+	white-space: pre-wrap;
+}
+
+.rms-indexnow-log {
+	list-style: none;
+	margin: 12px 0 0;
+	padding: 0;
+}
+
+.rms-indexnow-log li {
+	align-items: baseline;
+	border-bottom: 1px solid var(--rms-rule);
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	padding: 8px 0;
+}
+
+.rms-sitemap-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	justify-content: flex-end;
+}

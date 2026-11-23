@@ -52,6 +52,12 @@ $rankmyseo_migrator->drop_tables();
 delete_option( \RankMySEO\Core\Settings::OPTION_KEY );
 delete_option( \RankMySEO\Database\Migrator::OPTION_DB_VERSION );
 delete_option( 'rankmyseo_flush_rewrite_rules' );
+delete_option( \RankMySEO\Modules\Sitemaps\SitemapSettings::OPTION_KEY );
+delete_option( \RankMySEO\Modules\Sitemaps\SitemapSettings::ROBOTS_OPTION_KEY );
+delete_option( \RankMySEO\Modules\Sitemaps\SitemapSettings::LOG_OPTION_KEY );
+delete_option( \RankMySEO\Modules\Sitemaps\SitemapSettings::QUEUE_OPTION_KEY );
+delete_option( \RankMySEO\Modules\Sitemaps\SitemapSettings::CACHE_GEN_OPTION_KEY );
+delete_option( \RankMySEO\Modules\Sitemaps\SitemapSettings::ATTEMPTS_OPTION_KEY );
 
 delete_metadata( 'user', 0, \RankMySEO\Core\Settings::USER_META_UI_MODE, '', true );
 delete_metadata( 'user', 0, \RankMySEO\Core\Settings::USER_META_WIZARD_DISMISSED, '', true );
