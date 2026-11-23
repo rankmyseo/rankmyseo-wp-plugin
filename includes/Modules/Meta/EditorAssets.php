@@ -122,6 +122,7 @@ final class EditorAssets {
 			'restRoot'   => (string) rest_url( 'rankmyseo/v1' ),
 			'nonce'      => wp_create_nonce( 'wp_rest' ),
 			'askAiEvent' => 'rankmyseo:ask-ai',
+			'locale'     => function_exists( 'get_locale' ) ? (string) get_locale() : 'en',
 		];
 	}
 

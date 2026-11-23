@@ -1,8 +1,10 @@
 import { TextareaControl, TextControl } from '@wordpress/components';
-import { useId, useState } from '@wordpress/element';
+import { useId, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import type { AnalysisResult, AnalyzerInput } from '../../analyzer';
 import { ModeToggle } from '../../shared/components/ModeToggle';
 import type { UiMode } from '../../shared/types';
+import { useCannibalization } from '../useCannibalization';
 import type { SeoFields, TemplateVariable } from '../fields';
 import {
 	DESCRIPTION_FONT,
@@ -16,6 +18,7 @@ import {
 	TITLE_MIN_CHARS,
 } from '../metrics';
 import { replaceTemplate, type TemplateVars } from '../template';
+import { AnalyzerPanel, type CannibalizationMatch } from './AnalyzerPanel';
 import { AskAiButton } from './AskAiButton';
 import { LengthMeter } from './LengthMeter';
 import { SerpPreview } from './SerpPreview';
@@ -36,6 +39,24 @@ export interface EditorPanelProps {
 	tagline?: string;
 	variables: TemplateVariable[];
 	onAskAi: () => void;
+	contentHtml?: string;
+	slug?: string;
+	postId?: number;
+	postType?: string;
+	locale?: string;
+	cannibalizationMatches?: CannibalizationMatch[];
+	onAnalysis?: ( result: AnalysisResult, signature: string ) => void;
+}
+
+function slugFromPermalink( permalink: string ): string {
+	try {
+		const parts = new URL( permalink ).pathname
+			.split( '/' )
+			.filter( Boolean );
+		return parts[ parts.length - 1 ] ?? '';
+	} catch {
+		return '';
+	}
 }
 
 type AdvancedTab = 'general' | 'social' | 'schema' | 'advanced';
@@ -58,6 +79,13 @@ export function EditorPanel( {
 	tagline = '',
 	variables,
 	onAskAi,
+	contentHtml = '',
+	slug = '',
+	postId = 0,
+	postType = 'post',
+	locale = 'en',
+	cannibalizationMatches,
+	onAnalysis,
 }: EditorPanelProps ): JSX.Element {
 	const [ tab, setTab ] = useState< AdvancedTab >( 'general' );
 	const fieldId = useId();
@@ -82,6 +110,37 @@ export function EditorPanel( {
 	const patch = ( next: Partial< SeoFields > ): void => {
 		onChange( { ...fields, ...next } );
 	};
+	const analyzerInput = useMemo< AnalyzerInput >(
+		() => ( {
+			focusKeyword: fields.focusKeyword,
+			seoTitle: resolvedTitle,
+			metaDescription: resolvedDescription,
+			slug: slug || slugFromPermalink( permalink ),
+			contentHtml,
+			postType,
+			locale,
+			noindex: fields.robots.noindex,
+			siteUrl,
+		} ),
+		[
+			fields.focusKeyword,
+			fields.robots.noindex,
+			resolvedTitle,
+			resolvedDescription,
+			slug,
+			permalink,
+			contentHtml,
+			postType,
+			locale,
+			siteUrl,
+		]
+	);
+	const fetchedMatches = useCannibalization(
+		fields.focusKeyword,
+		postId,
+		cannibalizationMatches === undefined
+	);
+	const matches = cannibalizationMatches ?? fetchedMatches;
 
 	const insertInto = (
 		key: 'title' | 'description',
@@ -175,7 +234,14 @@ export function EditorPanel( {
 				id="rankmyseo-analyzer-slot"
 				data-rankmyseo-analyzer-slot="1"
 				className="rms-slot"
-			/>
+			>
+				<AnalyzerPanel
+					input={ analyzerInput }
+					mode={ mode }
+					matches={ matches }
+					onAnalysis={ onAnalysis }
+				/>
+			</div>
 
 			{ mode === 'simple' ? (
 				<details className="rms-social-fold">

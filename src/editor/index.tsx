@@ -3,12 +3,15 @@ import { useEntityProp } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
 import {
 	createElement,
+	useCallback,
+	useRef,
 	useState,
 	type ComponentType,
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import type { ReactNode } from 'react';
+import { summaryPayload, type AnalysisResult } from '../analyzer';
 import type { UiMode } from '../shared/types';
 import { EditorPanel } from './components/EditorPanel';
 import {
@@ -29,12 +32,14 @@ interface EditorConfig {
 	tagline?: string;
 	variables?: TemplateVariable[];
 	askAiEvent?: string;
+	locale?: string;
 }
 
 interface EditorStores {
 	getCurrentPostType?: () => string;
 	getCurrentPostId?: () => number;
 	getEditedPostAttribute?: ( key: string ) => unknown;
+	getEditedPostContent?: () => string;
 	getPermalink?: () => string;
 }
 
@@ -48,6 +53,8 @@ function useEditorState(): {
 	postTitle: string;
 	postExcerpt: string;
 	permalink: string;
+	content: string;
+	slug: string;
 } {
 	return useSelect( ( select ) => {
 		const store = select( 'core/editor' ) as EditorStores;
@@ -61,6 +68,8 @@ function useEditorState(): {
 				store?.getEditedPostAttribute?.( 'excerpt' ) ?? ''
 			),
 			permalink: String( store?.getPermalink?.() ?? '' ),
+			content: String( store?.getEditedPostContent?.() ?? '' ),
+			slug: String( store?.getEditedPostAttribute?.( 'slug' ) ?? '' ),
 		};
 	}, [] );
 }
@@ -81,6 +90,34 @@ function EditorBody(): JSX.Element {
 		settings.uiMode === 'advanced' ? 'advanced' : 'simple'
 	);
 	const fields = fieldsFromRecord( meta ?? {} );
+	const metaRef = useRef( meta );
+	metaRef.current = meta;
+	const initialSignature = useRef< string | null >( null );
+	const persistAnalysis = useCallback(
+		( result: AnalysisResult, signature: string ) => {
+			if ( initialSignature.current === null ) {
+				initialSignature.current = signature;
+				return;
+			}
+			if ( signature === initialSignature.current ) {
+				return;
+			}
+			const summary = JSON.stringify( summaryPayload( result ) );
+			const current = metaRef.current ?? {};
+			if (
+				current._rankmyseo_seo_score === result.score &&
+				current._rankmyseo_seo_summary === summary
+			) {
+				return;
+			}
+			setMeta( {
+				...current,
+				_rankmyseo_seo_score: result.score,
+				_rankmyseo_seo_summary: summary,
+			} );
+		},
+		[ setMeta ]
+	);
 
 	const ask = (): void => {
 		const eventName = settings.askAiEvent || 'rankmyseo:ask-ai';
@@ -126,6 +163,12 @@ function EditorBody(): JSX.Element {
 			tagline={ settings.tagline || '' }
 			variables={ settings.variables || [] }
 			onAskAi={ ask }
+			contentHtml={ editor.content }
+			slug={ editor.slug }
+			postId={ editor.postId }
+			postType={ editor.postType }
+			locale={ settings.locale || 'en' }
+			onAnalysis={ persistAnalysis }
 		/>
 	);
 }
