@@ -37,7 +37,8 @@
 		"lint:php": "find rankmyseo.php uninstall.php includes tests/php -name '*.php' -print0 | xargs -0 -n1 php -l",
 		"phpcs": "phpcs",
 		"phpcbf": "phpcbf",
-		"phpstan": "phpstan analyse --memory-limit=512M",
-		"test": "phpunit"
+		"phpstan": "phpstan analyse --memory-limit=1G",
+		"test": "phpunit",
+		"test:php": "phpunit"
 	}
 }

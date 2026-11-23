@@ -12,15 +12,17 @@ namespace RankMySEO;
 use RankMySEO\Admin\AdminMenu;
 use RankMySEO\Core\Settings;
 use RankMySEO\Database\Migrator;
+use RankMySEO\Modules\Cloud\CloudModule;
+use RankMySEO\Modules\Cloud\CloudServices;
 use RankMySEO\Modules\ModuleManager;
 use RankMySEO\Modules\Stubs\AiQueueModule;
 use RankMySEO\Modules\Stubs\AnalyzerModule;
-use RankMySEO\Modules\Stubs\CloudModule;
 use RankMySEO\Modules\Stubs\ImporterModule;
 use RankMySEO\Modules\Stubs\MetaModule;
 use RankMySEO\Modules\Stubs\RedirectsModule;
 use RankMySEO\Modules\Stubs\SchemaModule;
 use RankMySEO\Modules\Stubs\SitemapsModule;
+use RankMySEO\Rest\CloudController;
 use RankMySEO\Rest\RestRegistry;
 use RankMySEO\Rest\SettingsController;
 use RankMySEO\Rest\StatusController;
@@ -197,6 +199,8 @@ final class Plugin {
 			}
 		);
 
+		CloudServices::register( $this->container );
+
 		$this->container->singleton(
 			SettingsController::class,
 			static function ( Container $container ): SettingsController {
@@ -231,6 +235,21 @@ final class Plugin {
 		);
 
 		$this->container->singleton(
+			CloudController::class,
+			static function ( Container $container ): CloudController {
+				$vault = $container->get( \RankMySEO\Modules\Cloud\TokenVault::class );
+				assert( $vault instanceof \RankMySEO\Modules\Cloud\TokenVault );
+				$pairing = $container->get( \RankMySEO\Modules\Cloud\PairingService::class );
+				assert( $pairing instanceof \RankMySEO\Modules\Cloud\PairingService );
+				$worker = $container->get( \RankMySEO\Modules\Cloud\SyncWorker::class );
+				assert( $worker instanceof \RankMySEO\Modules\Cloud\SyncWorker );
+				$insights = $container->get( \RankMySEO\Modules\Cloud\InsightsCache::class );
+				assert( $insights instanceof \RankMySEO\Modules\Cloud\InsightsCache );
+				return new CloudController( $vault, $pairing, $worker, $insights );
+			}
+		);
+
+		$this->container->singleton(
 			RestRegistry::class,
 			static function ( Container $container ): RestRegistry {
 				$settings_controller = $container->get( SettingsController::class );
@@ -239,12 +258,15 @@ final class Plugin {
 				assert( $status_controller instanceof StatusController );
 				$ui_preferences_controller = $container->get( UiPreferencesController::class );
 				assert( $ui_preferences_controller instanceof UiPreferencesController );
+				$cloud_controller = $container->get( CloudController::class );
+				assert( $cloud_controller instanceof CloudController );
 
 				return new RestRegistry(
 					[
 						$settings_controller,
 						$status_controller,
 						$ui_preferences_controller,
+						$cloud_controller,
 					]
 				);
 			}

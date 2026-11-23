@@ -60,9 +60,9 @@ This plugin works 100% locally by default and does not connect to any external s
 
 = RankMySEO Cloud (Optional) =
 
-* **Service URLs**: `https://api.rankmyseo.com` and `https://app.rankmyseo.com`
-* **When data is sent**: Only after a site administrator explicitly pairs the site or saves an API key, and triggers sync, insights, or AI assistant actions.
-* **What data is sent**: Site URL, site name, WordPress and plugin versions, synced post URLs and SEO metadata, and chat prompts or selected page context submitted by an authenticated user.
+* **Service URLs**: `https://api.rankmyseo.com/wp/v1/pair/start`, `https://api.rankmyseo.com/wp/v1/pair/poll`, `https://api.rankmyseo.com/wp/v1/connection`, `https://api.rankmyseo.com/wp/v1/disconnect`, `https://api.rankmyseo.com/wp/v1/rotate-token`, `https://api.rankmyseo.com/wp/v1/sync/inventory`, `https://api.rankmyseo.com/wp/v1/sync/events`, `https://api.rankmyseo.com/wp/v1/insights`, and `https://api.rankmyseo.com/wp/v1/policy`. The approval page opened in the browser is the address RankMySEO returns with the pairing code.
+* **When data is sent**: Only after a site administrator clicks Connect and approves the pairing code. Inventory and event sync, insights, token rotation, and disconnect run after that. Nothing is sent while the site is disconnected.
+* **What data is sent**: Site URL, site name, WordPress and plugin versions during pairing, then public post URLs, titles, meta descriptions, focus keywords, and on-page scores during sync. The site token and webhook secret stay encrypted in WordPress and are not shown in the admin screen.
 * **Terms of Service**: [https://rankmyseo.com/terms](https://rankmyseo.com/terms)
 * **Privacy Policy**: [https://rankmyseo.com/privacy](https://rankmyseo.com/privacy)
 
@@ -77,6 +77,7 @@ This plugin works 100% locally by default and does not connect to any external s
 
 = 0.1.0 =
 * Initial foundation release: plugin bootstrap, PSR-4 core container, module manager, settings storage, capabilities, versioned custom database migrations, REST API (`rankmyseo/v1`), dual-mode Simple/Advanced React admin shell, 3-step Setup Wizard shell, and local Ask AI assistant drawer.
+* Optional RankMySEO Cloud pairing with encrypted token storage, inventory and event sync, and cached keyword insights.
 
 == Upgrade Notice ==
 

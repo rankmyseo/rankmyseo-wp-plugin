@@ -149,6 +149,73 @@ export interface ChatActionCardData {
 	status: ActionCardStatus;
 }
 
+export type CloudHealth =
+	| 'disconnected'
+	| 'connected'
+	| 'reconnect'
+	| 'degraded';
+
+export interface CloudPairing {
+	code: string;
+	pair_url: string;
+	expires_at: string;
+}
+
+export interface CloudPublicState {
+	connected: boolean;
+	reconnect_required: boolean;
+	health: CloudHealth;
+	site_name: string;
+	site_host: string;
+	site_url: string;
+	domain: string;
+	project_id: string;
+	connection_id: string;
+	plan_id: string;
+	plan_label: string;
+	token_prefix: string;
+	last_sync_at: string;
+	last_error: string;
+	pairing: CloudPairing | null;
+}
+
+export interface CloudActionResponse {
+	state: CloudPublicState;
+	pair_status?: string;
+	processed?: number;
+	message?: string;
+}
+
+export interface CloudKeywordRow {
+	keyword: string;
+	position: number | null;
+	url: string;
+}
+
+export interface CloudInsights {
+	connected: boolean;
+	stale: boolean;
+	cached: boolean;
+	fetched_at: string;
+	message: string;
+	project: { id: string; name: string; domain: string } | null;
+	keywords: {
+		tracked: number;
+		rows: CloudKeywordRow[];
+	};
+	issues: Array< {
+		id: string;
+		category: string;
+		count: number;
+		impact: string;
+	} >;
+	page_updates: Array< {
+		url: string;
+		action: string;
+		summary: string;
+	} >;
+}
+
 export interface ChatMessage {
 	id: string;
 	role: 'user' | 'assistant';

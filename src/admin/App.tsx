@@ -5,6 +5,7 @@ import { Header } from './components/Header';
 import { Navigation } from './components/Navigation';
 import { SetupWizard } from './components/SetupWizard';
 import { AdminProvider, useAdmin } from './context/AdminContext';
+import { ConnectView } from './views/ConnectView';
 import { DashboardView } from './views/DashboardView';
 import { ModulePlaceholderView } from './views/ModulePlaceholderView';
 import { SettingsView } from './views/SettingsView';
@@ -26,6 +27,9 @@ function AdminShell(): JSX.Element {
 		}
 		if ( activePage === 'settings' ) {
 			return <SettingsView />;
+		}
+		if ( activePage === 'cloud' ) {
+			return <ConnectView />;
 		}
 		return <ModulePlaceholderView pageId={ activePage } />;
 	};

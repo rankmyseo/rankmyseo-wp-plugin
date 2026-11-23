@@ -12,6 +12,7 @@ namespace RankMySEO\Rest;
 use RankMySEO\Core\Capabilities;
 use RankMySEO\Core\Settings;
 use RankMySEO\Database\Migrator;
+use RankMySEO\Modules\Cloud\TokenVault;
 use RankMySEO\Modules\ModuleManager;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -98,7 +99,8 @@ final class StatusController extends AbstractController {
 			}
 		}
 
-		$blog_public = '0' !== (string) get_option( 'blog_public', '1' );
+		$blog_public     = '0' !== (string) get_option( 'blog_public', '1' );
+		$cloud_connected = ( new TokenVault() )->is_connected();
 
 		return $this->success_response(
 			[
@@ -123,8 +125,8 @@ final class StatusController extends AbstractController {
 					'items'         => $catalog,
 				],
 				'cloud'          => [
-					'connected' => false,
-					'tier'      => 'local',
+					'connected' => $cloud_connected,
+					'tier'      => $cloud_connected ? 'cloud' : 'local',
 				],
 				'onboarding'     => [
 					'wizard_completed' => (bool) $this->settings->get( 'wizard_completed', false ),
