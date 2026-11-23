@@ -536,11 +536,11 @@ final class RecordingWpdb extends wpdb {
 	}
 
 	/**
-	 * @param mixed $query
-	 * @param mixed $output
+	 * @param string $query
+	 * @param string $output
 	 * @return array<int, mixed>
 	 */
-	public function get_results( $query = null, $output = 'ARRAY_A' ) {
+	public function get_results( string $query, string $output = 'ARRAY_A' ): array {
 		unset( $query, $output );
 		return [];
 	}

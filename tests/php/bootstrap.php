@@ -1161,7 +1161,7 @@ if ( ! function_exists( 'get_permalink' ) ) {
 	function get_permalink( $post = 0 ): string {
 		$resolved = get_post( $post );
 		if ( ! $resolved instanceof WP_Post ) {
-			return home_url( '/' );
+			return '';
 		}
 		if ( isset( RankMySEO_Test_State::$permalinks[ $resolved->ID ] ) ) {
 			return RankMySEO_Test_State::$permalinks[ $resolved->ID ];
