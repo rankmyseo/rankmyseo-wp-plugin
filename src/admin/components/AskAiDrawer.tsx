@@ -2,9 +2,18 @@ import { Button } from '@wordpress/components';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import type { FormEvent, KeyboardEvent as ReactKeyboardEvent } from 'react';
-import { sendLocalChat } from '../../shared/api';
+import {
+	approveAiAction,
+	fetchCloudChatHistory,
+	fetchCloudChatTurn,
+	rejectAiAction,
+	rollbackAiAction,
+	sendCloudChat,
+	sendLocalChat,
+} from '../../shared/api';
 import { StatusBadge } from '../../shared/components/StatePrimitives';
 import type {
+	AiAction,
 	ChatActionCardData,
 	ChatMessage,
 	LocalChatHandoff,
@@ -13,6 +22,7 @@ import type {
 	NavPageId,
 } from '../../shared/types';
 import { useAdmin } from '../context/AdminContext';
+import { InlineActionCard } from './InlineActionCard';
 import {
 	buildLocalAssistantReply,
 	getStarterPrompts,
@@ -182,6 +192,22 @@ export function AskAiDrawer( {
 	const [ busy, setBusy ] = useState( false );
 	const inputRef = useRef< HTMLTextAreaElement | null >( null );
 	const endRef = useRef< HTMLDivElement | null >( null );
+	const isConnected = status?.cloud.connected ?? false;
+	const canApprove = window.rankmyseoAdmin?.canApproveAi ?? false;
+
+	const rememberActions = useCallback(
+		( id: number, next: AiAction ): void => {
+			setMessages( ( prev ) =>
+				prev.map( ( message ) => ( {
+					...message,
+					aiActions: message.aiActions?.map( ( action ) =>
+						action.id === id ? next : action
+					),
+				} ) )
+			);
+		},
+		[]
+	);
 
 	const submitPrompt = useCallback(
 		async ( rawPrompt: string ): Promise< void > => {
@@ -199,6 +225,50 @@ export function AskAiDrawer( {
 
 			setDraft( '' );
 			setBusy( true );
+
+			if ( isConnected ) {
+				setMessages( ( prev ) => [ ...prev, userMsg ] );
+				try {
+					const started = await sendCloudChat( clean, {
+						url: status?.site.url,
+						title: settings?.site_name,
+					} );
+					let turn = started;
+					if ( started.state === 'running' && started.turn_id ) {
+						turn = await fetchCloudChatTurn( started.turn_id );
+					}
+					const replyMsg: ChatMessage = {
+						id: `rms-cloud-${ turn.turn_id || Date.now() }`,
+						role: 'assistant',
+						content:
+							turn.reply ||
+							turn.message ||
+							__(
+								'RankMySEO is still working on that. Open the queue in a moment.',
+								'rankmyseo'
+							),
+						createdAt: new Date().toISOString(),
+						aiActions: turn.actions ?? [],
+					};
+					setMessages( ( prev ) => [ ...prev, replyMsg ] );
+				} catch ( caught ) {
+					const replyMsg: ChatMessage = {
+						id: `rms-cloud-error-${ Date.now() }`,
+						role: 'assistant',
+						content:
+							caught instanceof Error
+								? caught.message
+								: __(
+										'RankMySEO could not answer just now.',
+										'rankmyseo'
+								  ),
+						createdAt: new Date().toISOString(),
+					};
+					setMessages( ( prev ) => [ ...prev, replyMsg ] );
+				}
+				setBusy( false );
+				return;
+			}
 
 			let reply: ChatMessage;
 			try {
@@ -219,8 +289,33 @@ export function AskAiDrawer( {
 			setMessages( ( prev ) => [ ...prev, userMsg, reply ] );
 			setBusy( false );
 		},
-		[ activePage, busy, settings, status, uiMode ]
+		[ activePage, busy, isConnected, settings, status, uiMode ]
 	);
+
+	useEffect( () => {
+		if ( ! isChatOpen || ! isConnected ) {
+			return undefined;
+		}
+		let cancelled = false;
+		void fetchCloudChatHistory()
+			.then( ( history ) => {
+				if ( cancelled || ! history.messages?.length ) {
+					return;
+				}
+				setMessages(
+					history.messages.map( ( message ) => ( {
+						id: message.id || `rms-history-${ message.role }`,
+						role: message.role,
+						content: message.content,
+						createdAt: new Date().toISOString(),
+					} ) )
+				);
+			} )
+			.catch( () => undefined );
+		return () => {
+			cancelled = true;
+		};
+	}, [ isChatOpen, isConnected ] );
 
 	useEffect( () => {
 		if ( isChatOpen && pendingChatPrompt ) {
@@ -262,7 +357,6 @@ export function AskAiDrawer( {
 	}
 
 	const starters = getStarterPrompts();
-	const isConnected = status?.cloud.connected ?? false;
 
 	const handleSubmit = ( event: FormEvent ): void => {
 		event.preventDefault();
@@ -406,6 +500,50 @@ export function AskAiDrawer( {
 									</div>
 								) }
 
+							{ message.aiActions &&
+								message.aiActions.length > 0 && (
+									<div className="rms-chat-action-slots">
+										{ message.aiActions.map( ( action ) => (
+											<InlineActionCard
+												key={ action.id }
+												action={ action }
+												canApprove={ canApprove }
+												onApprove={ ( id, after ) => {
+													void approveAiAction(
+														id,
+														after
+													).then( ( result ) =>
+														rememberActions(
+															id,
+															result.action
+														)
+													);
+												} }
+												onReject={ ( id ) => {
+													void rejectAiAction(
+														id
+													).then( ( result ) =>
+														rememberActions(
+															id,
+															result.action
+														)
+													);
+												} }
+												onRollback={ ( id ) => {
+													void rollbackAiAction(
+														id
+													).then( ( result ) =>
+														rememberActions(
+															id,
+															result.action
+														)
+													);
+												} }
+											/>
+										) ) }
+									</div>
+								) }
+
 							{ message.actionCards &&
 								message.actionCards.length > 0 && (
 									<div className="rms-chat-action-slots">
@@ -424,7 +562,12 @@ export function AskAiDrawer( {
 					) ) }
 					{ busy && (
 						<p className="rms-chat-status" role="status">
-							{ __( 'Checking this site locally…', 'rankmyseo' ) }
+							{ isConnected
+								? __( 'Asking RankMySEO…', 'rankmyseo' )
+								: __(
+										'Checking this site locally…',
+										'rankmyseo'
+								  ) }
 						</p>
 					) }
 					<div ref={ endRef } />
@@ -472,10 +615,15 @@ export function AskAiDrawer( {
 					/>
 					<div className="rms-chat-composer-bar">
 						<span className="rms-chat-composer-hint">
-							{ __(
-								'Local mode · Zero external requests',
-								'rankmyseo'
-							) }
+							{ isConnected
+								? __(
+										'Connected · RankMySEO answers for this site',
+										'rankmyseo'
+								  )
+								: __(
+										'Local mode · Zero external requests',
+										'rankmyseo'
+								  ) }
 						</span>
 						<Button
 							type="submit"

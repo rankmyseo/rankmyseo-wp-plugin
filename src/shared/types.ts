@@ -216,6 +216,56 @@ export interface CloudInsights {
 	} >;
 }
 
+export interface AiAction {
+	id: number;
+	cloud_action_id: string;
+	action_type: string;
+	risk_tier: RiskTier;
+	status: string;
+	wp_post_id: number | null;
+	target_url: string;
+	before: Record< string, unknown >;
+	after: Record< string, unknown >;
+	rationale: string;
+	title: string;
+	before_text: string;
+	after_text: string;
+	source?: string;
+	applied_by?: string;
+}
+
+export interface AiPolicy {
+	enabled: boolean;
+	actionTypes: string[];
+	postTypes: string[];
+	excludedUrls: string[];
+	dailyCap: number;
+	articles: 'draft';
+}
+
+export interface AuditEntry {
+	id: number;
+	event_type: string;
+	actor_type: string;
+	summary: string;
+	created_at: string;
+}
+
+export interface CloudChatTurn {
+	state?: 'running' | 'done' | 'failed';
+	turn_id?: string;
+	thread_id?: string;
+	reply?: string;
+	phase?: string;
+	actions?: AiAction[];
+	message?: string;
+	messages?: Array< {
+		id: string;
+		role: 'user' | 'assistant';
+		content: string;
+	} >;
+}
+
 export interface ChatMessage {
 	id: string;
 	role: 'user' | 'assistant';
@@ -227,6 +277,7 @@ export interface ChatMessage {
 	followUps?: LocalChatFollowUp[];
 	cloudHandoff?: LocalChatHandoff | null;
 	operatorEnabled?: boolean;
+	aiActions?: AiAction[];
 }
 
 export interface LocalChatItem {
