@@ -12,7 +12,7 @@ namespace RankMySEO\Modules\Stubs;
 use RankMySEO\Modules\AbstractModule;
 
 /**
- * Placeholder registration for AI Approval Queue (implemented in PR 9).
+ * AI Approval Queue. REST routes are registered with the other controllers.
  */
 final class AiQueueModule extends AbstractModule {
 	/**
@@ -54,20 +54,20 @@ final class AiQueueModule extends AbstractModule {
 	 * {@inheritDoc}
 	 */
 	public function is_ready(): bool {
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public function requires_cloud(): bool {
 		return true;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	public function requires_cloud(): bool {
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public function register(): void {
-		// Implemented in AI Approval Queue PR.
+		// Routes and the auto-apply cron are registered by AiActionsController.
 	}
 }

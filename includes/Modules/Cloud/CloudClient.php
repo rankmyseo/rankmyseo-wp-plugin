@@ -186,6 +186,105 @@ final class CloudClient {
 	}
 
 	/**
+	 * List suggested actions for this site.
+	 *
+	 * @param array<string, string> $query Optional status, wpPostId, riskTier, or cursor.
+	 * @return CloudResult
+	 */
+	public function list_actions( array $query = array() ): CloudResult {
+		if ( ! $this->vault->is_connected() ) {
+			return CloudResult::local( 'disconnected', __( 'Connect RankMySEO before loading suggestions.', 'rankmyseo' ) );
+		}
+		return $this->request( 'GET', '/wp/v1/actions', null, true, $query );
+	}
+
+	/**
+	 * Ask RankMySEO to project existing suggestions onto this site.
+	 *
+	 * @param array<string, mixed> $body Optional wpPostId, url, and sources.
+	 * @return CloudResult
+	 */
+	public function generate_actions( array $body ): CloudResult {
+		if ( ! $this->vault->is_connected() ) {
+			return CloudResult::local( 'disconnected', __( 'Connect RankMySEO before asking for suggestions.', 'rankmyseo' ) );
+		}
+		return $this->request( 'POST', '/wp/v1/actions/generate', $body, true );
+	}
+
+	/**
+	 * Report the outcome of one action.
+	 *
+	 * @param string               $action_id Cloud action id.
+	 * @param array<string, mixed> $body      Status, snapshot id, and optional note.
+	 * @return CloudResult
+	 */
+	public function ack_action( string $action_id, array $body ): CloudResult {
+		if ( ! $this->vault->is_connected() ) {
+			return CloudResult::local( 'disconnected', __( 'Connect RankMySEO before reporting a suggestion.', 'rankmyseo' ) );
+		}
+		if ( 1 !== preg_match( '/^[0-9a-f-]{36}$/i', $action_id ) ) {
+			$result         = CloudResult::local( 'invalid_request', __( 'That suggestion is not on this site.', 'rankmyseo' ) );
+			$result->status = 400;
+			return $result;
+		}
+		return $this->request( 'POST', '/wp/v1/actions/' . rawurlencode( $action_id ) . '/ack', $body, true );
+	}
+
+	/**
+	 * Send a chat message. async is always true so PHP does not wait for the reply.
+	 *
+	 * @param string               $user_hash SHA-256 of the site and WordPress user.
+	 * @param array<string, mixed> $body      content, and optional pageContext.
+	 * @return CloudResult
+	 */
+	public function send_chat( string $user_hash, array $body ): CloudResult {
+		if ( ! $this->vault->is_connected() ) {
+			return CloudResult::local( 'disconnected', __( 'Connect RankMySEO to ask about this site.', 'rankmyseo' ) );
+		}
+		$body['async'] = true;
+		return $this->request( 'POST', '/wp/v1/chat/message', $body, true, array(), $this->user_headers( $user_hash ) );
+	}
+
+	/**
+	 * Read one chat turn. This call stays short.
+	 *
+	 * @param string $user_hash SHA-256 of the site and WordPress user.
+	 * @param string $turn_id   Turn id returned with 202 Accepted.
+	 * @return CloudResult
+	 */
+	public function chat_progress( string $user_hash, string $turn_id ): CloudResult {
+		if ( ! $this->vault->is_connected() ) {
+			return CloudResult::local( 'disconnected', __( 'Connect RankMySEO to ask about this site.', 'rankmyseo' ) );
+		}
+		return $this->request(
+			'GET',
+			'/wp/v1/chat/progress',
+			null,
+			true,
+			array( 'turnId' => $turn_id ),
+			$this->user_headers( $user_hash )
+		);
+	}
+
+	/**
+	 * Read the current chat thread for this WordPress user.
+	 *
+	 * @param string   $user_hash SHA-256 of the site and WordPress user.
+	 * @param int|null $before    Optional sequence cursor.
+	 * @return CloudResult
+	 */
+	public function chat_thread( string $user_hash, ?int $before = null ): CloudResult {
+		if ( ! $this->vault->is_connected() ) {
+			return CloudResult::local( 'disconnected', __( 'Connect RankMySEO to ask about this site.', 'rankmyseo' ) );
+		}
+		$query = array();
+		if ( is_int( $before ) && $before > 0 ) {
+			$query['before'] = (string) $before;
+		}
+		return $this->request( 'GET', '/wp/v1/chat/thread', null, true, $query, $this->user_headers( $user_hash ) );
+	}
+
+	/**
 	 * Resolve the API origin. The constant wins as the default; the filter can override it.
 	 *
 	 * @return string
@@ -222,10 +321,11 @@ final class CloudClient {
 	 * @param string                    $path   Path beginning with /wp/v1/.
 	 * @param array<string, mixed>|null $body   JSON body, or null.
 	 * @param bool                      $auth   Whether to send the bearer token.
-	 * @param array<string, string>     $query  Query parameters.
+	 * @param array<string, string>     $query          Query parameters.
+	 * @param array<string, string>     $extra_headers Extra headers such as X-WP-User-Hash.
 	 * @return CloudResult
 	 */
-	private function request( string $method, string $path, ?array $body, bool $auth, array $query = array() ): CloudResult {
+	private function request( string $method, string $path, ?array $body, bool $auth, array $query = array(), array $extra_headers = array() ): CloudResult {
 		$token = '';
 		if ( $auth ) {
 			$token = $this->vault->get_secret( 'token' );
@@ -248,6 +348,11 @@ final class CloudClient {
 		}
 		if ( '' !== $token ) {
 			$headers['Authorization'] = 'Bearer ' . $token;
+		}
+		foreach ( $extra_headers as $name => $value ) {
+			if ( '' !== $value ) {
+				$headers[ $name ] = $value;
+			}
 		}
 
 		$args = array(
@@ -366,6 +471,20 @@ final class CloudClient {
 			return max( 0, (int) $raw );
 		}
 		return 0;
+	}
+
+	/**
+	 * Header that keeps one WordPress user on their own chat thread.
+	 *
+	 * @param string $user_hash 64 character hex hash.
+	 * @return array<string, string>
+	 */
+	private function user_headers( string $user_hash ): array {
+		$hash = strtolower( trim( $user_hash ) );
+		if ( 1 !== preg_match( '/^[a-f0-9]{64}$/', $hash ) ) {
+			return array();
+		}
+		return array( 'X-WP-User-Hash' => $hash );
 	}
 
 	/**

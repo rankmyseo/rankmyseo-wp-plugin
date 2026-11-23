@@ -80,6 +80,9 @@ final class RankMySEO_Test_State {
 	/** @var array<int, array<string, mixed>> */
 	public static array $post_meta = [];
 
+	/** @var int */
+	public static int $next_post_id = 100;
+
 	public static function reset(): void {
 		self::$options           = [ 'blog_public' => '1' ];
 		self::$user_meta         = [];
@@ -102,6 +105,7 @@ final class RankMySEO_Test_State {
 		self::$cron              = [];
 		self::$posts             = [];
 		self::$post_meta         = [];
+		self::$next_post_id      = 100;
 		self::$bloginfo          = [ 'name' => 'Test Site' ];
 		$GLOBALS['wp_version']   = '6.4.3';
 		$GLOBALS['wpdb']         = new wpdb();
@@ -197,8 +201,30 @@ if ( ! class_exists( 'WP_REST_Request' ) ) {
 		private array $json_params = [];
 	/** @var array<string, mixed> */
 	private array $body_params = [];
-	/** @var array<string, mixed> */
-	private array $params = [];
+		/** @var array<string, mixed> */
+		private array $params = [];
+
+		private string $raw_body = '';
+
+		/** @var array<string, string> */
+		private array $headers = [];
+
+		public function set_body( string $body ): void {
+			$this->raw_body = $body;
+		}
+
+		public function get_body(): string {
+			return $this->raw_body;
+		}
+
+		public function set_header( string $name, string $value ): void {
+			$this->headers[ strtolower( $name ) ] = $value;
+		}
+
+		/** @return string */
+		public function get_header( string $name ) {
+			return $this->headers[ strtolower( $name ) ] ?? '';
+		}
 
 		/** @param array<string, mixed> $json_params */
 		public function set_json_params( array $json_params ): void {
@@ -279,6 +305,9 @@ if ( ! class_exists( 'wpdb' ) ) {
 		/** @var list<array<string, mixed>> */
 		public array $sync_rows = [];
 
+		/** @var array<string, list<array<string, mixed>>> */
+		public array $table_rows = [];
+
 		/** @param mixed ...$args */
 		public function prepare( string $query, ...$args ): string {
 			$index  = 0;
@@ -302,6 +331,9 @@ if ( ! class_exists( 'wpdb' ) ) {
 			if ( preg_match( "/SHOW TABLES LIKE '([^']+)'/", $query, $matches ) ) {
 				return in_array( $matches[1], $this->existing_tables, true ) ? $matches[1] : null;
 			}
+			if ( preg_match( '/count\s*\(/i', $query ) ) {
+				return (string) count( $this->match_table_rows( $query ) );
+			}
 			return null;
 		}
 
@@ -313,7 +345,7 @@ if ( ! class_exists( 'wpdb' ) ) {
 			unset( $output );
 			$this->queries[] = $query;
 			if ( ! str_contains( $query, 'rankmyseo_sync_queue' ) ) {
-				return [];
+				return $this->match_table_rows( $query );
 			}
 			$rows = $this->sync_rows;
 			if ( preg_match_all( "/(\\w+)\\s*=\\s*'((?:\\\\'|[^'])*)'/", $query, $matches, PREG_SET_ORDER ) ) {
@@ -372,7 +404,17 @@ if ( ! class_exists( 'wpdb' ) ) {
 		public function insert( string $table, array $data, $format = null ) {
 			unset( $format );
 			if ( ! str_contains( $table, 'rankmyseo_sync_queue' ) ) {
-				return false;
+				if ( ! str_contains( $table, 'rankmyseo_' ) ) {
+					return false;
+				}
+				++$this->insert_id;
+				$row       = $data;
+				$row['id'] = $this->insert_id;
+				if ( ! isset( $this->table_rows[ $table ] ) ) {
+					$this->table_rows[ $table ] = [];
+				}
+				$this->table_rows[ $table ][] = $row;
+				return 1;
 			}
 			++$this->insert_id;
 			$row       = $data;
@@ -396,7 +438,18 @@ if ( ! class_exists( 'wpdb' ) ) {
 		public function update( string $table, array $data, array $where, $format = null, $where_format = null ): int {
 			unset( $format, $where_format );
 			if ( ! str_contains( $table, 'rankmyseo_sync_queue' ) ) {
-				return 0;
+				if ( ! isset( $this->table_rows[ $table ] ) ) {
+					return 0;
+				}
+				$count = 0;
+				foreach ( $this->table_rows[ $table ] as $index => $row ) {
+					if ( ! $this->row_matches_where( $row, $where ) ) {
+						continue;
+					}
+					$this->table_rows[ $table ][ $index ] = array_merge( $row, $data );
+					++$count;
+				}
+				return $count;
 			}
 			$id    = isset( $where['id'] ) ? (int) $where['id'] : 0;
 			$count = 0;
@@ -413,6 +466,109 @@ if ( ! class_exists( 'wpdb' ) ) {
 		public function query( string $query ): int {
 			$this->queries[] = $query;
 			return 1;
+		}
+
+		/**
+		 * @param array<string, mixed> $where
+		 * @param mixed                $where_format
+		 */
+		public function delete( string $table, array $where, $where_format = null ): int {
+			unset( $where_format );
+			if ( ! isset( $this->table_rows[ $table ] ) ) {
+				return 0;
+			}
+			$before                     = count( $this->table_rows[ $table ] );
+			$this->table_rows[ $table ] = array_values(
+				array_filter(
+					$this->table_rows[ $table ],
+					function ( array $row ) use ( $where ): bool {
+						return ! $this->row_matches_where( $row, $where );
+					}
+				)
+			);
+			return $before - count( $this->table_rows[ $table ] );
+		}
+
+		/**
+		 * @param mixed $output
+		 * @return array<string, mixed>|null
+		 */
+		public function get_row( string $query, $output = null ) {
+			$rows = $this->get_results( $query, $output );
+			return $rows[0] ?? null;
+		}
+
+		/**
+		 * @param array<string, mixed> $row
+		 * @param array<string, mixed> $where
+		 */
+		private function row_matches_where( array $row, array $where ): bool {
+			foreach ( $where as $column => $value ) {
+				if ( (string) ( $row[ $column ] ?? '' ) !== (string) $value ) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		/**
+		 * @return list<array<string, mixed>>
+		 */
+		private function match_table_rows( string $query ): array {
+			if ( ! preg_match( '/\bFROM\s+`?([A-Za-z0-9_]+)`?/i', $query, $found ) ) {
+				return [];
+			}
+			$table = $found[1];
+			$rows  = $this->table_rows[ $table ] ?? [];
+			if ( preg_match( '/\bWHERE\s+(.+?)(\s+ORDER\s+BY|\s+LIMIT\s+|$)/is', $query, $where_match ) ) {
+				$parts = preg_split( '/\s+AND\s+/i', trim( $where_match[1] ) );
+				$parts = is_array( $parts ) ? $parts : [];
+				foreach ( $parts as $part ) {
+					$part = trim( $part );
+					if ( preg_match( "/^([A-Za-z0-9_]+)\\s*=\\s*'((?:\\\\'|[^'])*)'$/", $part, $eq ) ) {
+						$column = $eq[1];
+						$value  = stripslashes( $eq[2] );
+						$rows   = array_values(
+							array_filter(
+								$rows,
+								static function ( array $row ) use ( $column, $value ): bool {
+									return (string) ( $row[ $column ] ?? '' ) === $value;
+								}
+							)
+						);
+						continue;
+					}
+					if ( preg_match( '/^([A-Za-z0-9_]+)\s*=\s*(-?\d+)$/', $part, $eq ) ) {
+						$column = $eq[1];
+						$value  = $eq[2];
+						$rows   = array_values(
+							array_filter(
+								$rows,
+								static function ( array $row ) use ( $column, $value ): bool {
+									return (string) ( $row[ $column ] ?? '' ) === $value;
+								}
+							)
+						);
+						continue;
+					}
+					if ( preg_match( "/^([A-Za-z0-9_]+)\\s*>=\\s*'([^']*)'$/", $part, $eq ) ) {
+						$column = $eq[1];
+						$value  = $eq[2];
+						$rows   = array_values(
+							array_filter(
+								$rows,
+								static function ( array $row ) use ( $column, $value ): bool {
+									return strcmp( (string) ( $row[ $column ] ?? '' ), $value ) >= 0;
+								}
+							)
+						);
+					}
+				}
+			}
+			if ( preg_match( '/\bLIMIT\s+(\d+)/i', $query, $limit ) ) {
+				$rows = array_slice( $rows, 0, (int) $limit[1] );
+			}
+			return $rows;
 		}
 
 		public function esc_like( string $text ): string {
@@ -520,7 +676,8 @@ if ( ! function_exists( 'get_current_user_id' ) ) {
 }
 
 if ( ! function_exists( 'current_user_can' ) ) {
-	function current_user_can( string $capability ): bool {
+	function current_user_can( string $capability, mixed ...$args ): bool {
+		unset( $args );
 		return ! empty( RankMySEO_Test_State::$current_user_caps[ $capability ] );
 	}
 }
@@ -593,6 +750,14 @@ if ( ! function_exists( 'do_action' ) ) {
 
 if ( ! defined( 'MINUTE_IN_SECONDS' ) ) {
 	define( 'MINUTE_IN_SECONDS', 60 );
+}
+
+if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
+	define( 'HOUR_IN_SECONDS', 3600 );
+}
+
+if ( ! defined( 'DAY_IN_SECONDS' ) ) {
+	define( 'DAY_IN_SECONDS', 86400 );
 }
 
 if ( ! defined( 'ARRAY_A' ) ) {
@@ -849,6 +1014,144 @@ if ( ! function_exists( 'is_post_type_viewable' ) ) {
 	function is_post_type_viewable( $post_type ): bool {
 		$type = is_object( $post_type ) ? (string) ( $post_type->name ?? '' ) : (string) $post_type;
 		return in_array( $type, [ 'post', 'page' ], true );
+	}
+}
+
+if ( ! function_exists( 'untrailingslashit' ) ) {
+	function untrailingslashit( string $value ): string {
+		return rtrim( $value, "/\\" );
+	}
+}
+
+if ( ! function_exists( 'current_time' ) ) {
+	/**
+	 * @return string|int
+	 */
+	function current_time( string $type, bool $gmt = false ) {
+		unset( $gmt );
+		if ( 'timestamp' === $type || 'U' === $type ) {
+			return time();
+		}
+		return gmdate( 'Y-m-d H:i:s' );
+	}
+}
+
+if ( ! function_exists( 'metadata_exists' ) ) {
+	function metadata_exists( string $meta_type, int $object_id, string $meta_key ): bool {
+		if ( 'post' !== $meta_type ) {
+			return false;
+		}
+		return array_key_exists( $meta_key, RankMySEO_Test_State::$post_meta[ $object_id ] ?? [] );
+	}
+}
+
+if ( ! function_exists( 'update_post_meta' ) ) {
+	/** @param mixed $meta_value */
+	function update_post_meta( int $post_id, string $meta_key, $meta_value ): int {
+		RankMySEO_Test_State::$post_meta[ $post_id ][ $meta_key ] = $meta_value;
+		return 1;
+	}
+}
+
+if ( ! function_exists( 'delete_post_meta' ) ) {
+	function delete_post_meta( int $post_id, string $meta_key ): bool {
+		unset( RankMySEO_Test_State::$post_meta[ $post_id ][ $meta_key ] );
+		return true;
+	}
+}
+
+if ( ! function_exists( 'strip_shortcodes' ) ) {
+	function strip_shortcodes( string $content ): string {
+		return (string) preg_replace( '/\[[^\]]+\]/', '', $content );
+	}
+}
+
+if ( ! function_exists( 'wp_kses_post' ) ) {
+	function wp_kses_post( string $data ): string {
+		$clean = (string) preg_replace( '/<script\b[^>]*>.*?<\/script>/is', '', $data );
+		$clean = (string) preg_replace( '/<iframe\b[^>]*>.*?<\/iframe>/is', '', $clean );
+		return (string) preg_replace( '/\s+on[a-z]+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $clean );
+	}
+}
+
+if ( ! function_exists( 'wp_insert_post' ) ) {
+	/**
+	 * @param array<string, mixed> $postarr
+	 * @return int
+	 */
+	function wp_insert_post( array $postarr, bool $wp_error = false ) {
+		unset( $wp_error );
+		$id = ++RankMySEO_Test_State::$next_post_id;
+		RankMySEO_Test_State::$posts[] = (object) array(
+			'ID'           => $id,
+			'post_type'    => (string) ( $postarr['post_type'] ?? 'post' ),
+			'post_status'  => (string) ( $postarr['post_status'] ?? 'draft' ),
+			'post_title'   => (string) ( $postarr['post_title'] ?? '' ),
+			'post_content' => (string) ( $postarr['post_content'] ?? '' ),
+			'post_name'    => (string) ( $postarr['post_name'] ?? 'post' ),
+			'post_parent'  => (int) ( $postarr['post_parent'] ?? 0 ),
+		);
+		return $id;
+	}
+}
+
+if ( ! function_exists( 'wp_update_post' ) ) {
+	/**
+	 * @param array<string, mixed> $postarr
+	 * @return int
+	 */
+	function wp_update_post( array $postarr, bool $wp_error = false ) {
+		unset( $wp_error );
+		$id = (int) ( $postarr['ID'] ?? 0 );
+		foreach ( RankMySEO_Test_State::$posts as $index => $post ) {
+			if ( (int) $post->ID !== $id ) {
+				continue;
+			}
+			foreach ( $postarr as $key => $value ) {
+				if ( 'ID' === $key ) {
+					continue;
+				}
+				$post->{$key} = $value;
+			}
+			RankMySEO_Test_State::$posts[ $index ] = $post;
+			return $id;
+		}
+		return 0;
+	}
+}
+
+if ( ! function_exists( 'wp_delete_post' ) ) {
+	function wp_delete_post( int $post_id, bool $force_delete = false ): bool {
+		unset( $force_delete );
+		RankMySEO_Test_State::$posts = array_values(
+			array_filter(
+				RankMySEO_Test_State::$posts,
+				static function ( object $post ) use ( $post_id ): bool {
+					return (int) $post->ID !== $post_id;
+				}
+			)
+		);
+		unset( RankMySEO_Test_State::$post_meta[ $post_id ] );
+		return true;
+	}
+}
+
+if ( ! function_exists( 'wp_save_post_revision' ) ) {
+	function wp_save_post_revision( int $post_id ) {
+		$post = get_post( $post_id );
+		if ( ! is_object( $post ) ) {
+			return 0;
+		}
+		return wp_insert_post(
+			array(
+				'post_type'    => 'revision',
+				'post_status'  => 'inherit',
+				'post_title'   => (string) ( $post->post_title ?? '' ),
+				'post_content' => (string) ( $post->post_content ?? '' ),
+				'post_parent'  => $post_id,
+				'post_name'    => (string) $post_id . '-revision',
+			)
+		);
 	}
 }
 

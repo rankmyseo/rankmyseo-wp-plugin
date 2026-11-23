@@ -12,6 +12,7 @@ namespace RankMySEO;
 use RankMySEO\Admin\AdminMenu;
 use RankMySEO\Core\Settings;
 use RankMySEO\Database\Migrator;
+use RankMySEO\Modules\AiActions\AiServices;
 use RankMySEO\Modules\Cloud\CloudModule;
 use RankMySEO\Modules\Cloud\CloudServices;
 use RankMySEO\Modules\ModuleManager;
@@ -22,6 +23,7 @@ use RankMySEO\Modules\Stubs\MetaModule;
 use RankMySEO\Modules\Stubs\RedirectsModule;
 use RankMySEO\Modules\Stubs\SchemaModule;
 use RankMySEO\Modules\Stubs\SitemapsModule;
+use RankMySEO\Rest\AiActionsController;
 use RankMySEO\Rest\CloudController;
 use RankMySEO\Rest\RestRegistry;
 use RankMySEO\Rest\SettingsController;
@@ -200,6 +202,7 @@ final class Plugin {
 		);
 
 		CloudServices::register( $this->container );
+		AiServices::register( $this->container );
 
 		$this->container->singleton(
 			SettingsController::class,
@@ -260,6 +263,8 @@ final class Plugin {
 				assert( $ui_preferences_controller instanceof UiPreferencesController );
 				$cloud_controller = $container->get( CloudController::class );
 				assert( $cloud_controller instanceof CloudController );
+				$ai_controller = $container->get( AiActionsController::class );
+				assert( $ai_controller instanceof AiActionsController );
 
 				return new RestRegistry(
 					[
@@ -267,6 +272,7 @@ final class Plugin {
 						$status_controller,
 						$ui_preferences_controller,
 						$cloud_controller,
+						$ai_controller,
 					]
 				);
 			}
