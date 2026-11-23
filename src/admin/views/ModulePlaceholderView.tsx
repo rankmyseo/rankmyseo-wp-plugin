@@ -18,31 +18,9 @@ interface ModuleScreenMeta {
 }
 
 const SCREEN_META: Record<
-	Exclude< NavPageId, 'dashboard' | 'settings' >,
+	Exclude< NavPageId, 'dashboard' | 'settings' | 'meta' >,
 	ModuleScreenMeta
 > = {
-	meta: {
-		moduleId: 'meta',
-		title: __( 'On-Page & Titles', 'rankmyseo' ),
-		simpleTitle: __( 'Search Previews & Titles', 'rankmyseo' ),
-		simpleSummary: __(
-			'Control the titles and descriptions Google shows for your pages, plus the image people see when sharing links on social media.',
-			'rankmyseo'
-		),
-		advancedSummary: __(
-			'Global CPT & taxonomy title templates, wp_robots directives, canonical overrides, OpenGraph/Twitter tags, and Gutenberg/Classic editor previews.',
-			'rankmyseo'
-		),
-		aiPrompt: __( 'Fix missing meta descriptions', 'rankmyseo' ),
-		highlights: [
-			__( 'Google desktop & mobile snippet preview', 'rankmyseo' ),
-			__( 'OpenGraph & social share card defaults', 'rankmyseo' ),
-			__(
-				'Per-post titles, descriptions, and focus keyword',
-				'rankmyseo'
-			),
-		],
-	},
 	schema: {
 		moduleId: 'schema',
 		title: __( 'Structured Data (Schema)', 'rankmyseo' ),
@@ -177,7 +155,7 @@ const SCREEN_META: Record<
 export function ModulePlaceholderView( {
 	pageId,
 }: {
-	pageId: Exclude< NavPageId, 'dashboard' | 'settings' >;
+	pageId: Exclude< NavPageId, 'dashboard' | 'settings' | 'meta' >;
 } ): JSX.Element {
 	const { uiMode, modules, saving, toggleModule, openChat, navigateTo } =
 		useAdmin();

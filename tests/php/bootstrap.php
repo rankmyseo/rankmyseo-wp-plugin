@@ -59,6 +59,26 @@ final class RankMySEO_Test_State {
 		'name' => 'Test Site',
 	];
 
+	/** @var array<int, array<string, mixed>> */
+	public static array $post_meta = [];
+
+	/** @var array<int, array<string, mixed>> */
+	public static array $term_meta = [];
+
+	/** @var array<int, WP_Post> */
+	public static array $posts = [];
+
+	/** @var array<int, WP_Term> */
+	public static array $terms = [];
+
+	/** @var list<array<string, mixed>> */
+	public static array $registered_meta = [];
+
+	/** @var array<string, string> */
+	public static array $nonces = [];
+
+	public static bool $is_admin = false;
+
 	public static function reset(): void {
 		self::$options           = [ 'blog_public' => '1' ];
 		self::$user_meta         = [];
@@ -71,7 +91,17 @@ final class RankMySEO_Test_State {
 		];
 		self::$registered_routes = [];
 		self::$actions           = [];
-		self::$bloginfo          = [ 'name' => 'Test Site' ];
+		self::$bloginfo          = [
+			'name'        => 'Test Site',
+			'description' => 'A calm tagline',
+		];
+		self::$post_meta         = [];
+		self::$term_meta         = [];
+		self::$posts             = [];
+		self::$terms             = [];
+		self::$registered_meta   = [];
+		self::$nonces            = [];
+		self::$is_admin          = false;
 		self::$roles             = [
 			'administrator' => new WP_Role( 'administrator', [ 'manage_options' => true, 'edit_posts' => true ] ),
 			'editor'        => new WP_Role( 'editor', [ 'edit_posts' => true ] ),
@@ -183,6 +213,19 @@ if ( ! class_exists( 'WP_REST_Request' ) ) {
 		/** @return array<string, mixed> */
 		public function get_body_params(): array {
 			return $this->body_params;
+		}
+
+		/** @var array<string, mixed> */
+		private array $params = [];
+
+		/** @param mixed $value */
+		public function set_param( string $key, $value ): void {
+			$this->params[ $key ] = $value;
+		}
+
+		/** @return mixed */
+		public function get_param( string $key ) {
+			return $this->params[ $key ] ?? null;
 		}
 	}
 }
@@ -350,8 +393,17 @@ if ( ! function_exists( 'get_current_user_id' ) ) {
 }
 
 if ( ! function_exists( 'current_user_can' ) ) {
-	function current_user_can( string $capability ): bool {
-		return ! empty( RankMySEO_Test_State::$current_user_caps[ $capability ] );
+	function current_user_can( string $capability, ...$args ): bool {
+		unset( $args );
+		if ( ! empty( RankMySEO_Test_State::$current_user_caps[ $capability ] ) ) {
+			return true;
+		}
+
+		if ( in_array( $capability, [ 'edit_post', 'edit_term' ], true ) && ! empty( RankMySEO_Test_State::$current_user_caps['edit_posts'] ) ) {
+			return true;
+		}
+
+		return false;
 	}
 }
 
@@ -388,9 +440,13 @@ if ( ! function_exists( 'add_action' ) ) {
 }
 
 if ( ! function_exists( 'apply_filters' ) ) {
-	/** @param mixed $value */
-	function apply_filters( string $hook_name, $value ) {
-		unset( $hook_name );
+	/**
+	 * @param mixed $value
+	 * @param mixed ...$args
+	 * @return mixed
+	 */
+	function apply_filters( string $hook_name, $value, ...$args ) {
+		unset( $hook_name, $args );
 		return $value;
 	}
 }
@@ -402,6 +458,304 @@ if ( ! function_exists( 'register_rest_route' ) ) {
 			'namespace' => $route_namespace,
 			'route'     => $route,
 			'args'      => $args,
+		];
+		return true;
+	}
+}
+
+if ( ! function_exists( 'add_filter' ) ) {
+	function add_filter( string $hook_name, callable $callback, int $priority = 10 ): bool {
+		return add_action( $hook_name, $callback, $priority );
+	}
+}
+
+if ( ! function_exists( 'remove_action' ) ) {
+	/** @param mixed $callback */
+	function remove_action( string $hook_name, $callback, int $priority = 10 ): bool {
+		unset( $hook_name, $callback, $priority );
+		return true;
+	}
+}
+
+if ( ! class_exists( 'WP_Post' ) ) {
+	class WP_Post {
+		public int $ID = 0;
+		public string $post_title = '';
+		public string $post_type = 'post';
+		public string $post_excerpt = '';
+		public string $post_content = '';
+		public string $post_name = '';
+		public string $post_status = 'publish';
+		public string $post_date_gmt = '';
+		public string $post_modified_gmt = '';
+		public int $post_author = 1;
+	}
+}
+
+if ( ! class_exists( 'WP_Term' ) ) {
+	class WP_Term {
+		public int $term_id = 0;
+		public string $name = '';
+		public string $taxonomy = 'category';
+		public string $description = '';
+	}
+}
+
+if ( ! class_exists( 'WP_Post_Type' ) ) {
+	class WP_Post_Type {
+		public string $name = '';
+		public object $labels;
+	}
+}
+
+if ( ! class_exists( 'WP_Taxonomy' ) ) {
+	class WP_Taxonomy {
+		public string $name = '';
+		public object $labels;
+	}
+}
+
+if ( ! function_exists( 'strip_shortcodes' ) ) {
+	function strip_shortcodes( string $content ): string {
+		return (string) preg_replace( '/\[[^\]]+\]/', '', $content );
+	}
+}
+
+if ( ! function_exists( 'wp_strip_all_tags' ) ) {
+	function wp_strip_all_tags( string $text, bool $remove_breaks = false ): string {
+		$text = (string) preg_replace( '@<(script|style)[^>]*?>.*?</\\1>@si', '', $text );
+		$text = strip_tags( $text );
+		if ( $remove_breaks ) {
+			$text = (string) preg_replace( '/[\r\n\t ]+/', ' ', $text );
+		}
+		return trim( $text );
+	}
+}
+
+if ( ! function_exists( 'esc_attr' ) ) {
+	function esc_attr( string $text ): string {
+		return htmlspecialchars( $text, ENT_QUOTES, 'UTF-8' );
+	}
+}
+
+if ( ! function_exists( 'esc_url_raw' ) ) {
+	function esc_url_raw( string $url ): string {
+		$url = trim( $url );
+		if ( ! preg_match( '#^https?://#i', $url ) ) {
+			return '';
+		}
+		return $url;
+	}
+}
+
+if ( ! function_exists( 'esc_url' ) ) {
+	function esc_url( string $url ): string {
+		return esc_url_raw( $url );
+	}
+}
+
+if ( ! function_exists( 'wp_parse_url' ) ) {
+	/** @return array<string, mixed>|false */
+	function wp_parse_url( string $url ) {
+		$parts = parse_url( $url );
+		return is_array( $parts ) ? $parts : false;
+	}
+}
+
+if ( ! function_exists( 'wp_unslash' ) ) {
+	/** @param mixed $value */
+	function wp_unslash( $value ) {
+		return is_string( $value ) ? stripslashes( $value ) : $value;
+	}
+}
+
+if ( ! function_exists( 'wp_json_encode' ) ) {
+	/** @param mixed $data */
+	function wp_json_encode( $data, int $flags = 0 ) {
+		$json = json_encode( $data, $flags );
+		return false === $json ? false : $json;
+	}
+}
+
+if ( ! function_exists( 'wp_verify_nonce' ) ) {
+	function wp_verify_nonce( string $nonce, string $action ): bool {
+		return isset( RankMySEO_Test_State::$nonces[ $action ] ) && hash_equals( RankMySEO_Test_State::$nonces[ $action ], $nonce );
+	}
+}
+
+if ( ! function_exists( 'wp_create_nonce' ) ) {
+	function wp_create_nonce( string $action ): string {
+		RankMySEO_Test_State::$nonces[ $action ] = 'nonce-' . $action;
+		return RankMySEO_Test_State::$nonces[ $action ];
+	}
+}
+
+if ( ! function_exists( 'wp_is_post_revision' ) ) {
+	function wp_is_post_revision( int $post_id ): bool {
+		unset( $post_id );
+		return false;
+	}
+}
+
+if ( ! function_exists( 'wp_is_post_autosave' ) ) {
+	function wp_is_post_autosave( int $post_id ): bool {
+		unset( $post_id );
+		return false;
+	}
+}
+
+if ( ! function_exists( 'get_post_meta' ) ) {
+	/** @return mixed */
+	function get_post_meta( int $post_id, string $key = '', bool $single = false ) {
+		if ( '' === $key ) {
+			return RankMySEO_Test_State::$post_meta[ $post_id ] ?? [];
+		}
+		if ( ! isset( RankMySEO_Test_State::$post_meta[ $post_id ][ $key ] ) ) {
+			return $single ? '' : [];
+		}
+		$value = RankMySEO_Test_State::$post_meta[ $post_id ][ $key ];
+		return $single ? $value : [ $value ];
+	}
+}
+
+if ( ! function_exists( 'update_post_meta' ) ) {
+	/** @param mixed $value */
+	function update_post_meta( int $post_id, string $key, $value ): bool {
+		RankMySEO_Test_State::$post_meta[ $post_id ][ $key ] = $value;
+		return true;
+	}
+}
+
+if ( ! function_exists( 'delete_post_meta' ) ) {
+	function delete_post_meta( int $post_id, string $key ): bool {
+		unset( RankMySEO_Test_State::$post_meta[ $post_id ][ $key ] );
+		return true;
+	}
+}
+
+if ( ! function_exists( 'get_term_meta' ) ) {
+	/** @return mixed */
+	function get_term_meta( int $term_id, string $key = '', bool $single = false ) {
+		if ( '' === $key ) {
+			return RankMySEO_Test_State::$term_meta[ $term_id ] ?? [];
+		}
+		if ( ! isset( RankMySEO_Test_State::$term_meta[ $term_id ][ $key ] ) ) {
+			return $single ? '' : [];
+		}
+		$value = RankMySEO_Test_State::$term_meta[ $term_id ][ $key ];
+		return $single ? $value : [ $value ];
+	}
+}
+
+if ( ! function_exists( 'update_term_meta' ) ) {
+	/** @param mixed $value */
+	function update_term_meta( int $term_id, string $key, $value ): bool {
+		RankMySEO_Test_State::$term_meta[ $term_id ][ $key ] = $value;
+		return true;
+	}
+}
+
+if ( ! function_exists( 'delete_term_meta' ) ) {
+	function delete_term_meta( int $term_id, string $key ): bool {
+		unset( RankMySEO_Test_State::$term_meta[ $term_id ][ $key ] );
+		return true;
+	}
+}
+
+if ( ! function_exists( 'metadata_exists' ) ) {
+	function metadata_exists( string $meta_type, int $object_id, string $meta_key ): bool {
+		$bucket = 'term' === $meta_type ? RankMySEO_Test_State::$term_meta : RankMySEO_Test_State::$post_meta;
+		return isset( $bucket[ $object_id ] ) && array_key_exists( $meta_key, $bucket[ $object_id ] );
+	}
+}
+
+if ( ! function_exists( 'get_post' ) ) {
+	/** @param mixed $post */
+	function get_post( $post ): ?WP_Post {
+		$id = is_object( $post ) ? (int) $post->ID : (int) $post;
+		return RankMySEO_Test_State::$posts[ $id ] ?? null;
+	}
+}
+
+if ( ! function_exists( 'get_term' ) ) {
+	/** @param mixed $term */
+	function get_term( $term, string $taxonomy = '' ): ?WP_Term {
+		unset( $taxonomy );
+		$id = is_object( $term ) ? (int) $term->term_id : (int) $term;
+		return RankMySEO_Test_State::$terms[ $id ] ?? null;
+	}
+}
+
+if ( ! function_exists( 'get_post_types' ) ) {
+	/** @param mixed $args */
+	function get_post_types( $args = [], string $output = 'names' ): array {
+		unset( $args );
+		if ( 'objects' === $output ) {
+			$post          = new WP_Post_Type();
+			$post->name    = 'post';
+			$post->labels  = (object) [
+				'name'          => 'Posts',
+				'singular_name' => 'Post',
+			];
+			$page          = new WP_Post_Type();
+			$page->name    = 'page';
+			$page->labels  = (object) [
+				'name'          => 'Pages',
+				'singular_name' => 'Page',
+			];
+			return [
+				'post' => $post,
+				'page' => $page,
+			];
+		}
+		return [
+			'post' => 'post',
+			'page' => 'page',
+		];
+	}
+}
+
+if ( ! function_exists( 'get_taxonomies' ) ) {
+	/** @param mixed $args */
+	function get_taxonomies( $args = [], string $output = 'names' ): array {
+		unset( $args );
+		if ( 'objects' === $output ) {
+			$category         = new WP_Taxonomy();
+			$category->name   = 'category';
+			$category->labels = (object) [
+				'name'          => 'Categories',
+				'singular_name' => 'Category',
+			];
+			return [ 'category' => $category ];
+		}
+		return [
+			'category' => 'category',
+			'post_tag' => 'post_tag',
+		];
+	}
+}
+
+if ( ! function_exists( 'register_post_meta' ) ) {
+	/** @param array<string, mixed> $args */
+	function register_post_meta( string $post_type, string $meta_key, array $args ): bool {
+		RankMySEO_Test_State::$registered_meta[] = [
+			'object_type' => 'post',
+			'object'      => $post_type,
+			'key'         => $meta_key,
+			'args'        => $args,
+		];
+		return true;
+	}
+}
+
+if ( ! function_exists( 'register_term_meta' ) ) {
+	/** @param array<string, mixed> $args */
+	function register_term_meta( string $taxonomy, string $meta_key, array $args ): bool {
+		RankMySEO_Test_State::$registered_meta[] = [
+			'object_type' => 'term',
+			'taxonomy'    => $taxonomy,
+			'key'         => $meta_key,
+			'args'        => $args,
 		];
 		return true;
 	}

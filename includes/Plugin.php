@@ -16,11 +16,16 @@ use RankMySEO\Modules\ModuleManager;
 use RankMySEO\Modules\Stubs\AiQueueModule;
 use RankMySEO\Modules\Stubs\AnalyzerModule;
 use RankMySEO\Modules\Stubs\CloudModule;
+use RankMySEO\Modules\Meta\ConflictGuard;
+use RankMySEO\Modules\Meta\DocumentBuilder;
+use RankMySEO\Modules\Meta\MetaModule;
+use RankMySEO\Modules\Meta\MetaStore;
+use RankMySEO\Modules\Meta\TitleSettings;
 use RankMySEO\Modules\Stubs\ImporterModule;
-use RankMySEO\Modules\Stubs\MetaModule;
 use RankMySEO\Modules\Stubs\RedirectsModule;
 use RankMySEO\Modules\Stubs\SchemaModule;
 use RankMySEO\Modules\Stubs\SitemapsModule;
+use RankMySEO\Rest\MetaController;
 use RankMySEO\Rest\RestRegistry;
 use RankMySEO\Rest\SettingsController;
 use RankMySEO\Rest\StatusController;
@@ -231,6 +236,33 @@ final class Plugin {
 		);
 
 		$this->container->singleton(
+			TitleSettings::class,
+			static function ( Container $container ): TitleSettings {
+				$settings = $container->get( Settings::class );
+				assert( $settings instanceof Settings );
+				return new TitleSettings( $settings );
+			}
+		);
+
+		$this->container->singleton(
+			MetaController::class,
+			static function ( Container $container ): MetaController {
+				$settings = $container->get( Settings::class );
+				assert( $settings instanceof Settings );
+				$titles = $container->get( TitleSettings::class );
+				assert( $titles instanceof TitleSettings );
+
+				return new MetaController(
+					$settings,
+					$titles,
+					new MetaStore(),
+					new ConflictGuard( $titles ),
+					new DocumentBuilder()
+				);
+			}
+		);
+
+		$this->container->singleton(
 			RestRegistry::class,
 			static function ( Container $container ): RestRegistry {
 				$settings_controller = $container->get( SettingsController::class );
@@ -239,12 +271,15 @@ final class Plugin {
 				assert( $status_controller instanceof StatusController );
 				$ui_preferences_controller = $container->get( UiPreferencesController::class );
 				assert( $ui_preferences_controller instanceof UiPreferencesController );
+				$meta_controller = $container->get( MetaController::class );
+				assert( $meta_controller instanceof MetaController );
 
 				return new RestRegistry(
 					[
 						$settings_controller,
 						$status_controller,
 						$ui_preferences_controller,
+						$meta_controller,
 					]
 				);
 			}
