@@ -26,7 +26,7 @@ const NAV_ITEMS: NavItem[] = [
 		id: 'schema',
 		label: __( 'Schema', 'rankmyseo' ),
 		simpleLabel: __( 'Site Details', 'rankmyseo' ),
-		showInSimple: false,
+		showInSimple: true,
 	},
 	{
 		id: 'sitemaps',
