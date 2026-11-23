@@ -1,0 +1,76 @@
+/* Scoped RankMySEO design system tokens (WCAG 2.1 AA, zero Google Fonts) */
+.rms-root {
+	--rms-accent: #ff5c22;
+	--rms-accent-hover: #e64e17;
+	--rms-accent-soft: #fff2ec;
+	--rms-on-accent: #fff;
+	--rms-on-accent-small: #1b1e24;
+	--rms-paper: #f3f1ee;
+	--rms-card: #fff;
+	--rms-surface: #ebe8e4;
+	--rms-ink: #1b1e24;
+	--rms-ink-muted: #5c6370;
+	--rms-rule: #e4e0db;
+	--rms-signal-up: #1f9d64;
+	--rms-signal-up-bg: #e8f7f0;
+	--rms-signal-warn: #b45309;
+	--rms-signal-warn-bg: #fef3c7;
+	--rms-signal-down: #e24b4a;
+	--rms-signal-down-bg: #fdecec;
+	--rms-signal-flat: #6b7280;
+	--rms-signal-flat-bg: #f1f2f4;
+	--rms-radius-card: 8px;
+	--rms-radius-sm: 6px;
+	--rms-radius-pill: 999px;
+	--rms-font-sans: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
+	--rms-font-mono: ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
+
+	font-family: var(--rms-font-sans);
+	color: var(--rms-ink);
+	font-size: 14px;
+	line-height: 1.5;
+	box-sizing: border-box;
+}
+
+.rms-root *,
+.rms-root *::before,
+.rms-root *::after {
+	box-sizing: border-box;
+}
+
+.rms-root :focus-visible {
+	outline: 2px solid var(--rms-accent);
+	outline-offset: 2px;
+}
+
+.rms-mono {
+	font-family: var(--rms-font-mono);
+	font-variant-numeric: tabular-nums;
+}
+
+.rms-tabular {
+	font-variant-numeric: tabular-nums;
+}
+
+.rms-sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.rms-root *,
+	.rms-root *::before,
+	.rms-root *::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
