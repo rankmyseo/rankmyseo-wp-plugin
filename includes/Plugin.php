@@ -18,7 +18,7 @@ use RankMySEO\Modules\Stubs\AnalyzerModule;
 use RankMySEO\Modules\Stubs\CloudModule;
 use RankMySEO\Modules\Stubs\ImporterModule;
 use RankMySEO\Modules\Stubs\MetaModule;
-use RankMySEO\Modules\Stubs\RedirectsModule;
+use RankMySEO\Modules\Redirects\RedirectsModule;
 use RankMySEO\Modules\Schema\SchemaModule;
 use RankMySEO\Modules\Sitemaps\IndexNow;
 use RankMySEO\Modules\Sitemaps\RobotsTxt;

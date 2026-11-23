@@ -112,6 +112,9 @@ final class RankMySEO_Test_State {
 	/** @var list<array<string, mixed>> */
 	public static array $registered_meta = [];
 
+	/** @var array<string, array<string, mixed>> */
+	public static array $cache = [];
+
 	/** @var bool */
 	public static bool $is_admin = false;
 
@@ -132,6 +135,18 @@ final class RankMySEO_Test_State {
 
 	/** @var int */
 	public static int $queried_object_id = 0;
+
+	/** @var bool */
+	public static bool $nonce_valid = true;
+
+	/** @var list<int> */
+	public static array $http_status = [];
+
+	/** @var list<array{location: string, status: int}> */
+	public static array $redirects = [];
+
+	/** @var list<array{hook: string, args: array<int, mixed>}> */
+	public static array $scheduled = [];
 
 	/** @var array<string, string> */
 	public static array $bloginfo = [
@@ -176,6 +191,11 @@ final class RankMySEO_Test_State {
 		self::$doing_ajax        = false;
 		self::$doing_cron        = false;
 		self::$queried_object_id = 0;
+		self::$cache             = [];
+		self::$nonce_valid       = true;
+		self::$http_status       = [];
+		self::$redirects         = [];
+		self::$scheduled         = [];
 		self::$bloginfo          = [
 			'name'        => 'Test Site',
 			'description' => 'A test site',
@@ -268,12 +288,17 @@ if ( ! class_exists( 'WP_REST_Server' ) ) {
 
 if ( ! class_exists( 'WP_REST_Request' ) ) {
 	class WP_REST_Request {
-	/** @var array<string, mixed> */
-	private array $json_params = [];
-	/** @var array<string, mixed> */
-	private array $body_params = [];
-	/** @var array<string, mixed> */
-	private array $params = [];
+		/** @var array<string, mixed> */
+		private array $json_params = [];
+
+		/** @var array<string, mixed> */
+		private array $body_params = [];
+
+		/** @var array<string, mixed> */
+		private array $params = [];
+
+		/** @var array<string, string> */
+		private array $headers = [];
 
 		/** @param array<string, mixed> $json_params */
 		public function set_json_params( array $json_params ): void {
@@ -312,6 +337,15 @@ if ( ! class_exists( 'WP_REST_Request' ) ) {
 			}
 
 			return null;
+		}
+
+		public function set_header( string $key, string $value ): void {
+			$this->headers[ strtolower( str_replace( '_', '-', $key ) ) ] = $value;
+		}
+
+		public function get_header( string $key ): ?string {
+			$normalized = strtolower( str_replace( '_', '-', $key ) );
+			return $this->headers[ $normalized ] ?? null;
 		}
 	}
 }
@@ -616,10 +650,15 @@ if ( ! function_exists( 'wp_next_scheduled' ) ) {
 	/** @param array<int, mixed> $args */
 	function wp_next_scheduled( string $hook, array $args = [] ) {
 		unset( $args );
-		if ( empty( RankMySEO_Test_State::$cron[ $hook ] ) ) {
-			return false;
+		if ( ! empty( RankMySEO_Test_State::$cron[ $hook ] ) ) {
+			return RankMySEO_Test_State::$cron[ $hook ][0];
 		}
-		return RankMySEO_Test_State::$cron[ $hook ][0];
+		foreach ( RankMySEO_Test_State::$scheduled as $event ) {
+			if ( $event['hook'] === $hook ) {
+				return time();
+			}
+		}
+		return false;
 	}
 }
 
@@ -692,6 +731,10 @@ if ( ! function_exists( 'wp_remote_retrieve_response_code' ) ) {
 	}
 }
 
+if ( ! defined( 'ARRAY_A' ) ) {
+	define( 'ARRAY_A', 'ARRAY_A' );
+}
+
 if ( ! function_exists( 'apply_filters' ) ) {
 	/**
 	 * @param mixed $value
@@ -724,12 +767,189 @@ if ( ! function_exists( 'apply_filters' ) ) {
 		);
 
 		foreach ( $hooks as $hook ) {
-			$accepted = max( 1, (int) $hook['accepted_args'] );
-			$call     = array_slice( array_merge( [ $value ], $args ), 0, $accepted );
-			$value    = $hook['callback']( ...$call );
+			$callback = $hook['callback'];
+			$accepted = max( 0, (int) $hook['accepted_args'] );
+			$incoming = array_merge( [ $value ], $args );
+			if ( is_callable( $callback ) ) {
+				$reflection = new ReflectionFunction( $callback instanceof Closure ? $callback : Closure::fromCallable( $callback ) );
+				$accepted   = min( $accepted, $reflection->getNumberOfParameters() );
+			}
+			$call  = array_slice( $incoming, 0, $accepted );
+			$value = $callback( ...$call );
 		}
 
 		return $value;
+	}
+}
+
+if ( ! function_exists( 'add_filter' ) ) {
+	function add_filter( string $hook_name, callable $callback, int $priority = 10 ): bool {
+		RankMySEO_Test_State::$filters[ $hook_name ][ $priority ][] = $callback;
+		return true;
+	}
+}
+
+if ( ! function_exists( 'do_action' ) ) {
+	/** @param mixed ...$args */
+	function do_action( string $hook_name, ...$args ): void {
+		if ( empty( RankMySEO_Test_State::$actions[ $hook_name ] ) ) {
+			return;
+		}
+
+		foreach ( RankMySEO_Test_State::$actions[ $hook_name ] as $callback ) {
+			$callback( ...$args );
+		}
+	}
+}
+
+if ( ! function_exists( 'wp_unslash' ) ) {
+	/**
+	 * @param mixed $value
+	 * @return mixed
+	 */
+	function wp_unslash( $value ) {
+		if ( is_array( $value ) ) {
+			return array_map( 'wp_unslash', $value );
+		}
+
+		return is_string( $value ) ? stripslashes( $value ) : $value;
+	}
+}
+
+if ( ! function_exists( 'wp_parse_url' ) ) {
+	/**
+	 * @param string $url
+	 * @param int    $component
+	 * @return mixed
+	 */
+	function wp_parse_url( string $url, int $component = -1 ) {
+		if ( -1 === $component ) {
+			$parsed = parse_url( $url );
+			return false === $parsed ? false : $parsed;
+		}
+
+		return parse_url( $url, $component );
+	}
+}
+
+if ( ! function_exists( 'esc_url_raw' ) ) {
+	function esc_url_raw( string $url ): string {
+		$url = trim( $url );
+		if ( 1 !== preg_match( '#^https?://#i', $url ) ) {
+			return '';
+		}
+
+		return $url;
+	}
+}
+
+if ( ! function_exists( 'wp_verify_nonce' ) ) {
+	/** @param mixed $nonce */
+	function wp_verify_nonce( $nonce, string $action = '-1' ) {
+		unset( $nonce, $action );
+		return RankMySEO_Test_State::$nonce_valid ? 1 : false;
+	}
+}
+
+if ( ! function_exists( 'is_admin' ) ) {
+	function is_admin(): bool {
+		return RankMySEO_Test_State::$is_admin;
+	}
+}
+
+if ( ! function_exists( 'wp_doing_ajax' ) ) {
+	function wp_doing_ajax(): bool {
+		return RankMySEO_Test_State::$doing_ajax;
+	}
+}
+
+if ( ! function_exists( 'wp_doing_cron' ) ) {
+	function wp_doing_cron(): bool {
+		return RankMySEO_Test_State::$doing_cron;
+	}
+}
+
+if ( ! function_exists( 'is_404' ) ) {
+	function is_404(): bool {
+		return RankMySEO_Test_State::$is_404;
+	}
+}
+
+if ( ! function_exists( 'status_header' ) ) {
+	function status_header( int $code ): void {
+		RankMySEO_Test_State::$http_status[] = $code;
+	}
+}
+
+if ( ! function_exists( 'nocache_headers' ) ) {
+	function nocache_headers(): void {
+	}
+}
+
+if ( ! function_exists( 'wp_redirect' ) ) {
+	function wp_redirect( string $location, int $status = 302 ): bool {
+		RankMySEO_Test_State::$redirects[] = [
+			'location' => $location,
+			'status'   => $status,
+		];
+		return true;
+	}
+}
+
+if ( ! function_exists( 'wp_cache_get' ) ) {
+	/**
+	 * @param string $key
+	 * @param string $group
+	 * @return mixed
+	 */
+	function wp_cache_get( string $key, string $group = '' ) {
+		return RankMySEO_Test_State::$cache[ $group ][ $key ] ?? false;
+	}
+}
+
+if ( ! function_exists( 'wp_cache_set' ) ) {
+	/**
+	 * @param string $key
+	 * @param mixed  $value
+	 */
+	function wp_cache_set( string $key, $value, string $group = '', int $expire = 0 ): bool {
+		unset( $expire );
+		RankMySEO_Test_State::$cache[ $group ][ $key ] = $value;
+		return true;
+	}
+}
+
+if ( ! function_exists( 'wp_cache_delete' ) ) {
+	function wp_cache_delete( string $key, string $group = '' ): bool {
+		unset( RankMySEO_Test_State::$cache[ $group ][ $key ] );
+		return true;
+	}
+}
+
+if ( ! function_exists( 'wp_next_scheduled' ) ) {
+	function wp_next_scheduled( string $hook ): int|false {
+		foreach ( RankMySEO_Test_State::$scheduled as $event ) {
+			if ( $event['hook'] === $hook ) {
+				return time();
+			}
+		}
+
+		return false;
+	}
+}
+
+if ( ! function_exists( 'wp_schedule_event' ) ) {
+	/** @param mixed $args */
+	function wp_schedule_event( int $timestamp, string $recurrence, string $hook, $args = [] ): bool {
+		RankMySEO_Test_State::$scheduled[] = [
+			'hook' => $hook,
+			'args' => [
+				'timestamp'  => $timestamp,
+				'recurrence' => $recurrence,
+				'payload'    => $args,
+			],
+		];
+		return true;
 	}
 }
 
@@ -941,7 +1161,7 @@ if ( ! function_exists( 'get_permalink' ) ) {
 	function get_permalink( $post = 0 ): string {
 		$resolved = get_post( $post );
 		if ( ! $resolved instanceof WP_Post ) {
-			return home_url( '/' );
+			return '';
 		}
 		if ( isset( RankMySEO_Test_State::$permalinks[ $resolved->ID ] ) ) {
 			return RankMySEO_Test_State::$permalinks[ $resolved->ID ];
