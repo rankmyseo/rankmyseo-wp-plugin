@@ -136,7 +136,10 @@ const SCREEN_META: Record<
 export function ModulePlaceholderView( {
 	pageId,
 }: {
-	pageId: Exclude< NavPageId, 'dashboard' | 'settings' | 'sitemaps' | 'meta' >;
+	pageId: Exclude<
+		NavPageId,
+		'dashboard' | 'settings' | 'sitemaps' | 'meta'
+	>;
 } ): JSX.Element {
 	const { uiMode, modules, saving, toggleModule, openChat, navigateTo } =
 		useAdmin();
