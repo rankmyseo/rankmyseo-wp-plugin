@@ -16,7 +16,7 @@ use RankMySEO\Modules\ModuleManager;
 use RankMySEO\Modules\Stubs\AiQueueModule;
 use RankMySEO\Modules\Stubs\AnalyzerModule;
 use RankMySEO\Modules\Stubs\CloudModule;
-use RankMySEO\Modules\Stubs\ImporterModule;
+use RankMySEO\Modules\Importer\ImporterModule;
 use RankMySEO\Modules\Stubs\MetaModule;
 use RankMySEO\Modules\Redirects\RedirectsModule;
 use RankMySEO\Modules\Schema\SchemaModule;
