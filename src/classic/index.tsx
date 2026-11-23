@@ -1,5 +1,5 @@
 import apiFetch from '@wordpress/api-fetch';
-import { createRoot, render, useState } from '@wordpress/element';
+import { createRoot, render, useEffect, useState } from '@wordpress/element';
 import type { UiMode } from '../shared/types';
 import { EditorPanel } from '../editor/components/EditorPanel';
 import {
@@ -23,6 +23,13 @@ interface ClassicConfig {
 	permalink?: string;
 	fields?: Record< string, unknown >;
 	askAiEvent?: string;
+	locale?: string;
+}
+
+interface TinyEditor {
+	getContent: () => string;
+	on: ( event: string, callback: () => void ) => void;
+	off: ( event: string, callback: () => void ) => void;
 }
 
 const FORM_IDS: Record< string, keyof SeoFields | 'robots' | 'keywords' > = {
@@ -61,6 +68,34 @@ function writeHidden( fields: SeoFields ): void {
 	}
 }
 
+function readClassicDocument( fallbackTitle: string ): {
+	content: string;
+	slug: string;
+	title: string;
+} {
+	const contentField = document.getElementById( 'content' );
+	const titleField = document.getElementById( 'title' );
+	const slugField = document.getElementById( 'post_name' );
+	const tiny = (
+		window as Window & {
+			tinymce?: { get?: ( id: string ) => TinyEditor | null };
+		}
+	 ).tinymce?.get?.( 'content' );
+	const content =
+		tiny?.getContent() ||
+		( contentField instanceof HTMLTextAreaElement
+			? contentField.value
+			: '' );
+	return {
+		content,
+		slug: slugField instanceof HTMLInputElement ? slugField.value : '',
+		title:
+			titleField instanceof HTMLInputElement && titleField.value
+				? titleField.value
+				: fallbackTitle,
+	};
+}
+
 function ClassicApp( { settings }: { settings: ClassicConfig } ): JSX.Element {
 	const [ mode, setMode ] = useState< UiMode >(
 		settings.uiMode === 'advanced' ? 'advanced' : 'simple'
@@ -68,6 +103,34 @@ function ClassicApp( { settings }: { settings: ClassicConfig } ): JSX.Element {
 	const [ fields, setFields ] = useState< SeoFields >( () =>
 		fieldsFromRecord( settings.fields ?? {} )
 	);
+	const [ documentState, setDocumentState ] = useState( () =>
+		readClassicDocument( settings.postTitle || '' )
+	);
+
+	useEffect( () => {
+		const update = (): void => {
+			setDocumentState( readClassicDocument( settings.postTitle || '' ) );
+		};
+		update();
+		const contentField = document.getElementById( 'content' );
+		const titleField = document.getElementById( 'title' );
+		const slugField = document.getElementById( 'post_name' );
+		contentField?.addEventListener( 'input', update );
+		titleField?.addEventListener( 'input', update );
+		slugField?.addEventListener( 'input', update );
+		const tiny = (
+			window as Window & {
+				tinymce?: { get?: ( id: string ) => TinyEditor | null };
+			}
+		 ).tinymce?.get?.( 'content' );
+		tiny?.on( 'keyup change input', update );
+		return () => {
+			contentField?.removeEventListener( 'input', update );
+			titleField?.removeEventListener( 'input', update );
+			slugField?.removeEventListener( 'input', update );
+			tiny?.off( 'keyup change input', update );
+		};
+	}, [ settings.postTitle ] );
 
 	return (
 		<EditorPanel
@@ -89,9 +152,14 @@ function ClassicApp( { settings }: { settings: ClassicConfig } ): JSX.Element {
 			siteUrl={ settings.siteUrl || '' }
 			separator={ settings.separator || '|' }
 			permalink={ settings.permalink || '' }
-			postTitle={ settings.postTitle || '' }
+			postTitle={ documentState.title || settings.postTitle || '' }
 			tagline={ settings.tagline || '' }
 			variables={ settings.variables || [] }
+			contentHtml={ documentState.content }
+			slug={ documentState.slug }
+			postId={ settings.postId || 0 }
+			postType={ settings.postType || 'post' }
+			locale={ settings.locale || 'en' }
 			onAskAi={ () => {
 				document.dispatchEvent(
 					new CustomEvent(
