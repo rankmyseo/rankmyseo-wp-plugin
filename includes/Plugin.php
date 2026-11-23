@@ -19,9 +19,15 @@ use RankMySEO\Modules\Stubs\CloudModule;
 use RankMySEO\Modules\Stubs\ImporterModule;
 use RankMySEO\Modules\Stubs\MetaModule;
 use RankMySEO\Modules\Stubs\RedirectsModule;
+use RankMySEO\Modules\Sitemaps\IndexNow;
+use RankMySEO\Modules\Sitemaps\RobotsTxt;
+use RankMySEO\Modules\Sitemaps\SitemapSettings;
+use RankMySEO\Modules\Sitemaps\SitemapsModule;
+use RankMySEO\Modules\Sitemaps\WordPressSitemapSource;
+use RankMySEO\Modules\Sitemaps\WpIndexNowTransport;
 use RankMySEO\Modules\Stubs\SchemaModule;
-use RankMySEO\Modules\Stubs\SitemapsModule;
 use RankMySEO\Rest\RestRegistry;
+use RankMySEO\Rest\SitemapsController;
 use RankMySEO\Rest\SettingsController;
 use RankMySEO\Rest\StatusController;
 use RankMySEO\Rest\UiPreferencesController;
@@ -198,6 +204,57 @@ final class Plugin {
 		);
 
 		$this->container->singleton(
+			SitemapSettings::class,
+			static function (): SitemapSettings {
+				return new SitemapSettings();
+			}
+		);
+
+		$this->container->singleton(
+			IndexNow::class,
+			static function ( Container $container ): IndexNow {
+				$sitemap_settings = $container->get( SitemapSettings::class );
+				assert( $sitemap_settings instanceof SitemapSettings );
+				return new IndexNow( $sitemap_settings, new WpIndexNowTransport() );
+			}
+		);
+
+		$this->container->singleton(
+			RobotsTxt::class,
+			static function ( Container $container ): RobotsTxt {
+				$sitemap_settings = $container->get( SitemapSettings::class );
+				assert( $sitemap_settings instanceof SitemapSettings );
+				return new RobotsTxt( $sitemap_settings );
+			}
+		);
+
+		$this->container->singleton(
+			WordPressSitemapSource::class,
+			static function ( Container $container ): WordPressSitemapSource {
+				$sitemap_settings = $container->get( SitemapSettings::class );
+				assert( $sitemap_settings instanceof SitemapSettings );
+				return new WordPressSitemapSource( $sitemap_settings );
+			}
+		);
+
+		$this->container->singleton(
+			SitemapsController::class,
+			static function ( Container $container ): SitemapsController {
+				$settings = $container->get( Settings::class );
+				assert( $settings instanceof Settings );
+				$sitemap_settings = $container->get( SitemapSettings::class );
+				assert( $sitemap_settings instanceof SitemapSettings );
+				$indexnow = $container->get( IndexNow::class );
+				assert( $indexnow instanceof IndexNow );
+				$robots = $container->get( RobotsTxt::class );
+				assert( $robots instanceof RobotsTxt );
+				$source = $container->get( WordPressSitemapSource::class );
+				assert( $source instanceof WordPressSitemapSource );
+				return new SitemapsController( $settings, $sitemap_settings, $indexnow, $robots, $source );
+			}
+		);
+
+		$this->container->singleton(
 			SettingsController::class,
 			static function ( Container $container ): SettingsController {
 				$settings = $container->get( Settings::class );
@@ -239,12 +296,15 @@ final class Plugin {
 				assert( $status_controller instanceof StatusController );
 				$ui_preferences_controller = $container->get( UiPreferencesController::class );
 				assert( $ui_preferences_controller instanceof UiPreferencesController );
+				$sitemaps_controller = $container->get( SitemapsController::class );
+				assert( $sitemaps_controller instanceof SitemapsController );
 
 				return new RestRegistry(
 					[
 						$settings_controller,
 						$status_controller,
 						$ui_preferences_controller,
+						$sitemaps_controller,
 					]
 				);
 			}

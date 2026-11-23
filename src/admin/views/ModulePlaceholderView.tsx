@@ -18,7 +18,7 @@ interface ModuleScreenMeta {
 }
 
 const SCREEN_META: Record<
-	Exclude< NavPageId, 'dashboard' | 'settings' >,
+	Exclude< NavPageId, 'dashboard' | 'settings' | 'sitemaps' >,
 	ModuleScreenMeta
 > = {
 	meta: {
@@ -63,25 +63,6 @@ const SCREEN_META: Record<
 			__( 'Unified JSON-LD @graph output', 'rankmyseo' ),
 			__( 'Automatic WooCommerce Product schema adapter', 'rankmyseo' ),
 			__( 'Per-post schema type overrides & filters', 'rankmyseo' ),
-		],
-	},
-	sitemaps: {
-		moduleId: 'sitemaps',
-		title: __( 'Sitemaps & Crawl', 'rankmyseo' ),
-		simpleTitle: __( 'Site Map & Search Engine Updates', 'rankmyseo' ),
-		simpleSummary: __(
-			'Keep an automatic map of your public pages and notify search engines right away when you publish updates.',
-			'rankmyseo'
-		),
-		advancedSummary: __(
-			'Paginated XML sitemaps replacing WP core sitemaps when enabled, virtual IndexNow key + async batch pings, virtual robots.txt editor, and crawl hygiene controls.',
-			'rankmyseo'
-		),
-		aiPrompt: __( 'How do sitemaps and crawl settings work?', 'rankmyseo' ),
-		highlights: [
-			__( 'Paginated XML sitemaps with noindex exclusion', 'rankmyseo' ),
-			__( 'Virtual IndexNow key and background pings', 'rankmyseo' ),
-			__( 'Safe virtual robots.txt controls', 'rankmyseo' ),
 		],
 	},
 	redirects: {
@@ -177,7 +158,7 @@ const SCREEN_META: Record<
 export function ModulePlaceholderView( {
 	pageId,
 }: {
-	pageId: Exclude< NavPageId, 'dashboard' | 'settings' >;
+	pageId: Exclude< NavPageId, 'dashboard' | 'settings' | 'sitemaps' >;
 } ): JSX.Element {
 	const { uiMode, modules, saving, toggleModule, openChat, navigateTo } =
 		useAdmin();
