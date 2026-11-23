@@ -13,6 +13,7 @@ use RankMySEO\Admin\AdminMenu;
 use RankMySEO\Core\OnboardingStore;
 use RankMySEO\Core\Settings;
 use RankMySEO\Database\Migrator;
+use RankMySEO\Modules\AiActions\AiServices;
 use RankMySEO\Modules\Analyzer\AnalyzerModule;
 use RankMySEO\Modules\Chat\ChatModule;
 use RankMySEO\Modules\Chat\LocalAssistant;
@@ -35,6 +36,7 @@ use RankMySEO\Modules\Sitemaps\SitemapSettings;
 use RankMySEO\Modules\Sitemaps\SitemapsModule;
 use RankMySEO\Modules\Sitemaps\WordPressSitemapSource;
 use RankMySEO\Modules\Sitemaps\WpIndexNowTransport;
+use RankMySEO\Rest\AiActionsController;
 use RankMySEO\Rest\ChatController;
 use RankMySEO\Rest\CloudController;
 use RankMySEO\Rest\MetaController;
@@ -222,6 +224,7 @@ final class Plugin {
 		);
 
 		CloudServices::register( $this->container );
+		AiServices::register( $this->container );
 
 		$this->container->singleton(
 			SitemapSettings::class,
@@ -448,6 +451,8 @@ final class Plugin {
 				assert( $meta_controller instanceof MetaController );
 				$cloud_controller = $container->get( CloudController::class );
 				assert( $cloud_controller instanceof CloudController );
+				$ai_controller = $container->get( AiActionsController::class );
+				assert( $ai_controller instanceof AiActionsController );
 
 				return new RestRegistry(
 					[
@@ -460,6 +465,7 @@ final class Plugin {
 						$chat_controller,
 						$meta_controller,
 						$cloud_controller,
+						$ai_controller,
 					]
 				);
 			}

@@ -17,6 +17,14 @@ if ( ! defined( 'ARRAY_A' ) ) {
 	define( 'ARRAY_A', 'ARRAY_A' );
 }
 
+if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
+	define( 'HOUR_IN_SECONDS', 3600 );
+}
+
+if ( ! defined( 'DAY_IN_SECONDS' ) ) {
+	define( 'DAY_IN_SECONDS', 86400 );
+}
+
 if ( ! defined( 'RANKMYSEO_VERSION' ) ) {
 	define( 'RANKMYSEO_VERSION', '0.1.0' );
 }
@@ -169,6 +177,9 @@ final class RankMySEO_Test_State {
 		'description' => 'A test site',
 	];
 
+	/** @var int */
+	public static int $next_post_id = 100;
+
 	public static function reset(): void {
 		self::$options           = [ 'blog_public' => '1' ];
 		self::$user_meta         = [];
@@ -223,6 +234,7 @@ final class RankMySEO_Test_State {
 			'name'        => 'Test Site',
 			'description' => 'A test site',
 		];
+		self::$next_post_id      = 100;
 		self::$roles             = [
 			'administrator' => new WP_Role( 'administrator', [ 'manage_options' => true, 'edit_posts' => true ] ),
 			'editor'        => new WP_Role( 'editor', [ 'edit_posts' => true ] ),
@@ -324,6 +336,16 @@ if ( ! class_exists( 'WP_REST_Request' ) ) {
 		/** @var array<string, string> */
 		private array $headers = [];
 
+		private string $raw_body = '';
+
+		public function set_body( string $body ): void {
+			$this->raw_body = $body;
+		}
+
+		public function get_body(): string {
+			return $this->raw_body;
+		}
+
 		/** @param array<string, mixed> $json_params */
 		public function set_json_params( array $json_params ): void {
 			$this->json_params = $json_params;
@@ -413,6 +435,10 @@ if ( ! class_exists( 'wpdb' ) ) {
 
 		/** @var list<array<string, mixed>> */
 		public array $sync_rows = [];
+
+		/** @var array<string, list<array<string, mixed>>> */
+		public array $table_rows = [];
+
 		/** @var list<string> */
 		public array $existing_tables = [];
 
@@ -448,7 +474,7 @@ if ( ! class_exists( 'wpdb' ) ) {
 			unset( $output );
 			$this->queries[] = $query;
 			if ( ! str_contains( $query, 'rankmyseo_sync_queue' ) ) {
-				return [];
+				return $this->match_table_rows( $query );
 			}
 			$rows = $this->sync_rows;
 			if ( preg_match_all( "/(\\w+)\\s*=\\s*'((?:\\\\'|[^'])*)'/", $query, $matches, PREG_SET_ORDER ) ) {
@@ -507,7 +533,17 @@ if ( ! class_exists( 'wpdb' ) ) {
 		public function insert( string $table, array $data, $format = null ) {
 			unset( $format );
 			if ( ! str_contains( $table, 'rankmyseo_sync_queue' ) ) {
-				return false;
+				if ( ! str_contains( $table, 'rankmyseo_' ) ) {
+					return false;
+				}
+				++$this->insert_id;
+				$row       = $data;
+				$row['id'] = $this->insert_id;
+				if ( ! isset( $this->table_rows[ $table ] ) ) {
+					$this->table_rows[ $table ] = [];
+				}
+				$this->table_rows[ $table ][] = $row;
+				return 1;
 			}
 			++$this->insert_id;
 			$row       = $data;
@@ -531,7 +567,18 @@ if ( ! class_exists( 'wpdb' ) ) {
 		public function update( string $table, array $data, array $where, $format = null, $where_format = null ): int {
 			unset( $format, $where_format );
 			if ( ! str_contains( $table, 'rankmyseo_sync_queue' ) ) {
-				return 0;
+				if ( ! isset( $this->table_rows[ $table ] ) ) {
+					return 0;
+				}
+				$count = 0;
+				foreach ( $this->table_rows[ $table ] as $index => $row ) {
+					if ( ! $this->row_matches_where( $row, $where ) ) {
+						continue;
+					}
+					$this->table_rows[ $table ][ $index ] = array_merge( $row, $data );
+					++$count;
+				}
+				return $count;
 			}
 			$id    = isset( $where['id'] ) ? (int) $where['id'] : 0;
 			$count = 0;
@@ -550,6 +597,9 @@ if ( ! class_exists( 'wpdb' ) ) {
 			if ( preg_match( "/SHOW TABLES LIKE '([^']+)'/", $query, $matches ) ) {
 				return in_array( $matches[1], $this->existing_tables, true ) ? $matches[1] : null;
 			}
+			if ( preg_match( '/count\s*\(/i', $query ) ) {
+				return (string) count( $this->match_table_rows( $query ) );
+			}
 			return null;
 		}
 
@@ -558,14 +608,94 @@ if ( ! class_exists( 'wpdb' ) ) {
 		 * @return mixed
 		 */
 		public function get_row( string $query, string $output = 'OBJECT' ) {
-			unset( $output );
-			$this->queries[] = $query;
-			return null;
+			$rows = $this->get_results( $query, is_string( $output ) ? $output : 'ARRAY_A' );
+			return $rows[0] ?? null;
 		}
 
 		public function query( string $query ): int {
 			$this->queries[] = $query;
 			return 1;
+		}
+
+		/**
+		 * @param array<string, mixed> $where
+		 * @param mixed                $where_format
+		 */
+		public function delete( string $table, array $where, $where_format = null ): int {
+			unset( $where_format );
+			if ( ! isset( $this->table_rows[ $table ] ) ) {
+				return 0;
+			}
+			$before                     = count( $this->table_rows[ $table ] );
+			$this->table_rows[ $table ] = array_values(
+				array_filter(
+					$this->table_rows[ $table ],
+					function ( array $row ) use ( $where ): bool {
+						return ! $this->row_matches_where( $row, $where );
+					}
+				)
+			);
+			return $before - count( $this->table_rows[ $table ] );
+		}
+
+		/**
+		 * @param array<string, mixed> $row
+		 * @param array<string, mixed> $where
+		 */
+		private function row_matches_where( array $row, array $where ): bool {
+			foreach ( $where as $column => $value ) {
+				if ( (string) ( $row[ $column ] ?? '' ) !== (string) $value ) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		/**
+		 * @return list<array<string, mixed>>
+		 */
+		private function match_table_rows( string $query ): array {
+			if ( ! preg_match( '/\bFROM\s+`?([A-Za-z0-9_]+)`?/i', $query, $found ) ) {
+				return [];
+			}
+			$table = $found[1];
+			$rows  = $this->table_rows[ $table ] ?? [];
+			if ( preg_match( '/\bWHERE\s+(.+?)(\s+ORDER\s+BY|\s+LIMIT\s+|$)/is', $query, $where_match ) ) {
+				$parts = preg_split( '/\s+AND\s+/i', trim( $where_match[1] ) );
+				$parts = is_array( $parts ) ? $parts : [];
+				foreach ( $parts as $part ) {
+					$part = trim( $part );
+					if ( preg_match( "/^([A-Za-z0-9_]+)\\s*=\\s*'((?:\\\\'|[^'])*)'$/", $part, $eq ) ) {
+						$column = $eq[1];
+						$value  = stripslashes( $eq[2] );
+						$rows   = array_values(
+							array_filter(
+								$rows,
+								static function ( array $row ) use ( $column, $value ): bool {
+									return (string) ( $row[ $column ] ?? '' ) === $value;
+								}
+							)
+						);
+						continue;
+					}
+					if ( preg_match( '/^([A-Za-z0-9_]+)\s*=\s*(-?\d+)$/', $part, $eq ) ) {
+						$column = $eq[1];
+						$value  = $eq[2];
+						$rows   = array_values(
+							array_filter(
+								$rows,
+								static function ( array $row ) use ( $column, $value ): bool {
+									return (string) ( $row[ $column ] ?? '' ) === $value;
+								}
+							)
+						);
+					}
+				}
+			}
+			if ( preg_match( '/\bLIMIT\s+(\d+)/i', $query, $limit ) ) {
+				$rows = array_slice( $rows, 0, (int) $limit[1] );
+			}
+			return $rows;
 		}
 
 		public function esc_like( string $text ): string {
@@ -1854,6 +1984,111 @@ if ( ! function_exists( 'rankmyseo_test_http_response' ) ) {
 			],
 			'cookies'  => [],
 		];
+	}
+}
+
+if ( ! function_exists( 'current_time' ) ) {
+	/**
+	 * @return string|int
+	 */
+	function current_time( string $type, bool $gmt = false ) {
+		unset( $gmt );
+		if ( 'timestamp' === $type || 'U' === $type ) {
+			return time();
+		}
+		return gmdate( 'Y-m-d H:i:s' );
+	}
+}
+
+if ( ! function_exists( 'wp_kses_post' ) ) {
+	function wp_kses_post( string $data ): string {
+		$clean = (string) preg_replace( '/<script\b[^>]*>.*?<\/script>/is', '', $data );
+		$clean = (string) preg_replace( '/<iframe\b[^>]*>.*?<\/iframe>/is', '', $clean );
+		return (string) preg_replace( '/\s+on[a-z]+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $clean );
+	}
+}
+
+if ( ! function_exists( 'wp_insert_post' ) ) {
+	/**
+	 * @param array<string, mixed> $postarr
+	 * @return int
+	 */
+	function wp_insert_post( array $postarr, bool $wp_error = false ) {
+		unset( $wp_error );
+		$id                              = ++RankMySEO_Test_State::$next_post_id;
+		RankMySEO_Test_State::$posts[] = (object) array(
+			'ID'           => $id,
+			'post_type'    => (string) ( $postarr['post_type'] ?? 'post' ),
+			'post_status'  => (string) ( $postarr['post_status'] ?? 'draft' ),
+			'post_title'   => (string) ( $postarr['post_title'] ?? '' ),
+			'post_content' => (string) ( $postarr['post_content'] ?? '' ),
+			'post_name'    => (string) ( $postarr['post_name'] ?? 'post' ),
+			'post_parent'  => (int) ( $postarr['post_parent'] ?? 0 ),
+		);
+		return $id;
+	}
+}
+
+if ( ! function_exists( 'wp_update_post' ) ) {
+	/**
+	 * @param array<string, mixed> $postarr
+	 * @return int
+	 */
+	function wp_update_post( array $postarr, bool $wp_error = false ) {
+		unset( $wp_error );
+		$id = (int) ( $postarr['ID'] ?? 0 );
+		foreach ( RankMySEO_Test_State::$posts as $index => $post ) {
+			if ( (int) $post->ID !== $id ) {
+				continue;
+			}
+			foreach ( $postarr as $key => $value ) {
+				if ( 'ID' === $key ) {
+					continue;
+				}
+				$post->{$key} = $value;
+			}
+			RankMySEO_Test_State::$posts[ $index ] = $post;
+			return $id;
+		}
+		return 0;
+	}
+}
+
+if ( ! function_exists( 'wp_delete_post' ) ) {
+	function wp_delete_post( int $post_id, bool $force_delete = false ): bool {
+		unset( $force_delete );
+		RankMySEO_Test_State::$posts = array_values(
+			array_filter(
+				RankMySEO_Test_State::$posts,
+				static function ( object $post ) use ( $post_id ): bool {
+					return (int) $post->ID !== $post_id;
+				}
+			)
+		);
+		unset( RankMySEO_Test_State::$post_meta[ $post_id ] );
+		return true;
+	}
+}
+
+if ( ! function_exists( 'wp_save_post_revision' ) ) {
+	/**
+	 * @return int
+	 */
+	function wp_save_post_revision( int $post_id ) {
+		$post = get_post( $post_id );
+		if ( ! is_object( $post ) ) {
+			return 0;
+		}
+		return wp_insert_post(
+			array(
+				'post_type'    => 'revision',
+				'post_status'  => 'inherit',
+				'post_title'   => (string) ( $post->post_title ?? '' ),
+				'post_content' => (string) ( $post->post_content ?? '' ),
+				'post_parent'  => $post_id,
+				'post_name'    => (string) $post_id . '-revision',
+			)
+		);
 	}
 }
 

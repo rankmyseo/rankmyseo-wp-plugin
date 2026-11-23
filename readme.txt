@@ -60,9 +60,9 @@ This plugin works 100% locally by default and does not connect to any external s
 
 = RankMySEO Cloud (Optional) =
 
-* **Service URLs**: `https://api.rankmyseo.com/wp/v1/pair/start`, `https://api.rankmyseo.com/wp/v1/pair/poll`, `https://api.rankmyseo.com/wp/v1/connection`, `https://api.rankmyseo.com/wp/v1/disconnect`, `https://api.rankmyseo.com/wp/v1/rotate-token`, `https://api.rankmyseo.com/wp/v1/sync/inventory`, `https://api.rankmyseo.com/wp/v1/sync/events`, `https://api.rankmyseo.com/wp/v1/insights`, and `https://api.rankmyseo.com/wp/v1/policy`. The approval page opened in the browser is the address RankMySEO returns with the pairing code.
-* **When data is sent**: Only after a site administrator clicks Connect and approves the pairing code. Inventory and event sync, insights, token rotation, and disconnect run after that. Nothing is sent while the site is disconnected.
-* **What data is sent**: Site URL, site name, WordPress and plugin versions during pairing, then public post URLs, titles, meta descriptions, focus keywords, and on-page scores during sync. The site token and webhook secret stay encrypted in WordPress and are not shown in the admin screen.
+* **Service URLs**: `https://api.rankmyseo.com/wp/v1/pair/start`, `https://api.rankmyseo.com/wp/v1/pair/poll`, `https://api.rankmyseo.com/wp/v1/connection`, `https://api.rankmyseo.com/wp/v1/disconnect`, `https://api.rankmyseo.com/wp/v1/rotate-token`, `https://api.rankmyseo.com/wp/v1/sync/inventory`, `https://api.rankmyseo.com/wp/v1/sync/events`, `https://api.rankmyseo.com/wp/v1/insights`, `https://api.rankmyseo.com/wp/v1/policy`, `https://api.rankmyseo.com/wp/v1/actions`, `https://api.rankmyseo.com/wp/v1/actions/generate`, `https://api.rankmyseo.com/wp/v1/actions/{id}/ack`, `https://api.rankmyseo.com/wp/v1/chat/message`, `https://api.rankmyseo.com/wp/v1/chat/progress`, and `https://api.rankmyseo.com/wp/v1/chat/thread`. The approval page opened in the browser is the address RankMySEO returns with the pairing code.
+* **When data is sent**: Only after a site administrator clicks Connect and approves the pairing code. Inventory and event sync, insights, suggested actions, chat, token rotation, and disconnect run after that. Nothing is sent while the site is disconnected. Chat waits for a person to send a message, then checks that reply with a short follow-up request instead of holding the connection open.
+* **What data is sent**: Site URL, site name, WordPress and plugin versions during pairing, then public post URLs, titles, meta descriptions, focus keywords, and on-page scores during sync. A chat message can include the question plus the current page URL, title, meta description, focus keyword, and score. The site token and webhook secret stay encrypted in WordPress and are not shown in the admin screen. Applying, skipping, or undoing a suggestion sends that outcome back to RankMySEO.
 * **Terms of Service**: [https://rankmyseo.com/terms](https://rankmyseo.com/terms)
 * **Privacy Policy**: [https://rankmyseo.com/privacy](https://rankmyseo.com/privacy)
 
@@ -79,6 +79,7 @@ This plugin works 100% locally by default and does not connect to any external s
 * Initial foundation release: plugin bootstrap, PSR-4 core container, module manager, settings storage, capabilities, versioned custom database migrations, REST API (`rankmyseo/v1`), dual-mode Simple/Advanced React admin shell, 3-step Setup Wizard shell, and local Ask AI assistant drawer.
 * Real-time on-page SEO score from 0 to 100, focus keyword checks, and a warning when another page targets the same keyword.
 * Optional RankMySEO Cloud pairing with encrypted token storage, inventory and event sync, and cached keyword insights.
+* AI approval queue with before-and-after previews, one-click undo, an opt-in auto-apply policy, an audit log, and connected chat action cards.
 
 == Upgrade Notice ==
 
