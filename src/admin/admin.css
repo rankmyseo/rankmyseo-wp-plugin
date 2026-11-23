@@ -1095,7 +1095,9 @@
 		width: 100%;
 	}
 
-	.rms-hours-row {
+	.rms-hours-row,
+	.rms-redirect-grid,
+	.rms-log-row {
 		grid-template-columns: 1fr;
 	}
 }
@@ -1161,4 +1163,105 @@
 	padding-left: 18px;
 	font-family: var(--rms-font-mono);
 	font-size: 12.5px;
+}
+
+/* Redirects & 404s */
+.rms-redirect-form,
+.rms-inline-actions,
+.rms-section-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 12px;
+}
+
+.rms-redirect-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px 16px;
+	align-items: end;
+}
+
+.rms-section-row {
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 12px;
+}
+
+.rms-tester {
+	margin-top: 16px;
+}
+
+.rms-match-toggle {
+	display: inline-flex;
+	gap: 4px;
+	padding: 3px;
+	border: 1px solid var(--rms-rule);
+	border-radius: var(--rms-radius-pill);
+	background: var(--rms-surface);
+}
+
+.rms-match-option {
+	border: 0;
+	border-radius: var(--rms-radius-pill);
+	background: transparent;
+	color: var(--rms-ink-muted);
+	font-size: 12.5px;
+	font-weight: 600;
+	padding: 6px 12px;
+	cursor: pointer;
+}
+
+.rms-match-option.is-active {
+	background: var(--rms-card);
+	color: var(--rms-ink);
+}
+
+.rms-table-wrap {
+	overflow-x: auto;
+	margin: 8px 0 16px;
+}
+
+.rms-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+}
+
+.rms-table th,
+.rms-table td {
+	padding: 8px 10px;
+	border-bottom: 1px solid var(--rms-rule);
+	text-align: left;
+	vertical-align: middle;
+}
+
+.rms-table th {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--rms-ink-muted);
+}
+
+.rms-log-list {
+	list-style: none;
+	margin: 0 0 12px;
+	padding: 0;
+}
+
+.rms-log-row {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: 12px;
+	align-items: center;
+	padding: 12px 0;
+	border-bottom: 1px solid var(--rms-rule);
+}
+
+.rms-note {
+	margin: 0 0 12px;
+	padding: 10px 12px;
+	border: 1px solid var(--rms-rule);
+	border-radius: var(--rms-radius-card);
+	background: var(--rms-surface);
+	color: var(--rms-ink);
 }
