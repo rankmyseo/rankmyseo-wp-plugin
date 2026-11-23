@@ -314,7 +314,9 @@ declare global {
 				open: () => void;
 				state: () => {
 					get: ( key: string ) => {
-						first: () => { toJSON: () => { url?: string } };
+						first: () => {
+							toJSON: () => { id?: number; url?: string };
+						};
 					};
 				};
 			};
