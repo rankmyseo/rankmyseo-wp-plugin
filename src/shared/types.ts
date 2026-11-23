@@ -175,6 +175,7 @@ declare global {
 			restRoot?: string;
 			nonce?: string;
 			askAiEvent?: string;
+			locale?: string;
 		};
 		rankmyseoClassic?: Window[ 'rankmyseoEditor' ] & {
 			postId?: number;

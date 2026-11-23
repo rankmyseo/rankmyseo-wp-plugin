@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace RankMySEO\Modules\Meta;
 
+use RankMySEO\Modules\Analyzer\ScoreBands;
+
 /**
  * Inline editing for search title, description, focus keyword, and noindex.
  */
@@ -98,17 +100,26 @@ final class QuickBulkEdit {
 		$score   = get_post_meta( $post_id, MetaKeys::SEO_SCORE, true );
 		$score   = is_numeric( $score ) ? (string) (int) $score : '';
 
+		$has_keyword = '' !== (string) $meta['focus_keyword'];
+		$band        = '' !== $score ? ScoreBands::band( (int) $score, $has_keyword ) : '';
+		$band_label  = '' !== $band ? ScoreBands::label( $band ) : '';
+
 		echo '<div class="rankmyseo-seo-col">';
 		echo '<span class="rankmyseo-score-slot" data-rankmyseo-analyzer-score="' . esc_attr( $score ) . '">';
 		if ( '' !== $score ) {
-			echo esc_html( $score );
+			printf(
+				'<span class="rankmyseo-score-pill %1$s"><span class="rankmyseo-score-value">%2$s</span> <span class="rankmyseo-score-label">%3$s</span></span>',
+				esc_attr( ScoreBands::css_class( $band ) ),
+				esc_html( $score ),
+				esc_html( $band_label )
+			);
 		} else {
 			echo '<span aria-hidden="true">—</span>';
 			echo '<span class="screen-reader-text">' . esc_html__( 'No score yet', 'rankmyseo' ) . '</span>';
 		}
 		echo '</span>';
 
-		if ( '' !== (string) $meta['focus_keyword'] ) {
+		if ( $has_keyword ) {
 			echo '<span class="rankmyseo-focus">' . esc_html( (string) $meta['focus_keyword'] ) . '</span>';
 		}
 

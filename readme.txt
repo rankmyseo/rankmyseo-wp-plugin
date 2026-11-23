@@ -77,6 +77,7 @@ This plugin works 100% locally by default and does not connect to any external s
 
 = 0.1.0 =
 * Initial foundation release: plugin bootstrap, PSR-4 core container, module manager, settings storage, capabilities, versioned custom database migrations, REST API (`rankmyseo/v1`), dual-mode Simple/Advanced React admin shell, 3-step Setup Wizard shell, and local Ask AI assistant drawer.
+* Real-time on-page SEO score from 0 to 100, focus keyword checks, and a warning when another page targets the same keyword.
 
 == Upgrade Notice ==
 

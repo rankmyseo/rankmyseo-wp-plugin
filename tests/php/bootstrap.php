@@ -307,6 +307,20 @@ if ( ! function_exists( 'esc_html' ) ) {
 	}
 }
 
+if ( ! function_exists( 'esc_html__' ) ) {
+	function esc_html__( string $text, string $domain = 'default' ): string {
+		unset( $domain );
+		return esc_html( $text );
+	}
+}
+
+if ( ! function_exists( 'esc_attr__' ) ) {
+	function esc_attr__( string $text, string $domain = 'default' ): string {
+		unset( $domain );
+		return esc_attr( $text );
+	}
+}
+
 if ( ! function_exists( 'esc_sql' ) ) {
 	/**
 	 * @param mixed $data
@@ -745,6 +759,131 @@ if ( ! function_exists( 'register_post_meta' ) ) {
 			'args'        => $args,
 		];
 		return true;
+	}
+}
+
+if ( ! function_exists( 'get_locale' ) ) {
+	function get_locale(): string {
+		return 'en_US';
+	}
+}
+
+if ( ! function_exists( 'absint' ) ) {
+	/** @param mixed $maybeint */
+	function absint( $maybeint ): int {
+		return abs( (int) $maybeint );
+	}
+}
+
+if ( ! function_exists( 'is_admin' ) ) {
+	function is_admin(): bool {
+		return RankMySEO_Test_State::$is_admin;
+	}
+}
+
+if ( ! function_exists( 'admin_url' ) ) {
+	function admin_url( string $path = '' ): string {
+		return 'https://example.com/wp-admin/' . ltrim( $path, '/' );
+	}
+}
+
+if ( ! function_exists( 'get_edit_post_link' ) ) {
+	/** @param mixed $post */
+	function get_edit_post_link( $post, string $context = 'display' ): string {
+		unset( $context );
+		$id = is_object( $post ) ? (int) $post->ID : (int) $post;
+		return admin_url( 'post.php?post=' . $id . '&action=edit' );
+	}
+}
+
+if ( ! function_exists( 'get_registered_meta_keys' ) ) {
+	/** @return array<string, array<string, mixed>> */
+	function get_registered_meta_keys( string $object_type, string $object_subtype = '' ): array {
+		$keys = [];
+		foreach ( RankMySEO_Test_State::$registered_meta as $entry ) {
+			if ( ( $entry['object_type'] ?? '' ) !== $object_type ) {
+				continue;
+			}
+			if ( '' !== $object_subtype && ( $entry['object'] ?? '' ) !== $object_subtype ) {
+				continue;
+			}
+			$key = (string) ( $entry['key'] ?? '' );
+			if ( '' !== $key ) {
+				$keys[ $key ] = is_array( $entry['args'] ?? null ) ? $entry['args'] : [];
+			}
+		}
+		return $keys;
+	}
+}
+
+if ( ! function_exists( 'get_posts' ) ) {
+	/**
+	 * @param array<string, mixed> $args Query args.
+	 * @return list<WP_Post>
+	 */
+	function get_posts( array $args = [] ): array {
+		$types   = (array) ( $args['post_type'] ?? [ 'post' ] );
+		$status  = (array) ( $args['post_status'] ?? [ 'publish' ] );
+		$exclude = array_map( 'intval', (array) ( $args['post__not_in'] ?? [] ) );
+		$meta    = (string) ( $args['meta_key'] ?? '' );
+		$limit   = (int) ( $args['posts_per_page'] ?? 5 );
+		$found   = [];
+		foreach ( RankMySEO_Test_State::$posts as $post ) {
+			if ( ! in_array( $post->post_type, $types, true ) ) {
+				continue;
+			}
+			if ( ! in_array( $post->post_status, $status, true ) ) {
+				continue;
+			}
+			if ( in_array( (int) $post->ID, $exclude, true ) ) {
+				continue;
+			}
+			if ( '' !== $meta ) {
+				$stored = RankMySEO_Test_State::$post_meta[ $post->ID ][ $meta ] ?? '';
+				if ( '' === trim( (string) $stored ) ) {
+					continue;
+				}
+			}
+			$found[] = $post;
+			if ( $limit > 0 && count( $found ) >= $limit ) {
+				break;
+			}
+		}
+		return $found;
+	}
+}
+
+if ( ! function_exists( 'selected' ) ) {
+	/** @param mixed $selected @param mixed $current */
+	function selected( $selected, $current = true, bool $display = true ): string {
+		$result = (string) $selected === (string) $current ? ' selected="selected"' : '';
+		if ( $display ) {
+			echo $result; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Boolean attribute.
+		}
+		return $result;
+	}
+}
+
+if ( ! class_exists( 'WP_Query' ) ) {
+	class WP_Query {
+		/** @var array<string, mixed> */
+		public array $query_vars = [];
+
+		public bool $main_query = true;
+
+		public function is_main_query(): bool {
+			return $this->main_query;
+		}
+
+		/** @return mixed */
+		public function get( string $key ) {
+			return $this->query_vars[ $key ] ?? '';
+		}
+
+		/** @param mixed $value */
+		public function set( string $key, $value ): void {
+			$this->query_vars[ $key ] = $value;
+		}
 	}
 }
 
