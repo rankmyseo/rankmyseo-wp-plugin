@@ -107,5 +107,7 @@ jobs:
       - name: Run WordPress Plugin Check
         uses: WordPress/plugin-check-action@v1
         with:
+          # Directory name is the GitHub repo; the WordPress.org text domain is rankmyseo.
+          slug: rankmyseo
           exclude-directories: '.git,.github,node_modules,tests,vendor'
           exclude-files: '.eslintrc.js,.gitignore,.stylelintrc.json,.wp-env.json,composer.json,composer.lock,jest.config.js,package.json,package-lock.json,phpcs.xml.dist,phpstan-bootstrap.php,phpstan.neon.dist,phpunit.xml.dist,README.md,tsconfig.json,webpack.config.js'

@@ -264,6 +264,19 @@ if ( ! function_exists( 'esc_html' ) ) {
 	}
 }
 
+if ( ! function_exists( 'esc_sql' ) ) {
+	/**
+	 * @param mixed $data
+	 * @return mixed
+	 */
+	function esc_sql( $data ) {
+		if ( is_array( $data ) ) {
+			return array_map( 'esc_sql', $data );
+		}
+		return addslashes( (string) $data );
+	}
+}
+
 if ( ! function_exists( 'sanitize_key' ) ) {
 	function sanitize_key( string $key ): string {
 		return (string) preg_replace( '/[^a-z0-9_\-]/', '', strtolower( $key ) );

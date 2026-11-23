@@ -129,17 +129,12 @@ final class Migrator {
 	 * @return void
 	 */
 	public function drop_tables(): void {
-		$tables = Schema::get_table_names( $this->wpdb->prefix );
+		foreach ( Schema::TABLE_SUFFIXES as $suffix ) {
+			$table_name = esc_sql( $this->wpdb->prefix . $suffix );
 
-		foreach ( $tables as $table_name ) {
-			$escaped = preg_replace( '/[^a-zA-Z0-9_]/', '', $table_name );
-			if ( ! is_string( $escaped ) || '' === $escaped ) {
-				continue;
-			}
-
-			// Table names come strictly from Schema::TABLE_SUFFIXES + sanitized prefix.
+			// Table names come from the fixed Schema::TABLE_SUFFIXES allowlist.
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$this->wpdb->query( "DROP TABLE IF EXISTS `{$escaped}`" );
+			$this->wpdb->query( "DROP TABLE IF EXISTS `{$table_name}`" );
 		}
 
 		delete_option( self::OPTION_DB_VERSION );
