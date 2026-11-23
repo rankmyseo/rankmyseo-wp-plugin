@@ -6,6 +6,7 @@ import { Navigation } from './components/Navigation';
 import { SetupWizard } from './components/SetupWizard';
 import { AdminProvider, useAdmin } from './context/AdminContext';
 import { DashboardView } from './views/DashboardView';
+import { ImporterView } from './views/ImporterView';
 import { ModulePlaceholderView } from './views/ModulePlaceholderView';
 import { RedirectsView } from './views/redirects/RedirectsView';
 import { SchemaView } from './views/SchemaView';
@@ -38,6 +39,9 @@ function AdminShell(): JSX.Element {
 		}
 		if ( activePage === 'redirects' ) {
 			return <RedirectsView />;
+		}
+		if ( activePage === 'import' ) {
+			return <ImporterView />;
 		}
 		return <ModulePlaceholderView pageId={ activePage } />;
 	};
