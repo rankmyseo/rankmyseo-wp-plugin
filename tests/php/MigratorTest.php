@@ -32,6 +32,8 @@ final class MigratorTest extends TestCase {
 			'audit_logs',
 			'sync_queue',
 			'import_backups',
+			'link_edges',
+			'link_counts',
 		];
 
 		$this->assertSame( $expected_keys, array_keys( $sqls ) );
@@ -39,7 +41,13 @@ final class MigratorTest extends TestCase {
 		foreach ( $sqls as $key => $sql ) {
 			$expected_table = Schema::get_table_name( $key, 'wp_' );
 			$this->assertStringContainsString( "CREATE TABLE {$expected_table}", $sql );
-			$this->assertStringContainsString( 'PRIMARY KEY  (id)', $sql );
+			if ( 'link_edges' === $key ) {
+				$this->assertStringContainsString( 'PRIMARY KEY  (source_id, target_id)', $sql );
+			} elseif ( 'link_counts' === $key ) {
+				$this->assertStringContainsString( 'PRIMARY KEY  (post_id)', $sql );
+			} else {
+				$this->assertStringContainsString( 'PRIMARY KEY  (id)', $sql );
+			}
 			$this->assertStringContainsString( 'DEFAULT CHARACTER SET utf8mb4', $sql );
 		}
 	}
@@ -50,9 +58,9 @@ final class MigratorTest extends TestCase {
 	}
 
 	public function test_migrator_runs_dbdelta_updates_version_and_is_idempotent(): void {
-		$wpdb      = new wpdb();
-		$executed  = [];
-		$migrator  = new Migrator(
+		$wpdb     = new wpdb();
+		$executed = [];
+		$migrator = new Migrator(
 			$wpdb,
 			static function ( string $sql ) use ( &$executed ): void {
 				$executed[] = $sql;

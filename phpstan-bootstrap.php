@@ -12,7 +12,7 @@ if ( ! defined( 'RANKMYSEO_VERSION' ) ) {
 }
 
 if ( ! defined( 'RANKMYSEO_DB_VERSION' ) ) {
-	define( 'RANKMYSEO_DB_VERSION', 1 );
+	define( 'RANKMYSEO_DB_VERSION', 2 );
 }
 
 if ( ! defined( 'RANKMYSEO_FILE' ) ) {

@@ -15,6 +15,7 @@ export interface SeoFields {
 	canonical: string;
 	focusKeyword: string;
 	secondaryKeywords: string[];
+	cornerstone: boolean;
 	robots: RobotsValue;
 	ogTitle: string;
 	ogDescription: string;
@@ -51,6 +52,7 @@ export function emptyFields(): SeoFields {
 		canonical: '',
 		focusKeyword: '',
 		secondaryKeywords: [],
+		cornerstone: false,
 		robots: defaultRobots(),
 		ogTitle: '',
 		ogDescription: '',
@@ -138,6 +140,9 @@ export function fieldsFromRecord(
 			pick( record, 'focus_keyword', '_rankmyseo_focus_keyword' )
 		),
 		secondaryKeywords: list.slice( 0, 5 ),
+		cornerstone: asBool(
+			pick( record, 'cornerstone', '_rankmyseo_cornerstone' )
+		),
 		robots: robotsFromUnknown(
 			pick( record, 'robots', '_rankmyseo_robots' )
 		),
@@ -172,6 +177,7 @@ export function metaPatchFromFields(
 		_rankmyseo_canonical: fields.canonical,
 		_rankmyseo_focus_keyword: fields.focusKeyword,
 		_rankmyseo_secondary_keywords: fields.secondaryKeywords,
+		_rankmyseo_cornerstone: fields.cornerstone,
 		_rankmyseo_robots: fields.robots,
 		_rankmyseo_og_title: fields.ogTitle,
 		_rankmyseo_og_description: fields.ogDescription,

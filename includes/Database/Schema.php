@@ -16,7 +16,7 @@ final class Schema {
 	/**
 	 * Current database schema version.
 	 */
-	public const DB_VERSION = 1;
+	public const DB_VERSION = 2;
 
 	/**
 	 * Logical table keys mapped to their unprefixed suffixes.
@@ -31,6 +31,8 @@ final class Schema {
 		'audit_logs'     => 'rankmyseo_audit_logs',
 		'sync_queue'     => 'rankmyseo_sync_queue',
 		'import_backups' => 'rankmyseo_import_backups',
+		'link_edges'     => 'rankmyseo_link_edges',
+		'link_counts'    => 'rankmyseo_link_counts',
 	];
 
 	/**
@@ -206,6 +208,23 @@ final class Schema {
 				PRIMARY KEY  (id),
 				KEY batch_id (batch_id),
 				KEY source_object (source_plugin, object_type, object_id)
+			) {$charset_collate};",
+
+			'link_edges'     => "CREATE TABLE {$tables['link_edges']} (
+				source_id bigint(20) unsigned NOT NULL,
+				target_id bigint(20) unsigned NOT NULL,
+				PRIMARY KEY  (source_id, target_id),
+				KEY target_id (target_id)
+			) {$charset_collate};",
+
+			'link_counts'    => "CREATE TABLE {$tables['link_counts']} (
+				post_id bigint(20) unsigned NOT NULL,
+				outgoing_count int(10) unsigned NOT NULL DEFAULT 0,
+				incoming_count int(10) unsigned NOT NULL DEFAULT 0,
+				is_cornerstone tinyint(1) unsigned NOT NULL DEFAULT 0,
+				updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				PRIMARY KEY  (post_id),
+				KEY incoming_count (incoming_count)
 			) {$charset_collate};",
 		];
 	}

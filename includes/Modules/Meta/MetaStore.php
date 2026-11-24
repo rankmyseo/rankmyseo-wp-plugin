@@ -90,6 +90,7 @@ final class MetaStore {
 			'robots'              => $robots_set ? Robots::sanitize( $this->raw_meta( $object_type, $object_id, MetaKeys::ROBOTS ) ) : null,
 			'focus_keyword'       => $this->string_meta( $object_type, $object_id, MetaKeys::FOCUS_KEYWORD ),
 			'secondary_keywords'  => MetaSanitizer::sanitize_keywords( $this->raw_meta( $object_type, $object_id, MetaKeys::SECONDARY_KEYWORDS ) ),
+			'cornerstone'         => MetaSanitizer::sanitize_bool( $this->raw_meta( $object_type, $object_id, MetaKeys::CORNERSTONE ) ),
 			'og_title'            => $this->string_meta( $object_type, $object_id, MetaKeys::OG_TITLE ),
 			'og_description'      => $this->string_meta( $object_type, $object_id, MetaKeys::OG_DESCRIPTION ),
 			'og_image'            => $this->string_meta( $object_type, $object_id, MetaKeys::OG_IMAGE ),
@@ -136,6 +137,12 @@ final class MetaStore {
 			$this->delete( $object_type, $object_id, MetaKeys::SECONDARY_KEYWORDS );
 		} else {
 			$this->update( $object_type, $object_id, MetaKeys::SECONDARY_KEYWORDS, $keywords );
+		}
+
+		if ( ! empty( $bundle['cornerstone'] ) ) {
+			$this->update( $object_type, $object_id, MetaKeys::CORNERSTONE, '1' );
+		} else {
+			$this->delete( $object_type, $object_id, MetaKeys::CORNERSTONE );
 		}
 
 		$robots = isset( $bundle['robots'] ) && is_array( $bundle['robots'] )

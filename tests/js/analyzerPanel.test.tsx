@@ -61,6 +61,7 @@ describe( 'analyzer panel', () => {
 			screen.getByText( /Focus keyword is empty/ )
 		).toBeInTheDocument();
 		expect( screen.getAllByText( 'Critical' ).length ).toBeGreaterThan( 0 );
+		expect( screen.getByText( /Focus:/ ) ).toBeInTheDocument();
 		expect( screen.getAllByText( 'Improve' ).length ).toBeGreaterThan( 0 );
 	} );
 

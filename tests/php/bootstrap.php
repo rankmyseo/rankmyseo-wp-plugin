@@ -30,7 +30,7 @@ if ( ! defined( 'RANKMYSEO_VERSION' ) ) {
 }
 
 if ( ! defined( 'RANKMYSEO_DB_VERSION' ) ) {
-	define( 'RANKMYSEO_DB_VERSION', 1 );
+	define( 'RANKMYSEO_DB_VERSION', 2 );
 }
 
 if ( ! defined( 'RANKMYSEO_DIR' ) ) {
@@ -812,6 +812,13 @@ if ( ! function_exists( '__' ) ) {
 	function __( string $text, string $domain = 'default' ): string {
 		unset( $domain );
 		return $text;
+	}
+}
+
+if ( ! function_exists( '_n' ) ) {
+	function _n( string $single, string $plural, int $number, string $domain = 'default' ): string {
+		unset( $domain );
+		return 1 === $number ? $single : $plural;
 	}
 }
 

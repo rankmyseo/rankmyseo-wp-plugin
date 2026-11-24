@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace RankMySEO\Modules\Analyzer;
 
 use RankMySEO\Modules\Meta\MetaKeys;
+use RankMySEO\Modules\Meta\MetaSanitizer;
 use RankMySEO\Modules\Meta\TemplateContext;
 use RankMySEO\Modules\Meta\TemplateEngine;
 use RankMySEO\Modules\Meta\TitleSettings;
@@ -127,16 +128,20 @@ final class ScorePersister {
 			]
 		);
 
+		$cornerstone = get_post_meta( (int) $post->ID, MetaKeys::CORNERSTONE, true );
+
 		return [
-			'focus_keyword'    => $keyword,
-			'seo_title'        => $this->templates->replace( '' !== $meta_title ? $meta_title : '%title% %sep% %sitename%', $context ),
-			'meta_description' => $this->templates->replace( '' !== $meta_desc ? $meta_desc : '%excerpt%', $context ),
-			'slug'             => $post->post_name,
-			'content_html'     => $post->post_content,
-			'post_type'        => $post->post_type,
-			'locale'           => function_exists( 'get_locale' ) ? (string) get_locale() : 'en',
-			'noindex'          => is_array( $robots ) && ! empty( $robots['noindex'] ),
-			'site_url'         => home_url( '/' ),
+			'focus_keyword'      => $keyword,
+			'secondary_keywords' => MetaSanitizer::sanitize_keywords( get_post_meta( (int) $post->ID, MetaKeys::SECONDARY_KEYWORDS, true ) ),
+			'seo_title'          => $this->templates->replace( '' !== $meta_title ? $meta_title : '%title% %sep% %sitename%', $context ),
+			'meta_description'   => $this->templates->replace( '' !== $meta_desc ? $meta_desc : '%excerpt%', $context ),
+			'slug'               => $post->post_name,
+			'content_html'       => $post->post_content,
+			'post_type'          => $post->post_type,
+			'locale'             => function_exists( 'get_locale' ) ? (string) get_locale() : 'en',
+			'noindex'            => is_array( $robots ) && ! empty( $robots['noindex'] ),
+			'site_url'           => home_url( '/' ),
+			'cornerstone'        => true === $cornerstone || 1 === $cornerstone || '1' === (string) $cornerstone,
 		];
 	}
 }

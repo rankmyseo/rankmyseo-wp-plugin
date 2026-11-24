@@ -61,7 +61,15 @@ final class AnalyzerTest extends TestCase {
 		$this->assertSame( 0, AnalyzerMeta::sanitize_score( -4 ) );
 		$this->assertSame( 100, AnalyzerMeta::sanitize_score( 140 ) );
 		$this->assertSame( '', AnalyzerMeta::sanitize_summary( 'not-json' ) );
-		$this->assertStringContainsString( 'good', AnalyzerMeta::sanitize_summary( [ 'band' => 'good', 'score' => 90 ] ) );
+		$this->assertStringContainsString(
+			'good',
+			AnalyzerMeta::sanitize_summary(
+				[
+					'band'  => 'good',
+					'score' => 90,
+				]
+			)
+		);
 	}
 
 	public function test_analyzer_registers_the_focus_keyword_when_meta_has_not(): void {
@@ -81,7 +89,7 @@ final class AnalyzerTest extends TestCase {
 				'content_html'     => '',
 			]
 		);
-		$max = 0;
+		$max        = 0;
 		foreach ( $empty['checks'] as $check ) {
 			$max += (int) $check['max_score'];
 		}
@@ -126,7 +134,7 @@ final class AnalyzerTest extends TestCase {
 				[ 'locale' => 'id_ID' ]
 			)
 		);
-		$reading = $this->check( $indonesian, 'readability' );
+		$reading    = $this->check( $indonesian, 'readability' );
 		$this->assertSame( 3, $reading['score'] );
 		$this->assertNull( $indonesian['summary']['flesch_reading_ease'] );
 
@@ -136,14 +144,14 @@ final class AnalyzerTest extends TestCase {
 	}
 
 	public function test_save_post_persists_a_score_and_skips_unauthorized_edits(): void {
-		$post                 = new WP_Post();
-		$post->ID             = 5;
-		$post->post_title     = 'Garden tools';
-		$post->post_name      = 'garden-tools';
-		$post->post_type      = 'post';
-		$post->post_status    = 'publish';
-		$post->post_excerpt   = 'Garden tools that help small yards stay tidy. Compare pruners, gloves, and hand tools for everyday planting and weekend care today.';
-		$post->post_content   = (string) $this->strong_input()['content_html'];
+		$post                           = new WP_Post();
+		$post->ID                       = 5;
+		$post->post_title               = 'Garden tools';
+		$post->post_name                = 'garden-tools';
+		$post->post_type                = 'post';
+		$post->post_status              = 'publish';
+		$post->post_excerpt             = 'Garden tools that help small yards stay tidy. Compare pruners, gloves, and hand tools for everyday planting and weekend care today.';
+		$post->post_content             = (string) $this->strong_input()['content_html'];
 		RankMySEO_Test_State::$posts[5] = $post;
 		update_post_meta( 5, MetaKeys::FOCUS_KEYWORD, 'garden tools' );
 		update_post_meta( 5, MetaKeys::TITLE, 'Garden tools for small city yards' );
@@ -252,6 +260,103 @@ final class AnalyzerTest extends TestCase {
 		$this->assertStringContainsString( '84', $html );
 		$this->assertStringContainsString( 'Good', $html );
 		$this->assertStringContainsString( 'garden tools', $html );
+		$this->assertStringNotContainsString( 'rankmyseo-cornerstone', $html );
+
+		update_post_meta( 3, MetaKeys::CORNERSTONE, '1' );
+		ob_start();
+		( new QuickBulkEdit( new MetaStore() ) )->render_column( 'rankmyseo', 3 );
+		$badge = (string) ob_get_clean();
+		$this->assertStringContainsString( 'rankmyseo-cornerstone', $badge );
+		$this->assertStringContainsString( 'Cornerstone', $badge );
+
+		$_GET['rankmyseo_seo_filter'] = 'cornerstone';
+		$this->assertSame( 'cornerstone', $column->requested_filter() );
+		$filtered = new WP_Query();
+		$column->apply_query( $filtered, 'cornerstone' );
+		$this->assertSame( MetaKeys::CORNERSTONE, $filtered->get( 'meta_query' )[0]['key'] );
+		$this->assertSame( '1', $filtered->get( 'meta_query' )[0]['value'] );
+	}
+
+	public function test_secondary_keywords_and_english_word_forms_change_the_score(): void {
+		$calculator = new ScoreCalculator();
+		$primary    = $calculator->analyze( $this->strong_input() );
+		$blended    = $calculator->analyze(
+			array_merge(
+				$this->strong_input(),
+				[ 'secondary_keywords' => [ 'unrelated quartz mineral' ] ]
+			)
+		);
+		$this->assertSame( $primary['score'], $blended['primary_score'] );
+		$this->assertCount( 2, $blended['keywords'] );
+		$this->assertSame( 'secondary', $blended['keywords'][1]['role'] );
+		$this->assertSame( 'critical', $blended['keywords'][1]['status'] );
+		$this->assertSame( (int) round( $primary['score'] * 0.8 ), $blended['score'] );
+		$this->assertCount( 20, $blended['checks'] );
+
+		$english = $calculator->analyze(
+			[
+				'focus_keyword'    => 'running shoes',
+				'seo_title'        => 'Run shoe guide for city trails today',
+				'meta_description' => '',
+				'slug'             => 'running-shoes',
+				'locale'           => 'en_US',
+				'content_html'     => '<h1>Running shoes</h1><p>Running shoes help.</p>',
+			]
+		);
+		$this->assertSame( 'pass', $this->check( $english, 'keyword_in_title' )['status'] );
+
+		$synonym = $calculator->analyze(
+			[
+				'focus_keyword'    => 'buy',
+				'seo_title'        => 'Purchase garden tools today',
+				'meta_description' => '',
+				'slug'             => 'buy',
+				'locale'           => 'en_US',
+				'content_html'     => '<p>Purchase one set.</p>',
+			]
+		);
+		$this->assertTrue( $this->check( $synonym, 'keyword_in_title' )['metrics']['present'] );
+
+		$indonesian = $calculator->analyze(
+			[
+				'focus_keyword'    => 'buy',
+				'seo_title'        => 'Purchase garden tools today',
+				'meta_description' => '',
+				'slug'             => 'buy',
+				'locale'           => 'id_ID',
+				'content_html'     => '<p>Purchase one set. Buy stays exact.</p>',
+			]
+		);
+		$this->assertFalse( $this->check( $indonesian, 'keyword_in_title' )['metrics']['present'] );
+		$this->assertTrue( $this->check( $indonesian, 'keyword_in_intro' )['metrics']['present'] );
+
+		$forms = new \RankMySEO\Modules\Analyzer\WordForms();
+		$this->assertTrue( $forms->contains( 'Visit the city', 'cities', true ) );
+		$this->assertFalse( $forms->contains( 'Visit the city', 'cities', false ) );
+	}
+
+	public function test_cornerstone_pages_need_more_words_and_links(): void {
+		$input                 = $this->strong_input();
+		$input['content_html'] = '<h1>Garden tools</h1><p>Garden tools help a small yard.</p>';
+		$calculator            = new ScoreCalculator();
+		$normal                = $calculator->analyze( $input );
+		$pillar                = $calculator->analyze( array_merge( $input, [ 'cornerstone' => true ] ) );
+		$this->assertSame( 300, $this->check( $normal, 'word_count' )['metrics']['target'] );
+		$this->assertSame( 900, $this->check( $pillar, 'word_count' )['metrics']['target'] );
+		$this->assertSame( 'critical', $this->check( $pillar, 'internal_links' )['status'] );
+		$this->assertSame( 0, $this->check( $pillar, 'internal_links' )['score'] );
+
+		$linked = $calculator->analyze(
+			array_merge(
+				$input,
+				[
+					'cornerstone'  => true,
+					'content_html' => $input['content_html'] . '<p><a href="/a">A</a> <a href="/b">B</a> <a href="/c">C</a></p>',
+				]
+			)
+		);
+		$this->assertSame( 3, $this->check( $linked, 'internal_links' )['score'] );
+		$this->assertSame( 'pass', $this->check( $linked, 'internal_links' )['status'] );
 	}
 
 	/**
@@ -323,12 +428,12 @@ final class AnalyzerTest extends TestCase {
 	 * @return void
 	 */
 	private function seed_post( int $id, string $title, string $slug, string $status, string $keyword ): void {
-		$post              = new WP_Post();
-		$post->ID          = $id;
-		$post->post_title  = $title;
-		$post->post_name   = $slug;
-		$post->post_status = $status;
-		$post->post_type   = 'page';
+		$post                               = new WP_Post();
+		$post->ID                           = $id;
+		$post->post_title                   = $title;
+		$post->post_name                    = $slug;
+		$post->post_status                  = $status;
+		$post->post_type                    = 'page';
 		RankMySEO_Test_State::$posts[ $id ] = $post;
 		update_post_meta( $id, MetaKeys::FOCUS_KEYWORD, $keyword );
 	}

@@ -14,6 +14,7 @@ use RankMySEO\Database\Migrator;
 use RankMySEO\Modules\Chat\LocalAssistant;
 use RankMySEO\Modules\Chat\SiteHealth;
 use RankMySEO\Modules\Chat\SiteIndex;
+use RankMySEO\Modules\Links\LinkIndexer;
 use RankMySEO\Modules\ModuleManager;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -58,26 +59,36 @@ final class DashboardController extends AbstractController {
 	private Migrator $migrator;
 
 	/**
+	 * Local link index.
+	 *
+	 * @var LinkIndexer|null
+	 */
+	private ?LinkIndexer $links;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param LocalAssistant  $assistant  Local assistant.
-	 * @param SiteIndex       $index      Site index.
-	 * @param OnboardingStore $onboarding Onboarding store.
-	 * @param ModuleManager   $modules    Module manager.
-	 * @param Migrator        $migrator   Database migrator.
+	 * @param LocalAssistant   $assistant  Local assistant.
+	 * @param SiteIndex        $index      Site index.
+	 * @param OnboardingStore  $onboarding Onboarding store.
+	 * @param ModuleManager    $modules    Module manager.
+	 * @param Migrator         $migrator   Database migrator.
+	 * @param LinkIndexer|null $links     Optional link index.
 	 */
 	public function __construct(
 		LocalAssistant $assistant,
 		SiteIndex $index,
 		OnboardingStore $onboarding,
 		ModuleManager $modules,
-		Migrator $migrator
+		Migrator $migrator,
+		?LinkIndexer $links = null
 	) {
 		$this->assistant  = $assistant;
 		$this->index      = $index;
 		$this->onboarding = $onboarding;
 		$this->modules    = $modules;
 		$this->migrator   = $migrator;
+		$this->links      = $links;
 	}
 
 	/**
@@ -119,9 +130,12 @@ final class DashboardController extends AbstractController {
 					'thin_posts'           => $signals['thin_posts'],
 					'low_scores'           => $signals['low_scores'],
 					'open_404s'            => $signals['open_404s'],
+					'orphans'              => (int) ( $signals['orphans'] ?? 0 ),
+					'cornerstone'          => (int) ( $signals['cornerstones'] ?? 0 ),
 					'redirects_total'      => (int) $redirects['total'],
 					'redirects_active'     => (int) $redirects['active'],
 				],
+				'orphans'              => $this->links instanceof LinkIndexer ? $this->links->list_orphans( 5 ) : [],
 				'fixes'                => $this->build_fixes( $signals ),
 				'modules'              => $this->modules->get_catalog(),
 				'audit'                => [
@@ -173,7 +187,12 @@ final class DashboardController extends AbstractController {
 				'missing_descriptions',
 				sprintf(
 					/* translators: %d: number of published posts or pages. */
-					__( '%d published items are missing a search description', 'rankmyseo' ),
+					_n(
+						'%d published item is missing a search description',
+						'%d published items are missing a search description',
+						(int) $signals['missing_descriptions'],
+						'rankmyseo'
+					),
 					$signals['missing_descriptions']
 				),
 				__( 'A short description under the title helps searchers decide to click.', 'rankmyseo' ),
@@ -188,7 +207,12 @@ final class DashboardController extends AbstractController {
 				'missing_titles',
 				sprintf(
 					/* translators: %d: number of published posts or pages. */
-					__( '%d published items are missing an SEO title', 'rankmyseo' ),
+					_n(
+						'%d published item is missing an SEO title',
+						'%d published items are missing an SEO title',
+						(int) $signals['missing_titles'],
+						'rankmyseo'
+					),
 					$signals['missing_titles']
 				),
 				__( 'A custom SEO title can lead with the topic instead of repeating only the page name.', 'rankmyseo' ),
@@ -203,7 +227,12 @@ final class DashboardController extends AbstractController {
 				'thin_posts',
 				sprintf(
 					/* translators: %d: number of thin published posts or pages. */
-					__( '%d published items look thin', 'rankmyseo' ),
+					_n(
+						'%d published item looks thin',
+						'%d published items look thin',
+						(int) $signals['thin_posts'],
+						'rankmyseo'
+					),
 					$signals['thin_posts']
 				),
 				__( 'Pages with very little text give searchers less to land on. Add a section that answers their question.', 'rankmyseo' ),
@@ -218,7 +247,12 @@ final class DashboardController extends AbstractController {
 				'open_404s',
 				sprintf(
 					/* translators: %d: number of unresolved broken links. */
-					__( '%d broken links need a redirect', 'rankmyseo' ),
+					_n(
+						'%d broken link needs a redirect',
+						'%d broken links need a redirect',
+						(int) $signals['open_404s'],
+						'rankmyseo'
+					),
 					$signals['open_404s']
 				),
 				__( 'Visitors hitting these addresses get a missing page. Send them to a live page instead.', 'rankmyseo' ),
@@ -228,12 +262,38 @@ final class DashboardController extends AbstractController {
 			);
 		}
 
+		$orphans = (int) ( $signals['orphans'] ?? 0 );
+		if ( $orphans > 0 ) {
+			$fixes[] = $this->fix(
+				'orphans',
+				sprintf(
+					/* translators: %d: number of published posts or pages with no incoming links. */
+					_n(
+						'%d published page has no incoming links',
+						'%d published pages have no incoming links',
+						$orphans,
+						'rankmyseo'
+					),
+					$orphans
+				),
+				__( 'Other pages on this site do not link to these. A link from a related page helps visitors find them.', 'rankmyseo' ),
+				$orphans,
+				__( 'Show orphan pages', 'rankmyseo' ),
+				'dashboard'
+			);
+		}
+
 		if ( $signals['low_scores'] > 0 ) {
 			$fixes[] = $this->fix(
 				'low_scores',
 				sprintf(
 					/* translators: %d: number of low-scoring published items. */
-					__( '%d published items have a low SEO score', 'rankmyseo' ),
+					_n(
+						'%d published item has a low SEO score',
+						'%d published items have a low SEO score',
+						(int) $signals['low_scores'],
+						'rankmyseo'
+					),
 					$signals['low_scores']
 				),
 				__( 'Scores under 60 usually mean the title, description, or content still needs a pass.', 'rankmyseo' ),

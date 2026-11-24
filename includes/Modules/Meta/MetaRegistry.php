@@ -109,6 +109,13 @@ final class MetaRegistry {
 			MetaKeys::TWITTER_DESCRIPTION => $string( [ MetaSanitizer::class, 'sanitize_description' ] ),
 			MetaKeys::TWITTER_IMAGE       => $string( [ MetaSanitizer::class, 'sanitize_image' ] ),
 			MetaKeys::TWITTER_CARD        => $string( [ MetaSanitizer::class, 'sanitize_twitter_card' ] ),
+			MetaKeys::CORNERSTONE         => [
+				'type'              => 'boolean',
+				'single'            => true,
+				'show_in_rest'      => true,
+				'auth_callback'     => $auth,
+				'sanitize_callback' => [ MetaSanitizer::class, 'sanitize_bool' ],
+			],
 			MetaKeys::SECONDARY_KEYWORDS  => [
 				'type'              => 'array',
 				'single'            => true,

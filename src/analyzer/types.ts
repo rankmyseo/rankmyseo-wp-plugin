@@ -6,6 +6,7 @@ export type CheckCategory = 'keyword' | 'snippet' | 'content' | 'readability';
 
 export interface AnalyzerInput {
 	focusKeyword: string;
+	secondaryKeywords?: string[];
 	seoTitle: string;
 	metaDescription: string;
 	slug: string;
@@ -14,6 +15,7 @@ export interface AnalyzerInput {
 	locale?: string;
 	noindex?: boolean;
 	siteUrl?: string;
+	cornerstone?: boolean;
 }
 
 export interface CheckMetrics {
@@ -45,11 +47,21 @@ export interface AnalysisSummary {
 	headingCount: number;
 }
 
+export interface KeywordAssessment {
+	keyword: string;
+	role: 'primary' | 'secondary';
+	status: CheckStatus;
+	score: number;
+	checks: CheckResult[];
+}
+
 export interface AnalysisResult {
 	score: number;
+	primaryScore: number;
 	band: ScoreBand;
 	hasFocusKeyword: boolean;
 	checks: CheckResult[];
+	keywords: KeywordAssessment[];
 	summary: AnalysisSummary;
 }
 

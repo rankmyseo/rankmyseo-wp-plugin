@@ -15,6 +15,7 @@ namespace RankMySEO\Modules\Chat;
 use RankMySEO\Core\OnboardingStore;
 use RankMySEO\Core\Settings;
 use RankMySEO\Database\Migrator;
+use RankMySEO\Modules\Links\LinkIndexer;
 use RankMySEO\Modules\Sitemaps\LlmsTxt;
 use RankMySEO\Modules\Sitemaps\SitemapLlmsCatalog;
 use RankMySEO\Modules\Sitemaps\SitemapSettings;
@@ -58,18 +59,27 @@ final class LocalAssistant {
 	private Migrator $migrator;
 
 	/**
+	 * Local link index. Null in tests that do not exercise orphans.
+	 *
+	 * @var LinkIndexer|null
+	 */
+	private ?LinkIndexer $links;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param SiteIndex       $index      Local site index.
-	 * @param Settings        $settings   Settings repository.
-	 * @param OnboardingStore $onboarding Onboarding store.
-	 * @param Migrator        $migrator   Database migrator.
+	 * @param SiteIndex        $index      Local site index.
+	 * @param Settings         $settings   Settings repository.
+	 * @param OnboardingStore  $onboarding Onboarding store.
+	 * @param Migrator         $migrator   Database migrator.
+	 * @param LinkIndexer|null $links      Optional link index.
 	 */
-	public function __construct( SiteIndex $index, Settings $settings, OnboardingStore $onboarding, Migrator $migrator ) {
+	public function __construct( SiteIndex $index, Settings $settings, OnboardingStore $onboarding, Migrator $migrator, ?LinkIndexer $links = null ) {
 		$this->index      = $index;
 		$this->settings   = $settings;
 		$this->onboarding = $onboarding;
 		$this->migrator   = $migrator;
+		$this->links      = $links;
 	}
 
 	/**
@@ -100,6 +110,8 @@ final class LocalAssistant {
 				return $this->reply_llms();
 			case 'module_health':
 				return $this->reply_module_health();
+			case 'orphans':
+				return $this->reply_orphans();
 			case 'inspect_post':
 				return $this->reply_inspect_post( $message, $post_id );
 			case 'cloud_handoff':
@@ -159,6 +171,15 @@ final class LocalAssistant {
 
 		if ( str_contains( $normalized, 'llms' ) ) {
 			return 'llms_txt';
+		}
+
+		if (
+			str_contains( $normalized, 'orphan' )
+			|| str_contains( $normalized, 'no incoming' )
+			|| str_contains( $normalized, 'incoming link' )
+			|| str_contains( $normalized, 'nobody links' )
+		) {
+			return 'orphans';
 		}
 
 		if (
@@ -526,6 +547,9 @@ final class LocalAssistant {
 		if ( $signals['open_404s'] > 0 ) {
 			$items = array_merge( $items, $this->with_tip( $this->index->list_open_404s( 3 ), __( 'Create a redirect for this broken link.', 'rankmyseo' ) ) );
 		}
+		if ( $signals['orphans'] > 0 && $this->links instanceof LinkIndexer ) {
+			$items = array_merge( $items, $this->with_tip( $this->links->list_orphans( 3 ), __( 'Link to this page from a related post.', 'rankmyseo' ) ) );
+		}
 
 		$explanation = sprintf(
 			/* translators: 1: score from 0 to 100, 2: plain summary. */
@@ -548,6 +572,8 @@ final class LocalAssistant {
 	 *     thin_posts: int,
 	 *     low_scores: int,
 	 *     open_404s: int,
+	 *     orphans: int,
+	 *     cornerstones: int,
 	 *     sitemaps_enabled: bool,
 	 *     tables_healthy: bool
 	 * }
@@ -561,9 +587,36 @@ final class LocalAssistant {
 			'thin_posts'           => $this->index->count_thin_posts( SiteHealth::THIN_WORD_COUNT ),
 			'low_scores'           => $this->index->count_low_scores( SiteHealth::LOW_SCORE_THRESHOLD ),
 			'open_404s'            => $this->index->count_open_404s(),
+			'orphans'              => $this->links instanceof LinkIndexer ? $this->links->orphan_count() : 0,
+			'cornerstones'         => $this->links instanceof LinkIndexer ? $this->links->cornerstone_count() : 0,
 			'sitemaps_enabled'     => $this->settings->is_module_enabled( 'sitemaps' ),
 			'tables_healthy'       => $this->tables_healthy(),
 		];
+	}
+
+	/**
+	 * List published pages that nothing else on the site links to.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function reply_orphans(): array {
+		$count = $this->links instanceof LinkIndexer ? $this->links->orphan_count() : 0;
+		$rows  = $this->links instanceof LinkIndexer ? $this->links->list_orphans( self::ITEM_LIMIT ) : [];
+		if ( 0 === $count ) {
+			$explanation = __( 'No published page is missing incoming links from the rest of the site.', 'rankmyseo' );
+		} else {
+			$explanation = sprintf(
+				/* translators: %d: number of published posts or pages. */
+				_n(
+					'%d published page has no links pointing to it from other pages. Linking to it from a related page helps visitors and search find it.',
+					'%d published pages have no links pointing to them from other pages. Linking to them from a related page helps visitors and search find them.',
+					$count,
+					'rankmyseo'
+				),
+				$count
+			);
+		}
+		return $this->envelope( 'orphans', $explanation, $this->with_tip( $rows, __( 'Add a link to this page from a related post.', 'rankmyseo' ) ) );
 	}
 
 	/**
@@ -809,6 +862,11 @@ final class LocalAssistant {
 				'id'     => 'module_health',
 				'label'  => __( 'Sitemap and modules', 'rankmyseo' ),
 				'prompt' => __( 'Check sitemap and module health', 'rankmyseo' ),
+			],
+			'orphans'              => [
+				'id'     => 'orphans',
+				'label'  => __( 'Orphan pages', 'rankmyseo' ),
+				'prompt' => __( 'Show orphan pages', 'rankmyseo' ),
 			],
 		];
 

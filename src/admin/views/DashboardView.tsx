@@ -274,6 +274,57 @@ export function DashboardView(): JSX.Element {
 					</div>
 				</section>
 
+				{ summary && (
+					<section
+						className="rms-section"
+						aria-label={ __( 'Internal links', 'rankmyseo' ) }
+					>
+						<div className="rms-section-header">
+							<h2 className="rms-section-title">
+								{ __( 'Internal links', 'rankmyseo' ) }
+							</h2>
+							<span className="rms-muted">
+								{ sprintf(
+									/* translators: %d: number of cornerstone pages */
+									__( '%d cornerstone pages', 'rankmyseo' ),
+									summary.counts.cornerstone ?? 0
+								) }
+							</span>
+						</div>
+						{ ( summary.counts.orphans ?? 0 ) === 0 ? (
+							<p className="rms-muted">
+								{ __(
+									'Every published page has a link from somewhere else on this site.',
+									'rankmyseo'
+								) }
+							</p>
+						) : (
+							<ul className="rms-action-list">
+								{ ( summary.orphans ?? [] ).map( ( row ) => (
+									<li key={ row.id } className="rms-card">
+										<a href={ row.edit_link || row.url }>
+											{ row.title }
+										</a>
+									</li>
+								) ) }
+							</ul>
+						) }
+						<Button
+							variant="secondary"
+							onClick={ () =>
+								openChat(
+									__( 'Show orphan pages', 'rankmyseo' )
+								)
+							}
+						>
+							{ __(
+								'Ask about pages with no links',
+								'rankmyseo'
+							) }
+						</Button>
+					</section>
+				) }
+
 				<section className="rms-card rms-cloud-banner">
 					<div>
 						<StatusBadge tone="flat">
@@ -446,6 +497,23 @@ export function DashboardView(): JSX.Element {
 								/* translators: %d: count of unresolved 404s */
 								__( '%d open 404s', 'rankmyseo' ),
 								summary.counts.open_404s
+							) }
+						</li>
+						<li>
+							{ sprintf(
+								/* translators: %d: pages with no incoming internal links */
+								__(
+									'%d pages with no incoming links',
+									'rankmyseo'
+								),
+								summary.counts.orphans ?? 0
+							) }
+						</li>
+						<li>
+							{ sprintf(
+								/* translators: %d: cornerstone pages */
+								__( '%d cornerstone pages', 'rankmyseo' ),
+								summary.counts.cornerstone ?? 0
 							) }
 						</li>
 						<li>

@@ -26,23 +26,33 @@ final class ScoreCalculator {
 	private ContentInspector $content;
 
 	/**
+	 * English word-form matcher. Other locales stay on exact phrases.
+	 *
+	 * @var WordForms
+	 */
+	private WordForms $forms;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param ContentInspector|null $content Optional inspector.
 	 */
 	public function __construct( ?ContentInspector $content = null ) {
 		$this->content = $content ?? new ContentInspector();
+		$this->forms   = new WordForms( $this->content );
 	}
 
 	/**
 	 * Score one page.
 	 *
-	 * @param array<string, mixed> $input focus_keyword, seo_title, meta_description, slug, content_html, post_type, locale, noindex, site_url.
+	 * @param array<string, mixed> $input focus_keyword, secondary_keywords, seo_title, meta_description, slug, content_html, post_type, locale, noindex, site_url, cornerstone.
 	 * @return array<string, mixed>
 	 */
 	public function analyze( array $input ): array {
 		$keyword     = trim( (string) ( $input['focus_keyword'] ?? '' ) );
 		$has_keyword = '' !== $keyword;
+		$secondary   = $this->forms->limit_secondary( $keyword, $input['secondary_keywords'] ?? [] );
+		$cornerstone = ! empty( $input['cornerstone'] );
 		$title       = trim( (string) ( $input['seo_title'] ?? '' ) );
 		$description = trim( (string) ( $input['meta_description'] ?? '' ) );
 		$slug        = (string) ( $input['slug'] ?? '' );
@@ -65,8 +75,9 @@ final class ScoreCalculator {
 		$word_count      = count( $words );
 		$sentence_count  = count( $sentences );
 		$paragraph_count = count( $paragraphs );
+		$english         = $this->is_english( $locale );
 		$keyword_words   = $has_keyword ? count( array_filter( explode( ' ', $this->content->normalize_words( $keyword ) ) ) ) : 0;
-		$keyword_count   = $has_keyword ? $this->content->count_phrase( $plain, $keyword ) : 0;
+		$keyword_count   = $has_keyword ? $this->forms->count( $plain, $keyword, $english ) : 0;
 		$density         = ( $has_keyword && $word_count > 0 )
 			? round( ( ( $keyword_count * max( $keyword_words, 1 ) ) / $word_count ) * 100, 2 )
 			: 0.0;
@@ -107,15 +118,14 @@ final class ScoreCalculator {
 			if ( '' !== $alt ) {
 				++$images_with_alt;
 			}
-			if ( $has_keyword && $this->content->contains_phrase( $alt, $keyword ) ) {
+			if ( $has_keyword && $this->forms->contains( $alt, $keyword, $english ) ) {
 				$keyword_in_alt = true;
 			}
 		}
 
 		$intro            = implode( ' ', array_slice( $words, 0, 100 ) );
-		$english          = $this->is_english( $locale );
 		$reading          = $this->flesch( $word_count, $sentence_count, $syllables );
-		$target           = 'product' === $post_type ? 150 : 300;
+		$target           = ( 'product' === $post_type ? 150 : 300 ) * ( $cornerstone ? 3 : 1 );
 		$average_sentence = $sentence_count > 0 ? round( $word_count / $sentence_count, 1 ) : 0.0;
 		$paragraph_words  = 0;
 		$long_paragraphs  = 0;
@@ -130,8 +140,8 @@ final class ScoreCalculator {
 		$average_paragraph = $paragraph_count > 0 ? round( $paragraph_words / $paragraph_count, 1 ) : 0.0;
 
 		$title_score = 0;
-		if ( $has_keyword && $this->content->contains_phrase( $title, $keyword ) ) {
-			$title_score = $this->content->keyword_near_start( $title, $keyword ) ? 6 : 4;
+		if ( $has_keyword && $this->forms->contains( $title, $keyword, $english ) ) {
+			$title_score = $this->forms->near_start( $title, $keyword, $english ) ? 6 : 4;
 		}
 
 		$density_score = 0;
@@ -218,20 +228,20 @@ final class ScoreCalculator {
 					'nearStart' => 6 === $title_score,
 				]
 			),
-			$this->check( 'keyword_in_description', 'keyword', ( $has_keyword && $this->content->contains_phrase( $description, $keyword ) ) ? 5 : 0, 5, 'improve', [ 'present' => $has_keyword && $this->content->contains_phrase( $description, $keyword ) ] ),
+			$this->check( 'keyword_in_description', 'keyword', ( $has_keyword && $this->forms->contains( $description, $keyword, $english ) ) ? 5 : 0, 5, 'improve', [ 'present' => $has_keyword && $this->forms->contains( $description, $keyword, $english ) ] ),
 			$this->check(
 				'keyword_in_slug',
 				'keyword',
-				( $has_keyword && $this->content->slug_contains( $slug, $keyword ) ) ? 5 : 0,
+				( $has_keyword && $this->forms->slug_contains( $slug, $keyword, $english ) ) ? 5 : 0,
 				5,
 				'improve',
 				[
-					'present' => $has_keyword && $this->content->slug_contains( $slug, $keyword ),
+					'present' => $has_keyword && $this->forms->slug_contains( $slug, $keyword, $english ),
 					'slug'    => $slug,
 				]
 			),
-			$this->check( 'keyword_in_intro', 'keyword', ( $has_keyword && $this->content->contains_phrase( $intro, $keyword ) ) ? 5 : 0, 5, 'improve', [ 'present' => $has_keyword && $this->content->contains_phrase( $intro, $keyword ) ] ),
-			$this->check( 'keyword_in_headings', 'keyword', ( $has_keyword && $this->content->contains_phrase( implode( ' ', $heading_text ), $keyword ) ) ? 5 : 0, 5, 'improve', [ 'present' => $has_keyword && $this->content->contains_phrase( implode( ' ', $heading_text ), $keyword ) ] ),
+			$this->check( 'keyword_in_intro', 'keyword', ( $has_keyword && $this->forms->contains( $intro, $keyword, $english ) ) ? 5 : 0, 5, 'improve', [ 'present' => $has_keyword && $this->forms->contains( $intro, $keyword, $english ) ] ),
+			$this->check( 'keyword_in_headings', 'keyword', ( $has_keyword && $this->forms->contains( implode( ' ', $heading_text ), $keyword, $english ) ) ? 5 : 0, 5, 'improve', [ 'present' => $has_keyword && $this->forms->contains( implode( ' ', $heading_text ), $keyword, $english ) ] ),
 			$this->check(
 				'keyword_in_alt',
 				'keyword',
@@ -316,7 +326,18 @@ final class ScoreCalculator {
 					'withAlt' => $images_with_alt,
 				]
 			),
-			$this->check( 'internal_links', 'content', $internal > 0 ? 3 : 0, 3, 'improve', [ 'count' => $internal ] ),
+			$this->check(
+				'internal_links',
+				'content',
+				$this->internal_link_score( $internal, $cornerstone ),
+				3,
+				$cornerstone ? 'critical' : 'improve',
+				[
+					'count'       => $internal,
+					'cornerstone' => $cornerstone,
+					'minimum'     => $cornerstone ? 3 : 1,
+				]
+			),
 			$this->check( 'external_links', 'content', $external > 0 ? 2 : 0, 2, 'improve', [ 'count' => $external ] ),
 			$this->check(
 				'paragraph_length',
@@ -366,17 +387,51 @@ final class ScoreCalculator {
 			),
 		];
 
-		$score = 0;
+		$primary_score = 0;
 		foreach ( $checks as $item ) {
-			$score += (int) $item['score'];
+			$primary_score += (int) $item['score'];
+		}
+		$primary_score = max( 0, min( 100, $primary_score ) );
+
+		$keyword_checks = array_values(
+			array_filter(
+				$checks,
+				static fn( array $item ): bool => 'keyword' === ( $item['category'] ?? '' )
+			)
+		);
+		$keyword_points = 0;
+		foreach ( $keyword_checks as $item ) {
+			$keyword_points += (int) $item['score'];
+		}
+		$keywords         = [
+			[
+				'keyword' => $keyword,
+				'role'    => 'primary',
+				'status'  => $has_keyword ? $this->group_status( $keyword_checks ) : 'critical',
+				'score'   => $keyword_points,
+				'checks'  => $keyword_checks,
+			],
+		];
+		$secondary_scores = [];
+		foreach ( $secondary as $phrase ) {
+			$assessment         = $this->secondary_assessment( $phrase, $title, $description, $intro, implode( ' ', $heading_text ), $plain, $word_count, $english );
+			$keywords[]         = $assessment;
+			$secondary_scores[] = (int) $assessment['score'];
+		}
+		$score = $primary_score;
+		if ( [] !== $secondary_scores ) {
+			$average = array_sum( $secondary_scores ) / count( $secondary_scores );
+			$score   = (int) round( ( $primary_score * 0.8 ) + ( $average * 0.2 ) );
 		}
 		$score = max( 0, min( 100, $score ) );
 
 		return [
 			'score'             => $score,
+			'primary_score'     => $primary_score,
 			'band'              => ScoreBands::band( $score, $has_keyword ),
 			'has_focus_keyword' => $has_keyword,
 			'checks'            => $checks,
+			'keywords'          => $keywords,
 			'summary'           => [
 				'word_count'               => $word_count,
 				'keyword_count'            => $keyword_count,
@@ -453,6 +508,152 @@ final class ScoreCalculator {
 			'score'     => $score,
 			'max_score' => $max_score,
 			'metrics'   => $metrics,
+		];
+	}
+
+	/**
+	 * Points for links to other pages on this site.
+	 *
+	 * Cornerstone pages need three links for full points.
+	 *
+	 * @param int  $count       Internal links on the page.
+	 * @param bool $cornerstone Whether the page is cornerstone content.
+	 * @return int
+	 */
+	private function internal_link_score( int $count, bool $cornerstone ): int {
+		if ( ! $cornerstone ) {
+			return $count > 0 ? 3 : 0;
+		}
+		if ( $count >= 3 ) {
+			return 3;
+		}
+		if ( $count >= 1 ) {
+			return 1;
+		}
+		return 0;
+	}
+
+	/**
+	 * Worst status in a group of checks.
+	 *
+	 * @param list<array<string, mixed>> $checks Checks.
+	 * @return string
+	 */
+	private function group_status( array $checks ): string {
+		$statuses = [];
+		foreach ( $checks as $check ) {
+			$statuses[] = (string) ( $check['status'] ?? 'improve' );
+		}
+		if ( in_array( 'critical', $statuses, true ) ) {
+			return 'critical';
+		}
+		if ( [] !== $statuses && ! in_array( 'improve', $statuses, true ) ) {
+			return 'pass';
+		}
+		return 'improve';
+	}
+
+	/**
+	 * Score one secondary keyword on its own 100-point rubric.
+	 *
+	 * @param string $phrase      Secondary keyword.
+	 * @param string $title       SEO title.
+	 * @param string $description Meta description.
+	 * @param string $intro       First 100 words.
+	 * @param string $headings    Heading text.
+	 * @param string $plain       Page text.
+	 * @param int    $word_count  Word count.
+	 * @param bool   $english     Whether English word forms apply.
+	 * @return array<string, mixed>
+	 */
+	private function secondary_assessment( string $phrase, string $title, string $description, string $intro, string $headings, string $plain, int $word_count, bool $english ): array {
+		$count    = $this->forms->count( $plain, $phrase, $english );
+		$words    = max( 1, count( array_filter( explode( ' ', $this->content->normalize_words( $phrase ) ) ) ) );
+		$density  = $word_count > 0 ? round( ( ( $count * $words ) / $word_count ) * 100, 2 ) : 0.0;
+		$stuffing = $density > 2.5;
+		$in_title = $this->forms->contains( $title, $phrase, $english );
+		$in_desc  = $this->forms->contains( $description, $phrase, $english );
+		$in_place = $this->forms->contains( $headings, $phrase, $english ) || $this->forms->contains( $intro, $phrase, $english );
+		$checks   = [
+			$this->check(
+				'secondary_in_content',
+				'keyword',
+				$count > 0 ? 40 : 0,
+				40,
+				'critical',
+				[
+					'present' => $count > 0,
+					'keyword' => $phrase,
+					'count'   => $count,
+				]
+			),
+			$this->check(
+				'secondary_in_title',
+				'keyword',
+				$in_title ? 20 : 0,
+				20,
+				'improve',
+				[
+					'present' => $in_title,
+					'keyword' => $phrase,
+				]
+			),
+			$this->check(
+				'secondary_in_description',
+				'keyword',
+				$in_desc ? 15 : 0,
+				15,
+				'improve',
+				[
+					'present' => $in_desc,
+					'keyword' => $phrase,
+				]
+			),
+			$this->check(
+				'secondary_in_headings',
+				'keyword',
+				$in_place ? 15 : 0,
+				15,
+				'improve',
+				[
+					'present' => $in_place,
+					'keyword' => $phrase,
+				]
+			),
+			$this->check(
+				'secondary_density',
+				'keyword',
+				( $count > 0 && ! $stuffing ) ? 10 : 0,
+				10,
+				$stuffing ? 'critical' : 'improve',
+				[
+					'density'  => $density,
+					'count'    => $count,
+					'stuffing' => $stuffing,
+					'keyword'  => $phrase,
+				]
+			),
+		];
+		$score    = 0;
+		foreach ( $checks as $item ) {
+			$score += (int) $item['score'];
+		}
+		if ( $stuffing ) {
+			$status = 'critical';
+		} elseif ( $score >= 70 ) {
+			$status = 'pass';
+		} elseif ( $score >= 40 ) {
+			$status = 'improve';
+		} else {
+			$status = 'critical';
+		}
+
+		return [
+			'keyword' => $phrase,
+			'role'    => 'secondary',
+			'status'  => $status,
+			'score'   => $score,
+			'checks'  => $checks,
 		];
 	}
 

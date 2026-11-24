@@ -45,6 +45,7 @@ final class SiteHealth {
 		$score -= min( 12, max( 0, $signals['thin_posts'] ) * 2 );
 		$score -= min( 15, max( 0, $signals['open_404s'] ) * 3 );
 		$score -= min( 10, max( 0, $signals['low_scores'] ) );
+		$score -= min( 8, max( 0, (int) ( $signals['orphans'] ?? 0 ) ) );
 
 		if ( ! $signals['sitemaps_enabled'] ) {
 			$score -= 6;
@@ -94,7 +95,12 @@ final class SiteHealth {
 		if ( $signals['missing_descriptions'] > 0 ) {
 			$parts[] = sprintf(
 				/* translators: %d: number of published posts or pages. */
-				__( '%d published items are missing a search description.', 'rankmyseo' ),
+				_n(
+					'%d published item is missing a search description.',
+					'%d published items are missing a search description.',
+					(int) $signals['missing_descriptions'],
+					'rankmyseo'
+				),
 				$signals['missing_descriptions']
 			);
 		}
@@ -102,7 +108,12 @@ final class SiteHealth {
 		if ( $signals['missing_titles'] > 0 ) {
 			$parts[] = sprintf(
 				/* translators: %d: number of published posts or pages. */
-				__( '%d published items are missing an SEO title.', 'rankmyseo' ),
+				_n(
+					'%d published item is missing an SEO title.',
+					'%d published items are missing an SEO title.',
+					(int) $signals['missing_titles'],
+					'rankmyseo'
+				),
 				$signals['missing_titles']
 			);
 		}
@@ -110,7 +121,12 @@ final class SiteHealth {
 		if ( $signals['thin_posts'] > 0 ) {
 			$parts[] = sprintf(
 				/* translators: %d: number of thin published posts or pages. */
-				__( '%d published items look thin.', 'rankmyseo' ),
+				_n(
+					'%d published item looks thin.',
+					'%d published items look thin.',
+					(int) $signals['thin_posts'],
+					'rankmyseo'
+				),
 				$signals['thin_posts']
 			);
 		}
@@ -118,8 +134,27 @@ final class SiteHealth {
 		if ( $signals['open_404s'] > 0 ) {
 			$parts[] = sprintf(
 				/* translators: %d: number of unresolved broken links. */
-				__( '%d broken links are still open.', 'rankmyseo' ),
+				_n(
+					'%d broken link is still open.',
+					'%d broken links are still open.',
+					(int) $signals['open_404s'],
+					'rankmyseo'
+				),
 				$signals['open_404s']
+			);
+		}
+
+		$orphans = (int) ( $signals['orphans'] ?? 0 );
+		if ( $orphans > 0 ) {
+			$parts[] = sprintf(
+				/* translators: %d: number of published posts or pages with no incoming links. */
+				_n(
+					'%d published page has no incoming links.',
+					'%d published pages have no incoming links.',
+					$orphans,
+					'rankmyseo'
+				),
+				$orphans
 			);
 		}
 
