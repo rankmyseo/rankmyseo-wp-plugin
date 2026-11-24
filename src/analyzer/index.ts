@@ -12,6 +12,7 @@ export type {
 	AnalysisSummary,
 	AnalyzerInput,
 	CheckCategory,
+	ProductSignals,
 	CheckResult,
 	CheckStatus,
 	KeywordAssessment,

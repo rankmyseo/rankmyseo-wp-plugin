@@ -78,6 +78,7 @@ function createFixtures( uiMode: 'simple' | 'advanced' ): {
 			importer: true,
 			cloud: false,
 			ai_queue: false,
+			woocommerce: true,
 		},
 	};
 

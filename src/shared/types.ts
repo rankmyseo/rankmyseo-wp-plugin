@@ -7,6 +7,7 @@ export type NavPageId =
 	| 'meta'
 	| 'missing'
 	| 'schema'
+	| 'store'
 	| 'sitemaps'
 	| 'redirects'
 	| 'import'
@@ -22,7 +23,8 @@ export type ModuleId =
 	| 'redirects'
 	| 'importer'
 	| 'cloud'
-	| 'ai_queue';
+	| 'ai_queue'
+	| 'woocommerce';
 
 export interface PluginSettings {
 	default_ui_mode: UiMode;
@@ -440,6 +442,12 @@ declare global {
 			nonce?: string;
 			askAiEvent?: string;
 			locale?: string;
+			product?: {
+				sku: string;
+				gtin: string;
+				shortDescription: string;
+				galleryAlts: string[];
+			};
 		};
 		rankmyseoClassic?: Window[ 'rankmyseoEditor' ] & {
 			postId?: number;

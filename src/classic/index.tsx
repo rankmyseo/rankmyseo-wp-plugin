@@ -1,6 +1,8 @@
 import apiFetch from '@wordpress/api-fetch';
 import { createRoot, render, useEffect, useState } from '@wordpress/element';
+import type { ProductSignals } from '../analyzer';
 import type { UiMode } from '../shared/types';
+import { mergeProductSignals } from '../editor/productSignals';
 import { EditorPanel } from '../editor/components/EditorPanel';
 import {
 	fieldsFromRecord,
@@ -24,6 +26,7 @@ interface ClassicConfig {
 	fields?: Record< string, unknown >;
 	askAiEvent?: string;
 	locale?: string;
+	product?: ProductSignals;
 }
 
 interface TinyEditor {
@@ -127,18 +130,54 @@ function ClassicApp( { settings }: { settings: ClassicConfig } ): JSX.Element {
 	const [ documentState, setDocumentState ] = useState( () =>
 		readClassicDocument( settings.postTitle || '' )
 	);
+	const [ product, setProduct ] = useState< ProductSignals | undefined >(
+		() =>
+			mergeProductSignals( {
+				postType: settings.postType || 'post',
+				initial: settings.product,
+			} )
+	);
 
 	useEffect( () => {
 		const update = (): void => {
 			setDocumentState( readClassicDocument( settings.postTitle || '' ) );
+			const skuField = document.getElementById( '_sku' );
+			const gtinField = document.getElementById( '_rankmyseo_gtin' );
+			const excerptField = document.getElementById( 'excerpt' );
+			const liveMeta: Record< string, unknown > = {};
+			if ( skuField instanceof HTMLInputElement ) {
+				liveMeta._sku = skuField.value;
+			}
+			if ( gtinField instanceof HTMLInputElement ) {
+				liveMeta._rankmyseo_gtin = gtinField.value;
+			}
+			setProduct(
+				mergeProductSignals( {
+					postType: settings.postType || 'post',
+					meta: liveMeta,
+					initial: settings.product,
+					excerpt:
+						excerptField instanceof HTMLTextAreaElement
+							? excerptField.value
+							: undefined,
+					excerptFromEditor:
+						excerptField instanceof HTMLTextAreaElement,
+				} )
+			);
 		};
 		update();
 		const contentField = document.getElementById( 'content' );
 		const titleField = document.getElementById( 'title' );
 		const slugField = document.getElementById( 'post_name' );
+		const skuField = document.getElementById( '_sku' );
+		const gtinField = document.getElementById( '_rankmyseo_gtin' );
+		const excerptField = document.getElementById( 'excerpt' );
 		contentField?.addEventListener( 'input', update );
 		titleField?.addEventListener( 'input', update );
 		slugField?.addEventListener( 'input', update );
+		skuField?.addEventListener( 'input', update );
+		gtinField?.addEventListener( 'input', update );
+		excerptField?.addEventListener( 'input', update );
 		const tiny = (
 			window as Window & {
 				tinymce?: { get?: ( id: string ) => TinyEditor | null };
@@ -149,9 +188,12 @@ function ClassicApp( { settings }: { settings: ClassicConfig } ): JSX.Element {
 			contentField?.removeEventListener( 'input', update );
 			titleField?.removeEventListener( 'input', update );
 			slugField?.removeEventListener( 'input', update );
+			skuField?.removeEventListener( 'input', update );
+			gtinField?.removeEventListener( 'input', update );
+			excerptField?.removeEventListener( 'input', update );
 			tiny?.off( 'keyup change input', update );
 		};
-	}, [ settings.postTitle ] );
+	}, [ settings.postTitle, settings.postType, settings.product ] );
 
 	return (
 		<EditorPanel
@@ -182,6 +224,7 @@ function ClassicApp( { settings }: { settings: ClassicConfig } ): JSX.Element {
 			postType={ settings.postType || 'post' }
 			locale={ settings.locale || 'en' }
 			onInsertLink={ insertClassicLink }
+			product={ product }
 			onAskAi={ () => {
 				document.dispatchEvent(
 					new CustomEvent(

@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace RankMySEO\Modules\Schema;
 
 use RankMySEO\Core\Settings;
+use RankMySEO\Modules\WooCommerce\OfferPolicy;
+use RankMySEO\Modules\WooCommerce\WooSettings;
 use WP_Post;
 
 /**
@@ -48,7 +50,23 @@ final class ContextFactory {
 		$this->schema_settings = $schema_settings;
 		$this->core            = $core;
 		$currency              = (string) $schema_settings->all()['currency'];
-		$this->products        = $products ?? new WooProductReader( $currency );
+		$this->products        = $products ?? $this->default_reader( $currency );
+	}
+
+	/**
+	 * Product reader. Variation offers and policies turn on with the store module.
+	 *
+	 * @param string $currency Fallback currency.
+	 * @return WooProductReader
+	 */
+	private function default_reader( string $currency ): WooProductReader {
+		if ( ! $this->core instanceof Settings || ! $this->core->is_module_enabled( 'woocommerce' ) ) {
+			return new WooProductReader( $currency );
+		}
+
+		$store = new WooSettings();
+
+		return new WooProductReader( $currency, null, new OfferPolicy( $store ), $store->variation_offers_enabled() );
 	}
 
 	/**

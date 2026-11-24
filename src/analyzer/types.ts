@@ -2,7 +2,19 @@ export type CheckStatus = 'pass' | 'improve' | 'critical';
 
 export type ScoreBand = 'good' | 'needs_work' | 'poor' | 'no_keyword';
 
-export type CheckCategory = 'keyword' | 'snippet' | 'content' | 'readability';
+export type CheckCategory =
+	| 'keyword'
+	| 'snippet'
+	| 'content'
+	| 'readability'
+	| 'product';
+
+export interface ProductSignals {
+	sku: string;
+	gtin: string;
+	shortDescription: string;
+	galleryAlts: string[];
+}
 
 export interface AnalyzerInput {
 	focusKeyword: string;
@@ -16,6 +28,7 @@ export interface AnalyzerInput {
 	noindex?: boolean;
 	siteUrl?: string;
 	cornerstone?: boolean;
+	product?: ProductSignals;
 }
 
 export interface CheckMetrics {

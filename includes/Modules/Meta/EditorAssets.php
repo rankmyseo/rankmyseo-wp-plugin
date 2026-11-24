@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace RankMySEO\Modules\Meta;
 
+use RankMySEO\Modules\WooCommerce\ProductMeta;
+
 use RankMySEO\Core\Settings;
 
 /**
@@ -127,7 +129,7 @@ final class EditorAssets {
 	 * @return array<string, mixed>
 	 */
 	public function editor_config(): array {
-		return [
+		$config = [
 			'uiMode'     => $this->settings->get_user_ui_mode( get_current_user_id() ),
 			'siteName'   => $this->titles->site_name(),
 			'siteUrl'    => (string) home_url( '/' ),
@@ -139,6 +141,13 @@ final class EditorAssets {
 			'askAiEvent' => 'rankmyseo:ask-ai',
 			'locale'     => function_exists( 'get_locale' ) ? (string) get_locale() : 'en',
 		];
+
+		$post = get_post();
+		if ( $post instanceof \WP_Post && 'product' === $post->post_type ) {
+			$config['product'] = ProductMeta::signals_for_post( (int) $post->ID );
+		}
+
+		return $config;
 	}
 
 	/**

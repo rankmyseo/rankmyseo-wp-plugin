@@ -118,6 +118,7 @@ function setupApi( options?: {
 			importer: true,
 			cloud: false,
 			ai_queue: false,
+			woocommerce: true,
 		},
 	};
 	const settingsResponse: SettingsResponse = {

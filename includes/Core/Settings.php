@@ -66,14 +66,15 @@ final class Settings {
 			'wizard_completed'         => false,
 			'wizard_dismissed'         => false,
 			'modules'                  => [
-				'meta'      => true,
-				'analyzer'  => true,
-				'schema'    => true,
-				'sitemaps'  => true,
-				'redirects' => true,
-				'importer'  => true,
-				'cloud'     => false,
-				'ai_queue'  => false,
+				'meta'        => true,
+				'analyzer'    => true,
+				'schema'      => true,
+				'sitemaps'    => true,
+				'redirects'   => true,
+				'importer'    => true,
+				'cloud'       => false,
+				'ai_queue'    => false,
+				'woocommerce' => true,
 			],
 		];
 	}

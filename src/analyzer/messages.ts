@@ -33,6 +33,8 @@ export function categoryLabel( category: CheckResult[ 'category' ] ): string {
 			return __( 'Search snippet', 'rankmyseo' );
 		case 'content':
 			return __( 'Content', 'rankmyseo' );
+		case 'product':
+			return __( 'Product', 'rankmyseo' );
 		default:
 			return __( 'Readability', 'rankmyseo' );
 	}
@@ -190,6 +192,23 @@ export function simpleTip( check: CheckResult ): string {
 			);
 		case 'subheading_distribution':
 			return __( 'Add a heading about every 300 words.', 'rankmyseo' );
+		case 'product_identifier':
+			return check.score > 0
+				? __( 'This product has a barcode or SKU.', 'rankmyseo' )
+				: __(
+						'Add a barcode or SKU so shoppers can match this product.',
+						'rankmyseo'
+				  );
+		case 'product_short_description':
+			return __(
+				'Write a short description of about 50 to 160 characters.',
+				'rankmyseo'
+			);
+		case 'product_gallery_alt':
+			return __(
+				'Describe each product photo so shoppers know what it shows.',
+				'rankmyseo'
+			);
 		default:
 			return __(
 				'Use shorter sentences so the page is easy to read.',
@@ -311,6 +330,24 @@ export function checkDetail( check: CheckResult ): string {
 			return check.metrics.present
 				? __( 'Focus keyword is set.', 'rankmyseo' )
 				: __( 'Focus keyword is empty.', 'rankmyseo' );
+		case 'product_identifier':
+			return __( 'SKU or barcode on this product.', 'rankmyseo' );
+		case 'product_short_description':
+			return sprintf(
+				/* translators: %d: short description length in characters. */
+				__( 'Short description is %d characters.', 'rankmyseo' ),
+				metricNumber( check, 'characters' )
+			);
+		case 'product_gallery_alt':
+			return sprintf(
+				/* translators: 1: photos with a description, 2: total product photos. */
+				__(
+					'%1$d of %2$d product photos have a description.',
+					'rankmyseo'
+				),
+				metricNumber( check, 'withAlt' ),
+				metricNumber( check, 'images' )
+			);
 		default:
 			return check.metrics.present
 				? __( 'Found.', 'rankmyseo' )

@@ -12,11 +12,16 @@ import {
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import type { ReactNode } from 'react';
-import { summaryPayload, type AnalysisResult } from '../analyzer';
+import {
+	summaryPayload,
+	type AnalysisResult,
+	type ProductSignals,
+} from '../analyzer';
 import { registerRankMySEOBlocks } from '../blocks/register';
 import type { UiMode } from '../shared/types';
 import type { EditorInsight } from './insights';
 import { EditorPanel } from './components/EditorPanel';
+import { mergeProductSignals } from './productSignals';
 import {
 	emptyFields,
 	fieldsFromRecord,
@@ -36,6 +41,7 @@ interface EditorConfig {
 	variables?: TemplateVariable[];
 	askAiEvent?: string;
 	locale?: string;
+	product?: ProductSignals;
 }
 
 interface EditorStores {
@@ -93,6 +99,56 @@ function EditorBody(): JSX.Element {
 		settings.uiMode === 'advanced' ? 'advanced' : 'simple'
 	);
 	const fields = fieldsFromRecord( meta ?? {} );
+	const product = useSelect(
+		( select ) => {
+			if ( editor.postType !== 'product' ) {
+				return undefined;
+			}
+			const galleryRaw =
+				meta &&
+				Object.prototype.hasOwnProperty.call(
+					meta,
+					'_product_image_gallery'
+				)
+					? String( meta._product_image_gallery ?? '' )
+					: null;
+			let galleryAlts: string[] | undefined;
+			if ( galleryRaw && galleryRaw.trim() !== '' ) {
+				const core = select( 'core' ) as {
+					getEntityRecord?: (
+						kind: string,
+						name: string,
+						id: number
+					) => { alt_text?: string } | undefined;
+				};
+				const ids = galleryRaw
+					.split( ',' )
+					.map( ( id ) => Number( id.trim() ) )
+					.filter( ( id ) => id > 0 );
+				const records = ids.map(
+					( id ) =>
+						core?.getEntityRecord?.( 'postType', 'attachment', id )
+				);
+				if (
+					records.length > 0 &&
+					records.every( ( record ) => record )
+				) {
+					galleryAlts = records.map( ( record ) =>
+						String( record?.alt_text ?? '' )
+					);
+				}
+			}
+			return mergeProductSignals( {
+				postType: editor.postType,
+				meta,
+				initial: settings.product,
+				excerpt: editor.postExcerpt,
+				excerptFromEditor: true,
+				galleryAlts,
+			} );
+		},
+		[ editor.postType, editor.postExcerpt, meta, settings.product ]
+	);
 	const metaRef = useRef( meta );
 	metaRef.current = meta;
 	const initialSignature = useRef< string | null >( null );
@@ -217,6 +273,7 @@ function EditorBody(): JSX.Element {
 			postId={ editor.postId }
 			postType={ editor.postType }
 			locale={ settings.locale || 'en' }
+			product={ product }
 			onAnalysis={ persistAnalysis }
 			onInsertLink={ insertLink }
 			insight={ insight }

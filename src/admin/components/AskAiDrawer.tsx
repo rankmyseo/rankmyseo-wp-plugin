@@ -43,6 +43,7 @@ const SCREENS: NavPageId[] = [
 	'meta',
 	'missing',
 	'schema',
+	'store',
 	'sitemaps',
 	'redirects',
 	'import',

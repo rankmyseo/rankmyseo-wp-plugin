@@ -29,6 +29,72 @@ const DESCRIPTION_FONT = 14;
 const TITLE_PIXEL_MAX = 580;
 const DESCRIPTION_PIXEL_MAX = 920;
 
+function productChecks( input: AnalyzerInput ): CheckResult[] {
+	if ( input.postType !== 'product' ) {
+		return [];
+	}
+
+	const product = input.product ?? {
+		sku: '',
+		gtin: '',
+		shortDescription: '',
+		galleryAlts: [],
+	};
+	const hasSku = product.sku.trim() !== '';
+	const hasGtin = product.gtin.trim() !== '';
+	const short = product.shortDescription.trim();
+	const shortLength = short.length;
+	let shortScore = 0;
+	if ( shortLength >= 50 && shortLength <= 160 ) {
+		shortScore = 4;
+	} else if ( shortLength >= 20 && shortLength <= 240 ) {
+		shortScore = 2;
+	}
+
+	const alts = product.galleryAlts;
+	const withAlt = alts.filter( ( alt ) => alt.trim() !== '' ).length;
+	let galleryScore = 0;
+	let galleryEmpty: CheckStatus = 'improve';
+	if ( alts.length > 0 && withAlt === alts.length ) {
+		galleryScore = 4;
+	} else if ( withAlt > 0 ) {
+		galleryScore = 2;
+	} else if ( alts.length > 0 ) {
+		galleryScore = 0;
+		galleryEmpty = 'critical';
+	}
+
+	return [
+		check(
+			'product_identifier',
+			'product',
+			hasSku || hasGtin ? 4 : 0,
+			4,
+			'critical',
+			{ sku: hasSku, gtin: hasGtin }
+		),
+		check(
+			'product_short_description',
+			'product',
+			shortScore,
+			4,
+			shortLength === 0 ? 'critical' : 'improve',
+			{ characters: shortLength }
+		),
+		check(
+			'product_gallery_alt',
+			'product',
+			galleryScore,
+			4,
+			galleryEmpty,
+			{
+				images: alts.length,
+				withAlt,
+			}
+		),
+	];
+}
+
 function statusFor(
 	score: number,
 	maxScore: number,
@@ -580,15 +646,18 @@ export function analyze( input: AnalyzerInput ): AnalysisResult {
 			flesch: reading.ease === null ? '' : reading.ease,
 			grade: reading.grade === null ? '' : reading.grade,
 		} ),
+		...productChecks( input ),
 	];
 
-	const primaryScore = Math.max(
-		0,
-		Math.min(
-			100,
-			checks.reduce( ( total, item ) => total + item.score, 0 )
-		)
-	);
+	const earned = checks.reduce( ( total, item ) => total + item.score, 0 );
+	const max = checks.reduce( ( total, item ) => total + item.maxScore, 0 );
+	const primaryScore =
+		max <= 100
+			? Math.max( 0, Math.min( 100, earned ) )
+			: Math.max(
+					0,
+					Math.min( 100, Math.round( ( earned / max ) * 100 ) )
+			  );
 	const keywordChecks = checks.filter(
 		( item ) => item.category === 'keyword'
 	);
