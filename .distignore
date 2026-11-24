@@ -2,6 +2,7 @@
 # Patterns match .gitignore. build/, vendor/, languages/, and includes/ stay.
 
 /.git
+# Workflows and README screenshots. Kept out of the WordPress.org zip.
 /.github
 /.cursor
 /.wp-env
@@ -38,6 +39,7 @@
 /phpstan.neon
 /phpstan.neon.dist
 /phpstan-bootstrap.php
+/phpstan-elementor-stub.php
 /phpunit.xml
 /phpunit.xml.dist
 /webpack.config.js

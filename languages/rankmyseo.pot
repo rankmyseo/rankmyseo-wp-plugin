@@ -3,114 +3,151 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: RankMySEO 1.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rankmyseo-wp-plugin\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rankmyseo\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-23T16:56:40+00:00\n"
+"POT-Creation-Date: 2026-11-24T04:27:37+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: rankmyseo\n"
 
-#: src/admin/App.tsx:64
+#: src/admin/App.tsx:72
 msgid "Skip to content"
 msgstr ""
 
-#: src/admin/App.tsx:80
+#: src/admin/App.tsx:88
 msgid "Dismiss notice"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:95
-msgid "I checked this site locally and have nothing new to add."
-msgstr ""
-
-#: src/admin/components/AskAiDrawer.tsx:123
+#: src/admin/components/AskAiDrawer.tsx:125
 msgid "Connected assistant replies will appear here."
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:146
-#: src/admin/components/InlineActionCard.tsx:169
+#: src/admin/components/AskAiDrawer.tsx:148
+#: src/admin/components/InlineActionCard.tsx:171
+#: src/admin/views/MissingMetadataView.tsx:375
 msgid "Edit"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:150
+#: src/admin/components/AskAiDrawer.tsx:152
+#: src/shared/llms.ts:61
+#: includes/Modules/Sitemaps/LlmsTxt.php:463
 msgid "Untitled"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:184
+#: src/admin/components/AskAiDrawer.tsx:186
 msgid "Hi! Ask a question about your site SEO or pick a starter prompt below. Right now I run 100% locally using your live WordPress site status with zero external calls."
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:246
+#: src/admin/components/AskAiDrawer.tsx:248
 msgid "RankMySEO is still working on that. Open the queue in a moment."
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:261
+#: src/admin/components/AskAiDrawer.tsx:263
 #: includes/Modules/AiActions/ChatBridge.php:170
 msgid "RankMySEO could not answer just now."
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:392
+#: src/admin/components/AskAiDrawer.tsx:394
 msgid "RankMySEO AI Assistant"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:396
+#: src/admin/components/AskAiDrawer.tsx:398
 msgid "AI Assistant"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:399
+#: src/admin/components/AskAiDrawer.tsx:401
 msgid "Cloud AI"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:400
+#: src/admin/components/AskAiDrawer.tsx:402
 msgid "Local helper"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:406
+#: src/admin/components/AskAiDrawer.tsx:408
 msgid "Close AI Assistant"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:409
+#: src/admin/components/AskAiDrawer.tsx:411
 msgid "Close"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:457
+#: src/admin/components/AskAiDrawer.tsx:459
 #: src/admin/components/SetupWizard.tsx:449
 msgid "Review Cloud Setup"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:571
+#: src/admin/components/AskAiDrawer.tsx:573
 msgid "Asking RankMySEO…"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:572
+#: src/admin/components/AskAiDrawer.tsx:574
 msgid "Checking this site locally…"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:583
+#: src/admin/components/AskAiDrawer.tsx:585
 msgid "Suggested questions"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:603
+#: src/admin/components/AskAiDrawer.tsx:605
 msgid "Ask a question about your site SEO"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:613
+#: src/admin/components/AskAiDrawer.tsx:615
 msgid "Ask how to improve your site SEO…"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:624
+#: src/admin/components/AskAiDrawer.tsx:626
 msgid "Connected · RankMySEO answers for this site"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:628
+#: src/admin/components/AskAiDrawer.tsx:630
 msgid "Local mode · Zero external requests"
 msgstr ""
 
-#: src/admin/components/AskAiDrawer.tsx:639
+#: src/admin/components/AskAiDrawer.tsx:641
 msgid "Send"
+msgstr ""
+
+#: src/admin/components/AskAiDrawer.tsx:97
+msgid "I checked this site locally and have nothing new to add."
+msgstr ""
+
+#: src/admin/components/BuilderStatus.tsx:10
+msgid "Detected"
+msgstr ""
+
+#: src/admin/components/BuilderStatus.tsx:12
+msgid "Not detected"
+msgstr ""
+
+#: src/admin/components/BuilderStatus.tsx:7
+#: src/admin/views/DashboardView.tsx:613
+#: src/admin/views/SettingsView.tsx:260
+msgid "Active"
+msgstr ""
+
+#: src/admin/components/CommandBar.tsx:100
+msgid "Switch to Advanced mode"
+msgstr ""
+
+#: src/admin/components/CommandBar.tsx:101
+msgid "Switch to Simple mode"
+msgstr ""
+
+#: src/admin/components/CommandBar.tsx:109
+msgid "Open Ask AI"
+msgstr ""
+
+#: src/admin/components/CommandBar.tsx:118
+msgid "Turn on"
+msgstr ""
+
+#: src/admin/components/CommandBar.tsx:119
+msgid "Turn off"
 msgstr ""
 
 #: src/admin/components/CommandBar.tsx:14
@@ -122,67 +159,55 @@ msgid "Go to Search Previews"
 msgstr ""
 
 #: src/admin/components/CommandBar.tsx:16
-msgid "Go to Schema"
+msgid "Go to Missing details"
 msgstr ""
 
-#: src/admin/components/CommandBar.tsx:17
-msgid "Go to Sitemaps"
-msgstr ""
-
-#: src/admin/components/CommandBar.tsx:18
-msgid "Go to Redirects"
-msgstr ""
-
-#: src/admin/components/CommandBar.tsx:19
-msgid "Go to Import"
-msgstr ""
-
-#: src/admin/components/CommandBar.tsx:20
-msgid "Go to RankMySEO Cloud"
-msgstr ""
-
-#: src/admin/components/CommandBar.tsx:21
-msgid "Go to AI Queue"
-msgstr ""
-
-#: src/admin/components/CommandBar.tsx:22
-msgid "Go to Settings"
-msgstr ""
-
-#: src/admin/components/CommandBar.tsx:98
-msgid "Switch to Advanced mode"
-msgstr ""
-
-#: src/admin/components/CommandBar.tsx:99
-msgid "Switch to Simple mode"
-msgstr ""
-
-#: src/admin/components/CommandBar.tsx:107
-msgid "Open Ask AI"
-msgstr ""
-
-#: src/admin/components/CommandBar.tsx:116
-msgid "Turn on"
-msgstr ""
-
-#: src/admin/components/CommandBar.tsx:117
-msgid "Turn off"
-msgstr ""
-
-#: src/admin/components/CommandBar.tsx:166
+#: src/admin/components/CommandBar.tsx:168
 msgid "Command bar"
 msgstr ""
 
-#: src/admin/components/CommandBar.tsx:170
+#: src/admin/components/CommandBar.tsx:17
+msgid "Go to Schema"
+msgstr ""
+
+#: src/admin/components/CommandBar.tsx:172
 msgid "Search commands"
 msgstr ""
 
-#: src/admin/components/CommandBar.tsx:177
+#: src/admin/components/CommandBar.tsx:179
 msgid "Jump to a screen, toggle a module, or ask AI"
 msgstr ""
 
-#: src/admin/components/CommandBar.tsx:187
+#: src/admin/components/CommandBar.tsx:18
+msgid "Go to Store"
+msgstr ""
+
+#: src/admin/components/CommandBar.tsx:189
 msgid "No matching commands"
+msgstr ""
+
+#: src/admin/components/CommandBar.tsx:19
+msgid "Go to Sitemaps"
+msgstr ""
+
+#: src/admin/components/CommandBar.tsx:20
+msgid "Go to Redirects"
+msgstr ""
+
+#: src/admin/components/CommandBar.tsx:21
+msgid "Go to Import"
+msgstr ""
+
+#: src/admin/components/CommandBar.tsx:22
+msgid "Go to RankMySEO Cloud"
+msgstr ""
+
+#: src/admin/components/CommandBar.tsx:23
+msgid "Go to AI Queue"
+msgstr ""
+
+#: src/admin/components/CommandBar.tsx:24
+msgid "Go to Settings"
 msgstr ""
 
 #: src/admin/components/Header.tsx:19
@@ -192,12 +217,16 @@ msgstr ""
 #. Plugin Name of the plugin
 #. Author of the plugin
 #: src/admin/components/Header.tsx:24
-#: src/editor/index.tsx:230
-#: src/editor/index.tsx:238
-#: rankmyseo.php
-#: includes/Admin/AdminMenu.php:139
-#: includes/Admin/AdminMenu.php:140
-#: includes/Modules/Meta/ClassicMetabox.php:80
+#: src/builders/mount.tsx:167
+#: src/builders/mount.tsx:287
+#: src/editor/index.tsx:344
+#: src/editor/index.tsx:352
+#: rankmyseo.php:3
+#: rankmyseo.php:9
+#: includes/Admin/AdminMenu.php:153
+#: includes/Admin/AdminMenu.php:154
+#: includes/Modules/Meta/ClassicMetabox.php:81
+#: includes/Modules/Schema/ContentBlocks.php:49
 msgid "RankMySEO"
 msgstr ""
 
@@ -215,132 +244,133 @@ msgstr ""
 
 #: src/admin/components/Header.tsx:61
 #: src/admin/views/DashboardView.tsx:262
-#: src/admin/views/DashboardView.tsx:613
-#: src/admin/views/DashboardView.tsx:656
-#: src/admin/views/DashboardView.tsx:698
+#: src/admin/views/DashboardView.tsx:681
+#: src/admin/views/DashboardView.tsx:724
+#: src/admin/views/DashboardView.tsx:766
 msgid "Ask AI"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:27
-msgid "Low"
+#: src/admin/components/InlineActionCard.tsx:123
+#: src/admin/components/InlineActionCardSlot.tsx:66
+msgid "(empty)"
+msgstr ""
+
+#: src/admin/components/InlineActionCard.tsx:143
+msgid "Edit the suggestion"
+msgstr ""
+
+#: src/admin/components/InlineActionCard.tsx:163
+msgid "Confirm apply"
+msgstr ""
+
+#: src/admin/components/InlineActionCard.tsx:164
+#: src/admin/components/InlineActionCardSlot.tsx:93
+msgid "Approve & Apply"
+msgstr ""
+
+#: src/admin/components/InlineActionCard.tsx:178
+#: src/admin/components/InlineActionCardSlot.tsx:100
+msgid "Reject"
+msgstr ""
+
+#: src/admin/components/InlineActionCard.tsx:188
+msgid "Undo / Rollback"
+msgstr ""
+
+#: src/admin/components/InlineActionCard.tsx:193
+#: src/admin/components/InlineActionCardSlot.tsx:107
+#: src/admin/views/AiQueueView.tsx:160
+msgid "Applied"
+msgstr ""
+
+#: src/admin/components/InlineActionCard.tsx:198
+#: src/admin/components/InlineActionCardSlot.tsx:120
+#: src/admin/views/AiQueueView.tsx:163
+msgid "Rejected"
+msgstr ""
+
+#: src/admin/components/InlineActionCard.tsx:203
+#: src/admin/components/InlineActionCardSlot.tsx:125
+#: src/admin/views/AiQueueView.tsx:166
+msgid "Rolled back"
 msgstr ""
 
 #: src/admin/components/InlineActionCard.tsx:28
-msgid "Medium"
+msgid "Low"
 msgstr ""
 
 #: src/admin/components/InlineActionCard.tsx:29
+msgid "Medium"
+msgstr ""
+
+#: src/admin/components/InlineActionCard.tsx:30
 msgid "High"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:74
+#: src/admin/components/InlineActionCard.tsx:76
 #: src/admin/views/ConnectView.tsx:375
 msgid "This site"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:84
+#: src/admin/components/InlineActionCard.tsx:86
 msgid "Review the before and after, then decide."
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:92
+#: src/admin/components/InlineActionCard.tsx:94
 msgid "Before and after"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:121
-#: src/admin/components/InlineActionCardSlot.tsx:59
-msgid "(empty)"
-msgstr ""
-
-#: src/admin/components/InlineActionCard.tsx:141
-msgid "Edit the suggestion"
-msgstr ""
-
-#: src/admin/components/InlineActionCard.tsx:161
-msgid "Confirm apply"
-msgstr ""
-
-#: src/admin/components/InlineActionCard.tsx:162
-#: src/admin/components/InlineActionCardSlot.tsx:86
-msgid "Approve & Apply"
-msgstr ""
-
-#: src/admin/components/InlineActionCard.tsx:176
-#: src/admin/components/InlineActionCardSlot.tsx:93
-msgid "Reject"
-msgstr ""
-
-#: src/admin/components/InlineActionCard.tsx:186
-msgid "Undo / Rollback"
-msgstr ""
-
-#: src/admin/components/InlineActionCard.tsx:191
-#: src/admin/components/InlineActionCardSlot.tsx:100
-#: src/admin/views/AiQueueView.tsx:159
-msgid "Applied"
-msgstr ""
-
-#: src/admin/components/InlineActionCard.tsx:196
-#: src/admin/components/InlineActionCardSlot.tsx:113
-#: src/admin/views/AiQueueView.tsx:162
-msgid "Rejected"
-msgstr ""
-
-#: src/admin/components/InlineActionCard.tsx:201
-#: src/admin/components/InlineActionCardSlot.tsx:118
-#: src/admin/views/AiQueueView.tsx:165
-msgid "Rolled back"
-msgstr ""
-
-#: src/admin/components/InlineActionCardSlot.tsx:29
-msgid "Low risk"
+#: src/admin/components/InlineActionCardSlot.tsx:114
+msgid "Undo"
 msgstr ""
 
 #: src/admin/components/InlineActionCardSlot.tsx:30
-msgid "Medium risk"
+msgid "Low risk"
 msgstr ""
 
 #: src/admin/components/InlineActionCardSlot.tsx:31
+msgid "Medium risk"
+msgstr ""
+
+#: src/admin/components/InlineActionCardSlot.tsx:32
 msgid "High risk"
 msgstr ""
 
-#: src/admin/components/InlineActionCardSlot.tsx:53
+#: src/admin/components/InlineActionCardSlot.tsx:56
 #: src/admin/views/ImporterView.tsx:428
 msgid "Before"
 msgstr ""
 
-#: src/admin/components/InlineActionCardSlot.tsx:57
+#: src/admin/components/InlineActionCardSlot.tsx:61
 msgid "Removed:"
 msgstr ""
 
-#: src/admin/components/InlineActionCardSlot.tsx:64
+#: src/admin/components/InlineActionCardSlot.tsx:71
 #: src/admin/views/ImporterView.tsx:431
 msgid "After"
 msgstr ""
 
-#: src/admin/components/InlineActionCardSlot.tsx:68
+#: src/admin/components/InlineActionCardSlot.tsx:75
 msgid "Added:"
 msgstr ""
 
-#: src/admin/components/InlineActionCardSlot.tsx:107
-msgid "Undo"
-msgstr ""
-
 #: src/admin/components/Navigation.tsx:15
-#: src/admin/views/DashboardView.tsx:313
+#: src/admin/views/DashboardView.tsx:364
 #: includes/Admin/AdminMenu.php:68
 msgid "Dashboard"
 msgstr ""
 
 #: src/admin/components/Navigation.tsx:16
-#: includes/Modules/Schema/ContextFactory.php:99
-#: includes/Modules/Schema/ContextFactory.php:292
+#: src/blocks/breadcrumbs/edit.tsx:11
+#: includes/Modules/Schema/BreadcrumbTrail.php:167
+#: includes/Modules/Schema/ContextFactory.php:118
 msgid "Home"
 msgstr ""
 
 #: src/admin/components/Navigation.tsx:21
-#: src/admin/views/TitlesMetaView.tsx:266
+#: src/admin/views/TitlesMetaView.tsx:273
 #: includes/Admin/AdminMenu.php:75
-#: includes/Modules/Meta/MetaModule.php:29
+#: includes/Modules/Meta/MetaModule.php:33
 msgid "Titles & Meta"
 msgstr ""
 
@@ -349,79 +379,91 @@ msgid "Search Previews"
 msgstr ""
 
 #: src/admin/components/Navigation.tsx:27
-#: src/editor/components/EditorPanel.tsx:274
-#: includes/Admin/AdminMenu.php:82
-msgid "Schema"
+#: src/admin/views/MissingMetadataView.tsx:185
+msgid "Missing metadata"
 msgstr ""
 
 #: src/admin/components/Navigation.tsx:28
-msgid "Site Details"
+#: src/admin/views/MissingMetadataView.tsx:184
+#: includes/Admin/AdminMenu.php:82
+msgid "Missing details"
 msgstr ""
 
 #: src/admin/components/Navigation.tsx:33
-#: src/admin/components/Navigation.tsx:34
+#: src/editor/components/EditorPanel.tsx:337
 #: includes/Admin/AdminMenu.php:89
-msgid "Sitemaps"
+msgid "Schema"
+msgstr ""
+
+#: src/admin/components/Navigation.tsx:34
+msgid "Site Details"
 msgstr ""
 
 #: src/admin/components/Navigation.tsx:39
-#: src/admin/views/redirects/RedirectsView.tsx:259
-#: includes/Admin/AdminMenu.php:96
-#: includes/Modules/Redirects/RedirectsModule.php:36
-msgid "Redirects & 404s"
-msgstr ""
-
 #: src/admin/components/Navigation.tsx:40
-#: src/admin/views/DashboardView.tsx:683
-msgid "Broken Links"
+#: src/admin/views/store/StoreView.tsx:135
+#: includes/Admin/AdminMenu.php:96
+#: includes/Modules/Schema/SchemaController.php:388
+#: includes/Modules/WooCommerce/WooCommerceModule.php:47
+msgid "Store"
 msgstr ""
 
 #: src/admin/components/Navigation.tsx:45
 #: src/admin/components/Navigation.tsx:46
 #: includes/Admin/AdminMenu.php:103
-msgid "Import"
+msgid "Sitemaps"
 msgstr ""
 
 #: src/admin/components/Navigation.tsx:51
-#: src/admin/views/ConnectView.tsx:232
-#: src/admin/views/DashboardView.tsx:387
-#: includes/Admin/AdminMenu.php:109
+#: src/admin/views/redirects/RedirectsView.tsx:259
 #: includes/Admin/AdminMenu.php:110
-#: includes/Modules/Cloud/CloudModule.php:29
-msgid "RankMySEO Cloud"
+#: includes/Modules/Redirects/RedirectsModule.php:36
+msgid "Redirects & 404s"
 msgstr ""
 
 #: src/admin/components/Navigation.tsx:52
-msgid "Cloud"
+#: src/admin/views/DashboardView.tsx:751
+msgid "Broken Links"
 msgstr ""
 
 #: src/admin/components/Navigation.tsx:57
 #: src/admin/components/Navigation.tsx:58
 #: includes/Admin/AdminMenu.php:117
-msgid "AI Queue"
+msgid "Import"
 msgstr ""
 
 #: src/admin/components/Navigation.tsx:63
-#: src/admin/components/Navigation.tsx:64
-#: src/admin/views/SettingsView.tsx:87
+#: src/admin/views/ConnectView.tsx:232
+#: src/admin/views/DashboardView.tsx:438
+#: includes/Admin/AdminMenu.php:123
 #: includes/Admin/AdminMenu.php:124
+#: includes/Modules/Cloud/CloudModule.php:29
+msgid "RankMySEO Cloud"
+msgstr ""
+
+#: src/admin/components/Navigation.tsx:64
+msgid "Cloud"
+msgstr ""
+
+#: src/admin/components/Navigation.tsx:69
+#: src/admin/components/Navigation.tsx:70
+#: includes/Admin/AdminMenu.php:131
+msgid "AI Queue"
+msgstr ""
+
+#: src/admin/components/Navigation.tsx:75
+#: src/admin/components/Navigation.tsx:76
+#: src/admin/views/SettingsView.tsx:88
+#: includes/Admin/AdminMenu.php:138
 msgid "Settings"
 msgstr ""
 
-#: src/admin/components/Navigation.tsx:82
+#: src/admin/components/Navigation.tsx:94
 msgid "RankMySEO sections"
 msgstr ""
 
-#: src/admin/components/SetupWizard.tsx:51
-msgid "Choose a logo"
-msgstr ""
-
-#: src/admin/components/SetupWizard.tsx:52
-msgid "Use this logo"
-msgstr ""
-
 #: src/admin/components/SetupWizard.tsx:114
-#: includes/Modules/Chat/LocalAssistant.php:349
+#: includes/Modules/Chat/LocalAssistant.php:425
 msgid "Search titles and social previews"
 msgstr ""
 
@@ -446,7 +488,7 @@ msgid "Publish a list of public pages so new and updated content is easier to fi
 msgstr ""
 
 #: src/admin/components/SetupWizard.tsx:138
-#: includes/Modules/Chat/LocalAssistant.php:352
+#: includes/Modules/Chat/LocalAssistant.php:428
 msgid "Redirects and broken-link monitor"
 msgstr ""
 
@@ -486,7 +528,7 @@ msgid "Who is this site for?"
 msgstr ""
 
 #: src/admin/components/SetupWizard.tsx:215
-#: src/admin/views/SettingsView.tsx:131
+#: src/admin/views/SettingsView.tsx:132
 msgid "Business or Organization"
 msgstr ""
 
@@ -495,9 +537,9 @@ msgid "Company, online store, local business, or publication."
 msgstr ""
 
 #: src/admin/components/SetupWizard.tsx:236
-#: src/admin/utils/localAssistant.ts:174
+#: src/admin/utils/localAssistant.ts:183
 #: src/admin/views/SchemaView.tsx:395
-#: src/admin/views/SettingsView.tsx:138
+#: src/admin/views/SettingsView.tsx:139
 msgid "Person"
 msgstr ""
 
@@ -506,7 +548,7 @@ msgid "Personal blog, portfolio, creator, or freelancer."
 msgstr ""
 
 #: src/admin/components/SetupWizard.tsx:251
-#: src/admin/views/SettingsView.tsx:115
+#: src/admin/views/SettingsView.tsx:116
 msgid "Site or brand name"
 msgstr ""
 
@@ -515,7 +557,7 @@ msgid "Shown at the end of your search titles."
 msgstr ""
 
 #: src/admin/components/SetupWizard.tsx:262
-#: src/admin/views/SettingsView.tsx:152
+#: src/admin/views/SettingsView.tsx:153
 msgid "Title separator"
 msgstr ""
 
@@ -583,96 +625,56 @@ msgstr ""
 msgid "Skip for now — keep using locally"
 msgstr ""
 
-#: src/admin/context/AdminContext.tsx:164
+#: src/admin/components/SetupWizard.tsx:51
+msgid "Choose a logo"
+msgstr ""
+
+#: src/admin/components/SetupWizard.tsx:52
+msgid "Use this logo"
+msgstr ""
+
+#: src/admin/context/AdminContext.tsx:166
 msgid "Could not load RankMySEO settings. Please try again."
 msgstr ""
 
-#: src/admin/context/AdminContext.tsx:222
+#: src/admin/context/AdminContext.tsx:224
 msgid "Switched to Advanced Mode. All granular controls are visible."
 msgstr ""
 
-#: src/admin/context/AdminContext.tsx:226
+#: src/admin/context/AdminContext.tsx:228
 msgid "Switched to Simple Mode. Your advanced settings stay safely preserved."
 msgstr ""
 
-#: src/admin/context/AdminContext.tsx:235
+#: src/admin/context/AdminContext.tsx:237
 msgid "Could not save your experience mode preference."
 msgstr ""
 
-#: src/admin/context/AdminContext.tsx:264
+#: src/admin/context/AdminContext.tsx:266
 msgid "Could not save settings. Please try again."
 msgstr ""
 
-#: src/admin/context/AdminContext.tsx:300
+#: src/admin/context/AdminContext.tsx:302
 msgid "Module enabled."
 msgstr ""
 
-#: src/admin/context/AdminContext.tsx:301
+#: src/admin/context/AdminContext.tsx:303
 msgid "Module disabled."
 msgstr ""
 
-#: src/admin/context/AdminContext.tsx:333
+#: src/admin/context/AdminContext.tsx:335
 msgid "Setup complete. Your site is ready for local SEO."
 msgstr ""
 
-#: src/admin/context/AdminContext.tsx:341
+#: src/admin/context/AdminContext.tsx:343
 msgid "Could not save wizard progress."
 msgstr ""
 
-#: src/admin/context/AdminContext.tsx:365
+#: src/admin/context/AdminContext.tsx:367
 msgid "Setup skipped — switched to Advanced Mode."
 msgstr ""
 
-#: src/admin/context/AdminContext.tsx:374
+#: src/admin/context/AdminContext.tsx:376
 msgid "Could not persist wizard dismissal."
-msgstr ""
-
-#: src/admin/utils/localAssistant.ts:20
-#: src/admin/utils/localAssistant.ts:21
-msgid "Fix missing meta descriptions"
-msgstr ""
-
-#: src/admin/utils/localAssistant.ts:25
-#: src/admin/utils/localAssistant.ts:26
-#: src/admin/views/DashboardView.tsx:187
-msgid "How is my site's SEO?"
-msgstr ""
-
-#: src/admin/utils/localAssistant.ts:30
-#: src/admin/utils/localAssistant.ts:31
-#: src/admin/views/DashboardView.tsx:649
-msgid "Import from Yoast or Rank Math"
-msgstr ""
-
-#: src/admin/utils/localAssistant.ts:35
-#: src/admin/utils/localAssistant.ts:36
-#: includes/Modules/Chat/LocalAssistant.php:447
-msgid "Connect RankMySEO Cloud"
-msgstr ""
-
-#: src/admin/utils/localAssistant.ts:51
-msgid "your site"
-msgstr ""
-
-#. translators: 1: site name, 2: title separator
-#: src/admin/utils/localAssistant.ts:71
-msgid "On-Page & Titles is enabled for %1$s (using \"%2$s\" as your title separator). Keep titles around 50–60 characters with your main keyword near the front, and write plain 120–155 character meta descriptions so search engines do not pull random page text. You can configure defaults under On-Page & Titles."
-msgstr ""
-
-#: src/admin/utils/localAssistant.ts:78
-msgid "Your On-Page & Titles module is currently turned off. Turn it back on in Settings or On-Page & Titles to manage search titles and meta descriptions."
-msgstr ""
-
-#: src/admin/utils/localAssistant.ts:85
-msgid "Open On-Page & Titles"
-msgstr ""
-
-#: src/admin/utils/localAssistant.ts:88
-msgid "Manage Modules"
-msgstr ""
-
-#: src/admin/utils/localAssistant.ts:97
-msgid "RankMySEO supports non-destructive migration from Yoast SEO, Rank Math, and AIOSEO. Your original plugin data is never deleted, and every import writes rollback snapshots to the local import backups table so you can undo in one click."
 msgstr ""
 
 #: src/admin/utils/localAssistant.ts:102
@@ -703,227 +705,259 @@ msgstr ""
 msgid "Open Redirects & 404s"
 msgstr ""
 
+#: src/admin/utils/localAssistant.ts:145
+msgid "The AI site guide is optional and stays on this site. Open Sitemaps to turn it on, preview the public pages it lists, and check whether a real llms.txt file is already on disk."
+msgstr ""
+
 #: src/admin/utils/localAssistant.ts:150
-msgid "Sitemaps & Crawl is enabled. Search engine visibility is currently set to allow indexing, and your XML sitemap settings live under Sitemaps."
-msgstr ""
-
-#: src/admin/utils/localAssistant.ts:154
-msgid "Sitemaps & Crawl is turned off, so WordPress continues using its default sitemap behavior. Turn it on in Settings whenever you are ready."
-msgstr ""
-
-#: src/admin/utils/localAssistant.ts:159
-#: src/admin/views/DashboardView.tsx:483
+#: src/admin/utils/localAssistant.ts:168
+#: src/admin/views/DashboardView.tsx:551
 msgid "Open Sitemaps"
 msgstr ""
 
+#: src/admin/utils/localAssistant.ts:159
+msgid "Sitemaps & Crawl is enabled. Search engine visibility is currently set to allow indexing, and your XML sitemap settings live under Sitemaps."
+msgstr ""
+
+#: src/admin/utils/localAssistant.ts:163
+msgid "Sitemaps & Crawl is turned off, so WordPress continues using its default sitemap behavior. Turn it on in Settings whenever you are ready."
+msgstr ""
+
 #. translators: %s: site identity type
-#: src/admin/utils/localAssistant.ts:169
+#: src/admin/utils/localAssistant.ts:178
 msgid "Your site identity is currently set as \"%s\" for structured data. Schema helps search engines understand your business details, articles, and products."
 msgstr ""
 
-#: src/admin/utils/localAssistant.ts:175
+#: src/admin/utils/localAssistant.ts:184
 msgid "Business / Organization"
 msgstr ""
 
-#: src/admin/utils/localAssistant.ts:178
-#: src/admin/views/DashboardView.tsx:477
+#: src/admin/utils/localAssistant.ts:187
+#: src/admin/views/DashboardView.tsx:545
 msgid "Open Schema"
 msgstr ""
 
-#: src/admin/utils/localAssistant.ts:184
+#: src/admin/utils/localAssistant.ts:193
 msgid "Search engines are allowed to index this site."
 msgstr ""
 
-#: src/admin/utils/localAssistant.ts:188
+#: src/admin/utils/localAssistant.ts:197
 msgid "Warning: WordPress is currently set to discourage search engines from indexing this site."
 msgstr ""
 
-#: src/admin/utils/localAssistant.ts:193
+#: src/admin/utils/localAssistant.ts:20
+#: src/admin/utils/localAssistant.ts:21
+msgid "Fix missing meta descriptions"
+msgstr ""
+
+#: src/admin/utils/localAssistant.ts:202
 msgid "All custom SEO tables are installed and healthy."
 msgstr ""
 
-#: src/admin/utils/localAssistant.ts:197
+#: src/admin/utils/localAssistant.ts:206
 msgid "Some plugin tables need attention in Settings."
 msgstr ""
 
 #. translators: 1: site name, 2: enabled module count, 3: total module count, 4: visibility summary, 5: db summary
-#: src/admin/utils/localAssistant.ts:204
+#: src/admin/utils/localAssistant.ts:213
 msgid "Local check for %1$s: %2$d of %3$d SEO modules are enabled. %4$s %5$s You are currently running locally with zero external network calls."
 msgstr ""
 
-#: src/admin/utils/localAssistant.ts:217
+#: src/admin/utils/localAssistant.ts:226
 msgid "Review Dashboard"
 msgstr ""
 
-#: src/admin/utils/localAssistant.ts:220
+#: src/admin/utils/localAssistant.ts:229
 msgid "Open Settings"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:113
-msgid "Suggested changes"
+#: src/admin/utils/localAssistant.ts:25
+#: src/admin/utils/localAssistant.ts:26
+#: src/admin/views/DashboardView.tsx:187
+msgid "How is my site's SEO?"
+msgstr ""
+
+#: src/admin/utils/localAssistant.ts:30
+#: src/admin/utils/localAssistant.ts:31
+#: src/admin/views/DashboardView.tsx:717
+msgid "Import from Yoast or Rank Math"
+msgstr ""
+
+#: src/admin/utils/localAssistant.ts:35
+#: src/admin/utils/localAssistant.ts:36
+#: includes/Modules/Chat/LocalAssistant.php:528
+msgid "Connect RankMySEO Cloud"
+msgstr ""
+
+#: src/admin/utils/localAssistant.ts:51
+msgid "your site"
+msgstr ""
+
+#. translators: 1: site name, 2: title separator
+#: src/admin/utils/localAssistant.ts:71
+msgid "On-Page & Titles is enabled for %1$s (using \"%2$s\" as your title separator). Keep titles around 50–60 characters with your main keyword near the front, and write plain 120–155 character meta descriptions so search engines do not pull random page text. You can configure defaults under On-Page & Titles."
+msgstr ""
+
+#: src/admin/utils/localAssistant.ts:78
+msgid "Your On-Page & Titles module is currently turned off. Turn it back on in Settings or On-Page & Titles to manage search titles and meta descriptions."
+msgstr ""
+
+#: src/admin/utils/localAssistant.ts:85
+msgid "Open On-Page & Titles"
+msgstr ""
+
+#: src/admin/utils/localAssistant.ts:88
+msgid "Manage Modules"
+msgstr ""
+
+#: src/admin/utils/localAssistant.ts:97
+msgid "RankMySEO supports non-destructive migration from Yoast SEO, Rank Math, and AIOSEO. Your original plugin data is never deleted, and every import writes rollback snapshots to the local import backups table so you can undo in one click."
 msgstr ""
 
 #: src/admin/views/AiQueueView.tsx:114
+msgid "Suggested changes"
+msgstr ""
+
+#: src/admin/views/AiQueueView.tsx:115
 msgid "AI approval queue"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:123
+#: src/admin/views/AiQueueView.tsx:124
 msgid "Refresh suggestions"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:129
+#: src/admin/views/AiQueueView.tsx:130
 msgid "Nothing changes until you approve it. Undo puts the previous version back."
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:133
+#: src/admin/views/AiQueueView.tsx:134
 msgid "Filter the queue, inspect the full change, and choose which kinds of edits may apply on their own."
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:144
+#: src/admin/views/AiQueueView.tsx:145
 msgid "Status"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:153
+#: src/admin/views/AiQueueView.tsx:154
 msgid "All statuses"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:156
+#: src/admin/views/AiQueueView.tsx:157
 msgid "Pending"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:170
+#: src/admin/views/AiQueueView.tsx:171
+#: src/admin/views/MissingMetadataView.tsx:269
+#: src/admin/views/MissingMetadataView.tsx:371
 #: src/admin/views/redirects/RedirectsView.tsx:947
 msgid "Type"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:179
+#: src/admin/views/AiQueueView.tsx:180
+#: src/admin/views/MissingMetadataView.tsx:281
 msgid "All types"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:191
+#: src/admin/views/AiQueueView.tsx:192
 msgid "Hide full change"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:192
+#: src/admin/views/AiQueueView.tsx:193
 msgid "Show full change"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:200
+#: src/admin/views/AiQueueView.tsx:201
 msgid "No suggestions are waiting. Connect RankMySEO to pull new ones."
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:223
+#: src/admin/views/AiQueueView.tsx:224
 msgid "Auto-apply policy"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:225
+#: src/admin/views/AiQueueView.tsx:226
 msgid "Auto-apply"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:227
+#: src/admin/views/AiQueueView.tsx:228
 msgid "Off until you turn it on. Page content always waits for approval, and new articles stay drafts."
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:234
+#: src/admin/views/AiQueueView.tsx:235
 msgid "Allow selected changes to apply on their own"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:268
+#: src/admin/views/AiQueueView.tsx:269
 msgid "content_patch · Approval only"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:278
+#: src/admin/views/AiQueueView.tsx:279
 msgid "Post types"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:279
+#: src/admin/views/AiQueueView.tsx:280
 msgid "Comma-separated. Leave this empty and nothing applies on its own."
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:297
+#: src/admin/views/AiQueueView.tsx:298
 msgid "Daily cap"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:312
+#: src/admin/views/AiQueueView.tsx:313
 msgid "Save auto-apply settings"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:320
-#: src/admin/views/AiQueueView.tsx:322
+#: src/admin/views/AiQueueView.tsx:321
+#: src/admin/views/AiQueueView.tsx:323
 msgid "Audit log"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:327
+#: src/admin/views/AiQueueView.tsx:328
 msgid "When"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:330
+#: src/admin/views/AiQueueView.tsx:331
 msgid "Event"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:333
+#: src/admin/views/AiQueueView.tsx:334
 msgid "Who"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:336
+#: src/admin/views/AiQueueView.tsx:337
 msgid "Summary"
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:344
+#: src/admin/views/AiQueueView.tsx:345
 msgid "No audit entries yet."
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:400
-#: src/admin/views/AiQueueView.tsx:515
+#: src/admin/views/AiQueueView.tsx:401
+#: src/admin/views/AiQueueView.tsx:516
 #: includes/Modules/AiActions/ActionSync.php:89
 msgid "Suggestions could not be loaded."
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:452
+#: src/admin/views/AiQueueView.tsx:453
 #: includes/Modules/AiActions/ActionExecutor.php:166
 msgid "The change could not be applied."
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:467
+#: src/admin/views/AiQueueView.tsx:468
 msgid "The suggestion could not be skipped."
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:482
+#: src/admin/views/AiQueueView.tsx:483
 #: includes/Modules/AiActions/ActionExecutor.php:264
 msgid "The previous version could not be restored."
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:495
+#: src/admin/views/AiQueueView.tsx:496
 #: includes/Rest/AiActionsController.php:408
 msgid "Auto-apply settings saved."
 msgstr ""
 
-#: src/admin/views/AiQueueView.tsx:500
+#: src/admin/views/AiQueueView.tsx:501
 msgid "Auto-apply settings could not be saved."
-msgstr ""
-
-#: src/admin/views/ConnectView.tsx:32
-#: includes/Modules/Cloud/CloudClient.php:431
-#: includes/Modules/Cloud/PairingService.php:403
-#: includes/Rest/CloudController.php:258
-msgid "RankMySEO could not complete that request."
-msgstr ""
-
-#: src/admin/views/ConnectView.tsx:52
-#: src/admin/views/DashboardView.tsx:391
-msgid "Connected"
-msgstr ""
-
-#: src/admin/views/ConnectView.tsx:55
-msgid "Degraded"
-msgstr ""
-
-#: src/admin/views/ConnectView.tsx:58
-msgid "Reconnect needed"
-msgstr ""
-
-#: src/admin/views/ConnectView.tsx:60
-msgid "Not connected"
 msgstr ""
 
 #: src/admin/views/ConnectView.tsx:235
@@ -936,7 +970,7 @@ msgstr ""
 
 #: src/admin/views/ConnectView.tsx:274
 #: src/admin/views/ConnectView.tsx:308
-#: src/admin/views/DashboardView.tsx:301
+#: src/admin/views/DashboardView.tsx:352
 msgid "Connect to RankMySEO"
 msgstr ""
 
@@ -959,6 +993,13 @@ msgstr ""
 
 #: src/admin/views/ConnectView.tsx:319
 msgid "Continue locally keeps every SEO tool on this site and does not contact RankMySEO."
+msgstr ""
+
+#: src/admin/views/ConnectView.tsx:32
+#: includes/Modules/Cloud/CloudClient.php:431
+#: includes/Modules/Cloud/PairingService.php:403
+#: includes/Rest/CloudController.php:258
+msgid "RankMySEO could not complete that request."
 msgstr ""
 
 #: src/admin/views/ConnectView.tsx:330
@@ -1023,11 +1064,18 @@ msgid "RankMySEO will stop receiving updates from this site. The saved connectio
 msgstr ""
 
 #: src/admin/views/ConnectView.tsx:490
+#: src/admin/views/MissingMetadataView.tsx:514
+#: src/admin/views/MissingMetadataView.tsx:612
 msgid "Cancel"
 msgstr ""
 
 #: src/admin/views/ConnectView.tsx:517
 msgid "Showing saved insights"
+msgstr ""
+
+#: src/admin/views/ConnectView.tsx:52
+#: src/admin/views/DashboardView.tsx:442
+msgid "Connected"
 msgstr ""
 
 #: src/admin/views/ConnectView.tsx:525
@@ -1051,6 +1099,10 @@ msgstr ""
 msgid "No tracked keywords yet."
 msgstr ""
 
+#: src/admin/views/ConnectView.tsx:55
+msgid "Degraded"
+msgstr ""
+
 #: src/admin/views/ConnectView.tsx:570
 #: src/admin/views/ConnectView.tsx:573
 msgid "Next actions"
@@ -1060,17 +1112,21 @@ msgstr ""
 msgid "No next actions yet."
 msgstr ""
 
+#: src/admin/views/ConnectView.tsx:58
+msgid "Reconnect needed"
+msgstr ""
+
 #: src/admin/views/ConnectView.tsx:596
 #: src/admin/views/ConnectView.tsx:599
 msgid "Page edits"
 msgstr ""
 
-#: src/admin/views/ConnectView.tsx:603
-msgid "No page edits yet."
+#: src/admin/views/ConnectView.tsx:60
+msgid "Not connected"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:86
-msgid "Your WordPress Site"
+#: src/admin/views/ConnectView.tsx:603
+msgid "No page edits yet."
 msgstr ""
 
 #: src/admin/views/DashboardView.tsx:110
@@ -1117,7 +1173,7 @@ msgid "Continue setup"
 msgstr ""
 
 #: src/admin/views/DashboardView.tsx:242
-#: src/admin/views/DashboardView.tsx:595
+#: src/admin/views/DashboardView.tsx:663
 msgid "Review"
 msgstr ""
 
@@ -1127,237 +1183,259 @@ msgid "Ask AI: %s"
 msgstr ""
 
 #: src/admin/views/DashboardView.tsx:280
-msgid "Optional"
+#: src/admin/views/DashboardView.tsx:284
+msgid "Internal links"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:283
-msgid "Pair with RankMySEO Cloud when ready"
-msgstr ""
-
+#. translators: %d: number of cornerstone pages
 #: src/admin/views/DashboardView.tsx:289
-msgid "All standalone on-page SEO tools stay free and local. Connect RankMySEO Cloud anytime for live keyword tracking and approval-first recommendations."
+#: src/admin/views/DashboardView.tsx:515
+msgid "%d cornerstone pages"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:300
-msgid "View insights"
+#: src/admin/views/DashboardView.tsx:296
+msgid "Every published page has a link from somewhere else on this site."
 msgstr ""
 
 #: src/admin/views/DashboardView.tsx:316
+#: includes/Modules/Chat/LocalAssistant.php:869
+#: includes/Rest/DashboardController.php:303
+msgid "Show orphan pages"
+msgstr ""
+
+#: src/admin/views/DashboardView.tsx:320
+msgid "Ask about pages with no links"
+msgstr ""
+
+#: src/admin/views/DashboardView.tsx:331
+msgid "Optional"
+msgstr ""
+
+#: src/admin/views/DashboardView.tsx:334
+msgid "Pair with RankMySEO Cloud when ready"
+msgstr ""
+
+#: src/admin/views/DashboardView.tsx:340
+msgid "All standalone on-page SEO tools stay free and local. Connect RankMySEO Cloud anytime for live keyword tracking and approval-first recommendations."
+msgstr ""
+
+#: src/admin/views/DashboardView.tsx:351
+msgid "View insights"
+msgstr ""
+
+#: src/admin/views/DashboardView.tsx:367
 msgid "Operational status, module toggles, and system health for this WordPress site."
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:326
+#: src/admin/views/DashboardView.tsx:377
 msgid "All Settings"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:332
+#: src/admin/views/DashboardView.tsx:383
 msgid "Site SEO metrics"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:336
+#: src/admin/views/DashboardView.tsx:387
 msgid "Active Modules"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:342
+#: src/admin/views/DashboardView.tsx:393
 msgid "Local standalone core"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:348
+#: src/admin/views/DashboardView.tsx:399
 msgid "Search Indexing"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:352
+#: src/admin/views/DashboardView.tsx:403
 msgid "Allowed"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:353
+#: src/admin/views/DashboardView.tsx:404
 msgid "Discouraged"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:362
+#: src/admin/views/DashboardView.tsx:413
 msgid "Database Schema"
 msgstr ""
 
 #. translators: %d: installed schema version
-#: src/admin/views/DashboardView.tsx:367
+#: src/admin/views/DashboardView.tsx:418
 msgid "v%d"
 msgstr ""
 
 #. translators: %d: table count
-#: src/admin/views/DashboardView.tsx:375
+#: src/admin/views/DashboardView.tsx:426
 msgid "%d custom tables healthy"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:381
+#: src/admin/views/DashboardView.tsx:432
 msgid "Migration check needed"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:392
+#: src/admin/views/DashboardView.tsx:443
 msgid "Local Only"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:396
+#: src/admin/views/DashboardView.tsx:447
 msgid "Rankings available"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:397
+#: src/admin/views/DashboardView.tsx:448
 msgid "Stays on this site until you connect"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:408
+#: src/admin/views/DashboardView.tsx:459
 msgid "Site audit counts"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:412
+#: src/admin/views/DashboardView.tsx:463
 msgid "Site audit"
 msgstr ""
 
 #. translators: %d: site health score
-#: src/admin/views/DashboardView.tsx:417
+#: src/admin/views/DashboardView.tsx:468
 msgid "Local score %d / 100"
 msgstr ""
 
 #. translators: %d: count of published items missing a description
-#: src/admin/views/DashboardView.tsx:426
+#: src/admin/views/DashboardView.tsx:477
 msgid "%d missing descriptions"
 msgstr ""
 
 #. translators: %d: count of published items missing an SEO title
-#: src/admin/views/DashboardView.tsx:433
+#: src/admin/views/DashboardView.tsx:484
 msgid "%d missing SEO titles"
 msgstr ""
 
 #. translators: %d: count of thin published items
-#: src/admin/views/DashboardView.tsx:440
+#: src/admin/views/DashboardView.tsx:491
 msgid "%d thin posts"
 msgstr ""
 
 #. translators: %d: count of unresolved 404s
-#: src/admin/views/DashboardView.tsx:447
+#: src/admin/views/DashboardView.tsx:498
 msgid "%d open 404s"
 msgstr ""
 
+#. translators: %d: pages with no incoming internal links
+#: src/admin/views/DashboardView.tsx:505
+msgid "%d pages with no incoming links"
+msgstr ""
+
 #. translators: 1: active redirects, 2: total redirects
-#: src/admin/views/DashboardView.tsx:454
+#: src/admin/views/DashboardView.tsx:522
 msgid "%1$d active redirects of %2$d"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:469
+#: src/admin/views/DashboardView.tsx:537
 msgid "Quick links"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:489
+#: src/admin/views/DashboardView.tsx:557
 msgid "Open Redirects"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:495
+#: src/admin/views/DashboardView.tsx:563
 msgid "Open Search Previews"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:503
-#: src/admin/views/SettingsView.tsx:240
+#: src/admin/views/DashboardView.tsx:571
+#: src/admin/views/SettingsView.tsx:241
 msgid "SEO Modules"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:506
+#: src/admin/views/DashboardView.tsx:574
 msgid "Enable or disable modules independently. Disabled modules register zero hooks."
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:516
+#: src/admin/views/DashboardView.tsx:584
 #: src/admin/views/SchemaView.tsx:234
-#: src/admin/views/SettingsView.tsx:285
+#: src/admin/views/SettingsView.tsx:286
 #: src/admin/views/redirects/RedirectsView.tsx:278
+#: src/admin/views/store/StoreView.tsx:161
 msgid "Disabled"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:519
-#: src/admin/views/SettingsView.tsx:256
+#: src/admin/views/DashboardView.tsx:587
+#: src/admin/views/SettingsView.tsx:257
 msgid "Cloud optional"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:522
+#: src/admin/views/DashboardView.tsx:590
 #: src/admin/views/SchemaView.tsx:233
-#: src/admin/views/SettingsView.tsx:284
+#: src/admin/views/SettingsView.tsx:285
 #: src/admin/views/redirects/RedirectsView.tsx:277
+#: src/admin/views/store/StoreView.tsx:160
 msgid "Enabled"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:545
-#: src/admin/views/SettingsView.tsx:259
-msgid "Active"
-msgstr ""
-
-#: src/admin/views/DashboardView.tsx:546
+#: src/admin/views/DashboardView.tsx:614
 msgid "Inactive"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:576
+#: src/admin/views/DashboardView.tsx:644
 msgid "Set up your search titles and meta descriptions"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:582
+#: src/admin/views/DashboardView.tsx:650
 msgid "Choose a clear title separator and check how your"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:587
+#: src/admin/views/DashboardView.tsx:655
 msgid "appears in search results."
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:600
+#: src/admin/views/DashboardView.tsx:668
 msgid "Ask AI about search titles"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:606
-#: includes/Modules/Chat/LocalAssistant.php:721
-#: includes/Rest/DashboardController.php:181
+#: src/admin/views/DashboardView.tsx:674
+#: includes/Modules/Chat/LocalAssistant.php:834
+#: includes/Rest/DashboardController.php:222
 msgid "Find posts missing meta descriptions"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:621
+#: src/admin/views/DashboardView.tsx:689
 msgid "Switching from another SEO plugin?"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:627
+#: src/admin/views/DashboardView.tsx:695
 msgid "Copy existing titles, descriptions, and redirects safely from Yoast SEO, Rank Math, or AIOSEO with one-click undo."
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:638
+#: src/admin/views/DashboardView.tsx:706
 msgid "Open Import"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:643
+#: src/admin/views/DashboardView.tsx:711
 msgid "Ask AI about importing"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:664
+#: src/admin/views/DashboardView.tsx:732
 msgid "Keep broken links from costing visitors"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:670
+#: src/admin/views/DashboardView.tsx:738
 msgid "Use automatic"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:672
+#: src/admin/views/DashboardView.tsx:740
 msgid "rules whenever a page address changes so visitors always land on a live page."
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:688
+#: src/admin/views/DashboardView.tsx:756
 msgid "Ask AI about redirects"
 msgstr ""
 
-#: src/admin/views/DashboardView.tsx:694
-#: includes/Modules/Chat/LocalAssistant.php:741
-#: includes/Rest/DashboardController.php:226
+#: src/admin/views/DashboardView.tsx:762
+#: includes/Modules/Chat/LocalAssistant.php:854
+#: includes/Rest/DashboardController.php:282
 msgid "Show recent unresolved 404s"
 msgstr ""
 
-#. translators: 1: SEO plugin name, 2: number of posts with saved settings
-#: src/admin/views/ImporterView.tsx:35
-msgid "We found %1$s settings on %2$d posts — nothing will be deleted"
-msgstr ""
-
-#: src/admin/views/ImporterView.tsx:87
-msgid "The importer could not read this site."
+#: src/admin/views/DashboardView.tsx:86
+msgid "Your WordPress Site"
 msgstr ""
 
 #: src/admin/views/ImporterView.tsx:127
@@ -1432,6 +1510,11 @@ msgstr ""
 msgid "Batch size"
 msgstr ""
 
+#. translators: 1: SEO plugin name, 2: number of posts with saved settings
+#: src/admin/views/ImporterView.tsx:35
+msgid "We found %1$s settings on %2$d posts — nothing will be deleted"
+msgstr ""
+
 #: src/admin/views/ImporterView.tsx:360
 msgid "Dry-run preview"
 msgstr ""
@@ -1487,828 +1570,225 @@ msgstr ""
 msgid "%1$s · %2$s · %3$d values written"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:44
-msgid "Google stopped showing FAQ rich results on May 7, 2026. FAQ markup is still valid structured data for answer engines, and it does not promise a FAQ snippet in Google."
+#: src/admin/views/ImporterView.tsx:87
+msgid "The importer could not read this site."
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:57
-#: includes/Modules/Schema/SchemaController.php:361
-msgid "Blog post"
+#: src/admin/views/MissingMetadataView.tsx:219
+msgid "Fill empty search details from this site’s templates, or draft a suggestion to review before anything changes."
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:58
-#: includes/Modules/Schema/SchemaController.php:362
-msgid "Article"
+#: src/admin/views/MissingMetadataView.tsx:240
+msgid "Show"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:59
-#: includes/Modules/Schema/SchemaController.php:364
-msgid "Web page"
+#: src/admin/views/MissingMetadataView.tsx:252
+msgid "Anything missing"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:60
-#: includes/Modules/Schema/SchemaController.php:370
-msgid "Product"
+#: src/admin/views/MissingMetadataView.tsx:291
+msgid "Search"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:61
-#: includes/Modules/Schema/SchemaController.php:373
-msgid "None"
+#: src/admin/views/MissingMetadataView.tsx:302
+msgid "Filter"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:114
-msgid "Could not load structured data settings."
+#: src/admin/views/MissingMetadataView.tsx:307
+msgid "Local template fields"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:150
-msgid "Could not save structured data settings."
+#: src/admin/views/MissingMetadataView.tsx:327
+msgid "Fill with local templates"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:202
-msgid "Site Details for Search Engines"
+#: src/admin/views/MissingMetadataView.tsx:334
+msgid "Draft with RankMySEO AI"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:206
-#: includes/Modules/Schema/SchemaModule.php:51
-msgid "Structured Data (Schema)"
+#: src/admin/views/MissingMetadataView.tsx:338
+msgid "Connect RankMySEO to draft suggestions. Local templates work without a connection."
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:213
-#: src/admin/views/SitemapsView.tsx:191
-msgid "Module enabled"
+#: src/admin/views/MissingMetadataView.tsx:354
+msgid "Select all on this page"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:214
-#: src/admin/views/SitemapsView.tsx:192
-msgid "Module disabled"
+#: src/admin/views/MissingMetadataView.tsx:370
+#: includes/Modules/Meta/TemplateDefaults.php:25
+msgid "Title"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:219
-msgid "Tell search engines who publishes this site, then let articles, products, and breadcrumbs be described automatically."
+#: src/admin/views/MissingMetadataView.tsx:373
+msgid "Missing"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:223
-msgid "One JSON-LD @graph per page, with stable @id links, per-post overrides, and PHP filters."
+#: src/admin/views/MissingMetadataView.tsx:382
+msgid "Nothing is missing for this filter."
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:263
-#: src/admin/views/redirects/RedirectsView.tsx:425
-msgid "Custom advanced rules active — switch to Advanced to edit"
+#. translators: %s: page title.
+#: src/admin/views/MissingMetadataView.tsx:396
+msgid "Select %s"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:323
-msgid "Save site details"
+#. translators: %s: page title.
+#: src/admin/views/MissingMetadataView.tsx:418
+msgid "Search title for %s"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:324
-msgid "Save schema settings"
+#: src/admin/views/MissingMetadataView.tsx:506
+msgid "Save"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:350
-msgid "Choose a person or an"
+#: src/admin/views/MissingMetadataView.tsx:526
+msgid "Quick edit"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:352
-msgid "so search engines know who publishes your pages. This becomes your"
+#. translators: 1: current page, 2: number of matching pages.
+#: src/admin/views/MissingMetadataView.tsx:537
+msgid "Page %1$d. %2$d matching items."
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:363
-msgid "Site identity"
+#: src/admin/views/MissingMetadataView.tsx:548
+msgid "Previous"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:378
-msgid "Business or organization"
+#: src/admin/views/MissingMetadataView.tsx:555
+msgid "Next"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:381
-msgid "A company, shop, or group brand."
+#: src/admin/views/MissingMetadataView.tsx:567
+msgid "Review the local fill"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:397
-msgid "A personal site or solo creator."
+#: src/admin/views/MissingMetadataView.tsx:571
+msgid "Nothing to fill. Those fields already have text."
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:409
-msgid "Name"
+#: src/admin/views/MissingMetadataView.tsx:609
+msgid "Apply these details"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:417
-msgid "Logo image address"
+#: src/admin/views/MissingMetadataView.tsx:636
+msgid "That request could not be completed."
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:421
-msgid "A square logo helps search engines recognize your brand."
+#. translators: %d: number of pages updated.
+#: src/admin/views/MissingMetadataView.tsx:762
+msgid "Updated %d items from the local templates. Nothing was sent off this site."
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:430
-msgid "Short description"
+#: src/admin/views/MissingMetadataView.tsx:803
+msgid "Saved."
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:438
-msgid "Phone"
+#: src/admin/views/MissingMetadataView.tsx:83
+#: src/editor/components/EditorPanel.tsx:211
+#: includes/Modules/Meta/QuickBulkEdit.php:173
+#: includes/Modules/Meta/QuickBulkEdit.php:205
+#: includes/Modules/Meta/TermFields.php:69
+msgid "Search title"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:447
-msgid "Other profile links"
+#: src/admin/views/MissingMetadataView.tsx:84
+#: src/shared/glossary.ts:34
+#: includes/Modules/Importer/MetaCatalog.php:75
+msgid "SEO title"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:448
-msgid "One public profile address per line."
+#: src/admin/views/MissingMetadataView.tsx:88
+#: src/editor/components/EditorPanel.tsx:228
+#: includes/Modules/Meta/QuickBulkEdit.php:175
+#: includes/Modules/Meta/QuickBulkEdit.php:211
+#: includes/Modules/Meta/TermFields.php:70
+msgid "Search description"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:467
-msgid "Default type for posts"
+#: src/admin/views/MissingMetadataView.tsx:89
+#: src/shared/glossary.ts:27
+#: includes/Modules/Importer/MetaCatalog.php:76
+msgid "Meta description"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:483
-msgid "Describe products automatically"
+#: src/admin/views/MissingMetadataView.tsx:93
+msgid "Main phrase"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:484
-msgid "Replaces the shop built-in product markup so each product page is described once."
+#: src/admin/views/MissingMetadataView.tsx:94
+#: src/editor/components/EditorPanel.tsx:248
+#: src/shared/glossary.ts:76
+#: includes/Modules/Importer/MetaCatalog.php:79
+#: includes/Modules/Meta/QuickBulkEdit.php:177
+msgid "Focus keyword"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:545
-#: includes/Modules/Schema/SchemaController.php:298
-#: includes/Modules/Schema/SchemaController.php:326
-msgid "Post"
+#: src/admin/views/MissingMetadataView.tsx:97
+msgid "Image description"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:546
-#: includes/Modules/Schema/SchemaController.php:302
-#: includes/Modules/Schema/SchemaController.php:330
-msgid "Page"
+#: src/admin/views/MissingMetadataView.tsx:98
+msgid "Image alt text"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:550
-msgid "Preview is not available yet."
+#: src/admin/views/redirects/RedirectsView.tsx:1007
+msgid "Chain"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:579
-msgid "Schema type by content type"
+#: src/admin/views/redirects/RedirectsView.tsx:1033
+msgid "Could not delete that redirect."
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:584
-#: src/admin/views/SitemapsView.tsx:329
-msgid "Content type"
+#: src/admin/views/redirects/RedirectsView.tsx:1045
+msgid "Delete"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:585
-msgid "Schema type"
+#: src/admin/views/redirects/RedirectsView.tsx:1061
+msgid "Import CSV"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:627
-msgid "Publish local business details"
+#: src/admin/views/redirects/RedirectsView.tsx:1064
+msgid "Columns: source_path, match_type, target_url, status_code, is_active. Formula-like cells are stored as text."
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:640
-msgid "Business type"
+#: src/admin/views/redirects/RedirectsView.tsx:1087
+msgid "Could not import that CSV."
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:647
-#: src/shared/glossary.ts:111
-#: includes/Modules/Schema/SchemaController.php:371
-#: includes/Modules/Schema/SchemaController.php:384
-msgid "Local business"
+#: src/admin/views/redirects/RedirectsView.tsx:1099
+msgid "Upload CSV"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:664
-msgid "Business name"
+#: src/admin/views/redirects/RedirectsView.tsx:1105
+msgid "Broken pages (404s)"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:674
-msgid "Street address"
+#: src/admin/views/redirects/RedirectsView.tsx:1109
+msgid "No open 404s."
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:684
-msgid "City"
+#: src/admin/views/redirects/RedirectsView.tsx:1131
+msgid "Ignore"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:694
-msgid "Region"
+#: src/admin/views/redirects/RedirectsView.tsx:1139
+msgid "404 ignore rules"
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:704
-msgid "Postal code"
+#: src/admin/views/redirects/RedirectsView.tsx:1140
+msgid "One path pattern per line. Use * as a wildcard, or start a line with regex: for a checked regular expression."
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:714
-msgid "Country"
+#: src/admin/views/redirects/RedirectsView.tsx:1167
+msgid "Ignore rules saved."
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:724
-msgid "Latitude"
+#: src/admin/views/redirects/RedirectsView.tsx:1173
+msgid "Could not save ignore rules."
 msgstr ""
 
-#: src/admin/views/SchemaView.tsx:734
-msgid "Longitude"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:744
-msgid "Price range"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:754
-msgid "Opening hours"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:764
-msgid "Day"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:784
-msgid "Opens"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:800
-msgid "Closes"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:823
-msgid "Remove"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:832
-msgid "Add hours"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:841
-msgid "preview"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:853
-msgid "Copied JSON-LD"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:854
-msgid "Copy JSON-LD"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:861
-msgid "Preview page ID"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:864
-msgid "Use 0 for the homepage."
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:868
-msgid "Refresh preview"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:873
-msgid "JSON-LD preview"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:881
-msgid "Check custom JSON-LD"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:884
-msgid "Per-post overrides are stored in _rankmyseo_schema_type and _rankmyseo_schema_custom. This check uses the same validation before anything is saved."
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:891
-msgid "Custom JSON-LD"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:896
-msgid "Check JSON-LD"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:901
-msgid "Valid"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:902
-msgid "Needs a fix"
-msgstr ""
-
-#: src/admin/views/SchemaView.tsx:911
-msgid "PHP filters"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:78
-msgid "Settings saved."
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:91
-msgid "Manage your site basics, active SEO tools, and privacy preferences."
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:95
-msgid "Configure global plugin defaults, module toggles, data lifecycle, and system diagnostics."
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:102
-msgid "Re-run Setup Wizard"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:108
-msgid "General Site Settings"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:118
-msgid "Used in default search titles and site structured data."
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:127
-msgid "Site represents"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:161
-msgid "Default mode for new users"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:168
-msgid "Simple (Guided plain-English view)"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:175
-msgid "Advanced (Full granular controls)"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:182
-msgid "Each WordPress user can switch modes anytime from the top bar."
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:197
-msgid "Keep SEO data if plugin is uninstalled"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:201
-msgid "On by default. Turn this off to delete RankMySEO tables, options, transients, scheduled tasks, and saved SEO fields when the plugin is deleted."
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:211
-msgid "Share anonymous plugin diagnostics (optional)"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:215
-msgid "Off by default. Helps improve compatibility by sharing only WordPress and PHP version totals."
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:232
-msgid "Save Settings"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:243
-msgid "Turn individual features on or off anytime. Changes save immediately."
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:253
-msgid "Off"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:303
-msgid "System Health & Diagnostics"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:307
-msgid "Plugin Version"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:313
-msgid "WordPress Version"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:319
-msgid "PHP Version"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:323
-msgid "Schema Version"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:329
-msgid "Capabilities"
-msgstr ""
-
-#: src/admin/views/SettingsView.tsx:335
-msgid "Custom Tables"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:34
-msgid "Redirect attachment pages to the parent or file"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:38
-msgid "Hide attachment pages from search"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:39
-msgid "Hide internal search results from search"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:43
-msgid "Hide extra comment pages from search"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:47
-msgid "Remove replytocom links"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:48
-msgid "Remove the Really Simple Discovery link"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:49
-msgid "Remove the Windows Live Writer link"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:50
-msgid "Remove the shortlink tag"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:103
-msgid "Could not load sitemap settings. Please try again."
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:131
-msgid "Could not save sitemap settings."
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:152
-msgid "Sitemap settings are unavailable."
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:169
-msgid "Include Posts"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:170
-msgid "Include Pages"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:171
-msgid "Include Products"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:181
-msgid "Site Map & Search Engine Updates"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:185
-#: includes/Modules/Sitemaps/SitemapsModule.php:36
-msgid "Sitemaps & Crawl"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:197
-msgid "Keep an automatic map of your public pages and choose when search engines should be told about updates."
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:201
-msgid "Paginated XML sitemaps, IndexNow submissions, and virtual robots.txt rules."
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:212
-msgid "Sitemaps on"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:213
-msgid "Sitemaps off"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:258
-msgid "Sitemap is active"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:259
-msgid "Sitemap is off"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:275
-msgid "Turn sitemaps on to publish your XML sitemap. WordPress keeps its own sitemap until then."
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:286
-msgid "Pages to include"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:287
-msgid "Sitemap contents"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:307
-msgid "Products are included when a product post type exists."
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:330
-msgid "In sitemap"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:341
-msgid "(not installed)"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:351
-#: src/admin/views/SitemapsView.tsx:375
-msgid "Include"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:394
-#: includes/Modules/Sitemaps/WordPressSitemapSource.php:77
-msgid "Authors"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:398
-msgid "Include Authors"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:419
-#: src/admin/views/SitemapsView.tsx:423
-msgid "Enable IndexNow instant indexing"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:434
-msgid "IndexNow stays off until you enable it. After you enable it, RankMySEO sends changed public page addresses to IndexNow at https://api.indexnow.org/indexnow when you publish, update, or delete them. The request includes your site host, your IndexNow key, and those addresses."
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:445
-msgid "IndexNow key"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:454
-msgid "Key file:"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:471
-msgid "Could not rotate the IndexNow key."
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:480
-msgid "Rotate key"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:493
-msgid "Could not refresh the sitemap cache."
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:502
-msgid "Regenerate sitemap cache"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:512
-#: src/admin/views/SitemapsView.tsx:567
-msgid "Ping URL now"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:558
-msgid "IndexNow did not accept that URL. Turn IndexNow on and use a URL from this site."
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:576
-msgid "Recent submissions"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:580
-msgid "No IndexNow submissions yet."
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:595
-msgid "Sent"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:596
-msgid "Failed"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:601
-msgid "URLs"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:614
-msgid "Crawl safety"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:623
-msgid "Let search engines crawl my public pages"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:629
-msgid "Leave this on unless you intentionally want to block the whole site."
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:640
-msgid "robots.txt source"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:644
-msgid "Safe preset"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:648
-msgid "Custom rules"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:660
-msgid "Preset"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:664
-msgid "Default (block wp-admin only)"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:671
-msgid "Open (allow the whole site)"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:691
-msgid "Custom robots.txt"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:708
-#: includes/Modules/Sitemaps/RobotsTxt.php:214
-msgid "These rules include Disallow: /, which blocks crawlers from the entire site."
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:715
-msgid "Live preview"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:724
-msgid "URLs per sitemap"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:738
-msgid "Between 100 and 2000. The default is 1000."
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:745
-msgid "Include images in the sitemap"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:756
-msgid "Excluded post IDs"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:767
-msgid "Crawl hygiene"
-msgstr ""
-
-#: src/admin/views/SitemapsView.tsx:805
-msgid "Save crawl settings"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:44
-msgid "Author archive"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:45
-msgid "Date archive"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:46
-#: includes/Modules/Schema/ContextFactory.php:72
-msgid "Search results"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:47
-msgid "Missing page"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:164
-msgid "Search preview settings could not be loaded."
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:178
-msgid "Loading search previews"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:186
-msgid "Sample page"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:190
-msgid "A short sample excerpt."
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:191
-msgid "News"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:192
-msgid "Stories from the team."
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:198
-#: includes/Modules/Sitemaps/WordPressSitemapSource.php:162
-#: includes/Rest/SitemapsController.php:384
-msgid "Posts"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:252
-msgid "Could not save search previews."
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:265
-msgid "Search previews"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:269
-msgid "Choose the titles and descriptions people see in Google and when a page is shared."
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:285
-msgid "Another SEO plugin is active, so RankMySEO is not printing titles yet."
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:295
-#: includes/Modules/Meta/TemplateDefaults.php:35
-msgid "Site name"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:307
-#: includes/Modules/Meta/TemplateDefaults.php:30
-msgid "Separator"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:323
-msgid "Homepage title"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:332
-msgid "Homepage description"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:355
-msgid "Default social image"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:391
-msgid "Show Posts in Google"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:393
-msgid "Show Pages in Google"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:395
-msgid "Show Products in Google"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:407
-msgid "Templates"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:411
-msgid "The homepage is a static page. Its own search title is used when that page has one."
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:415
-msgid "The homepage shows your latest posts."
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:434
-msgid "Title template"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:459
-msgid "Hide this type from search"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:481
-msgid "Homepage preview:"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:485
-msgid "Post preview:"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:504
-msgid "Saving…"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:505
-msgid "Save search previews"
-msgstr ""
-
-#: src/admin/views/TitlesMetaView.tsx:509
-msgid "Search previews saved."
-msgstr ""
-
-#: src/admin/views/redirects/RedirectsView.tsx:66
-msgid "Exact"
-msgstr ""
-
-#: src/admin/views/redirects/RedirectsView.tsx:69
-msgid "Prefix"
-msgstr ""
-
-#: src/admin/views/redirects/RedirectsView.tsx:71
-msgid "Regex"
-msgstr ""
-
-#: src/admin/views/redirects/RedirectsView.tsx:76
-msgid "No redirect matches that URL."
-msgstr ""
-
-#: src/admin/views/redirects/RedirectsView.tsx:79
-msgid "Sends visitors to"
-msgstr ""
-
-#: src/admin/views/redirects/RedirectsView.tsx:83
-msgid "Responds with"
+#: src/admin/views/redirects/RedirectsView.tsx:1185
+msgid "Save ignore rules"
 msgstr ""
 
 #: src/admin/views/redirects/RedirectsView.tsx:186
@@ -2361,7 +1841,7 @@ msgid "Flatten chain"
 msgstr ""
 
 #: src/admin/views/redirects/RedirectsView.tsx:434
-#: includes/Modules/AiActions/ActionCatalog.php:157
+#: includes/Modules/AiActions/ActionCatalog.php:163
 msgid "Add a redirect"
 msgstr ""
 
@@ -2437,8 +1917,16 @@ msgstr ""
 msgid "1 redirect is active."
 msgstr ""
 
+#: src/admin/views/redirects/RedirectsView.tsx:66
+msgid "Exact"
+msgstr ""
+
 #: src/admin/views/redirects/RedirectsView.tsx:686
 msgid "Add a rule"
+msgstr ""
+
+#: src/admin/views/redirects/RedirectsView.tsx:69
+msgid "Prefix"
 msgstr ""
 
 #: src/admin/views/redirects/RedirectsView.tsx:692
@@ -2449,6 +1937,10 @@ msgstr ""
 msgid "To URL"
 msgstr ""
 
+#: src/admin/views/redirects/RedirectsView.tsx:71
+msgid "Regex"
+msgstr ""
+
 #: src/admin/views/redirects/RedirectsView.tsx:710
 msgid "HTTP status"
 msgstr ""
@@ -2457,12 +1949,20 @@ msgstr ""
 msgid "Match type"
 msgstr ""
 
+#: src/admin/views/redirects/RedirectsView.tsx:76
+msgid "No redirect matches that URL."
+msgstr ""
+
 #: src/admin/views/redirects/RedirectsView.tsx:771
 msgid "Redirect saved."
 msgstr ""
 
 #: src/admin/views/redirects/RedirectsView.tsx:778
 msgid "Could not save that redirect."
+msgstr ""
+
+#: src/admin/views/redirects/RedirectsView.tsx:79
+msgid "Sends visitors to"
 msgstr ""
 
 #: src/admin/views/redirects/RedirectsView.tsx:790
@@ -2475,6 +1975,10 @@ msgstr ""
 
 #: src/admin/views/redirects/RedirectsView.tsx:818
 msgid "Could not test that URL."
+msgstr ""
+
+#: src/admin/views/redirects/RedirectsView.tsx:83
+msgid "Responds with"
 msgstr ""
 
 #: src/admin/views/redirects/RedirectsView.tsx:830
@@ -2543,82 +2047,1163 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: src/admin/views/redirects/RedirectsView.tsx:1007
-msgid "Chain"
+#: src/admin/views/SchemaView.tsx:114
+msgid "Could not load structured data settings."
 msgstr ""
 
-#: src/admin/views/redirects/RedirectsView.tsx:1033
-msgid "Could not delete that redirect."
+#: src/admin/views/SchemaView.tsx:150
+msgid "Could not save structured data settings."
 msgstr ""
 
-#: src/admin/views/redirects/RedirectsView.tsx:1045
-msgid "Delete"
+#: src/admin/views/SchemaView.tsx:202
+msgid "Site Details for Search Engines"
 msgstr ""
 
-#: src/admin/views/redirects/RedirectsView.tsx:1061
-msgid "Import CSV"
+#: src/admin/views/SchemaView.tsx:206
+#: includes/Modules/Schema/SchemaModule.php:51
+msgid "Structured Data (Schema)"
 msgstr ""
 
-#: src/admin/views/redirects/RedirectsView.tsx:1064
-msgid "Columns: source_path, match_type, target_url, status_code, is_active. Formula-like cells are stored as text."
+#: src/admin/views/SchemaView.tsx:213
+#: src/admin/views/SitemapsView.tsx:216
+#: src/admin/views/store/StoreView.tsx:140
+msgid "Module enabled"
 msgstr ""
 
-#: src/admin/views/redirects/RedirectsView.tsx:1087
-msgid "Could not import that CSV."
+#: src/admin/views/SchemaView.tsx:214
+#: src/admin/views/SitemapsView.tsx:217
+#: src/admin/views/store/StoreView.tsx:141
+msgid "Module disabled"
 msgstr ""
 
-#: src/admin/views/redirects/RedirectsView.tsx:1099
-msgid "Upload CSV"
+#: src/admin/views/SchemaView.tsx:219
+msgid "Tell search engines who publishes this site, then let articles, products, and breadcrumbs be described automatically."
 msgstr ""
 
-#: src/admin/views/redirects/RedirectsView.tsx:1105
-msgid "Broken pages (404s)"
+#: src/admin/views/SchemaView.tsx:223
+msgid "One JSON-LD @graph per page, with stable @id links, per-post overrides, and PHP filters."
 msgstr ""
 
-#: src/admin/views/redirects/RedirectsView.tsx:1109
-msgid "No open 404s."
+#: src/admin/views/SchemaView.tsx:263
+#: src/admin/views/redirects/RedirectsView.tsx:425
+#: src/admin/views/store/StoreView.tsx:189
+msgid "Custom advanced rules active — switch to Advanced to edit"
 msgstr ""
 
-#: src/admin/views/redirects/RedirectsView.tsx:1131
-msgid "Ignore"
+#: src/admin/views/SchemaView.tsx:323
+msgid "Save site details"
 msgstr ""
 
-#: src/admin/views/redirects/RedirectsView.tsx:1139
-msgid "404 ignore rules"
+#: src/admin/views/SchemaView.tsx:324
+msgid "Save schema settings"
 msgstr ""
 
-#: src/admin/views/redirects/RedirectsView.tsx:1140
-msgid "One path pattern per line. Use * as a wildcard, or start a line with regex: for a checked regular expression."
+#: src/admin/views/SchemaView.tsx:350
+msgid "Choose a person or an"
 msgstr ""
 
-#: src/admin/views/redirects/RedirectsView.tsx:1167
-msgid "Ignore rules saved."
+#: src/admin/views/SchemaView.tsx:352
+msgid "so search engines know who publishes your pages. This becomes your"
 msgstr ""
 
-#: src/admin/views/redirects/RedirectsView.tsx:1173
-msgid "Could not save ignore rules."
+#: src/admin/views/SchemaView.tsx:363
+msgid "Site identity"
 msgstr ""
 
-#: src/admin/views/redirects/RedirectsView.tsx:1185
-msgid "Save ignore rules"
+#: src/admin/views/SchemaView.tsx:378
+msgid "Business or organization"
 msgstr ""
 
-#: src/analyzer/messages.ts:7
-#: includes/Modules/Analyzer/ScoreBands.php:45
-#: includes/Modules/Chat/SiteHealth.php:61
-msgid "Good"
+#: src/admin/views/SchemaView.tsx:381
+msgid "A company, shop, or group brand."
 msgstr ""
 
-#: src/analyzer/messages.ts:9
-#: includes/Modules/Analyzer/ScoreBands.php:47
-#: includes/Modules/Chat/SiteHealth.php:64
-msgid "Needs work"
+#: src/admin/views/SchemaView.tsx:397
+msgid "A personal site or solo creator."
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:409
+msgid "Name"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:417
+msgid "Logo image address"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:421
+msgid "A square logo helps search engines recognize your brand."
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:430
+msgid "Short description"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:438
+msgid "Phone"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:44
+msgid "Google stopped showing FAQ rich results on May 7, 2026. FAQ markup is still valid structured data for answer engines, and it does not promise a FAQ snippet in Google."
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:447
+msgid "Other profile links"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:448
+msgid "One public profile address per line."
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:467
+msgid "Default type for posts"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:483
+msgid "Describe products automatically"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:484
+msgid "Replaces the shop built-in product markup so each product page is described once."
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:545
+#: includes/Modules/Schema/SchemaController.php:298
+#: includes/Modules/Schema/SchemaController.php:326
+msgid "Post"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:546
+#: includes/Modules/Schema/SchemaController.php:302
+#: includes/Modules/Schema/SchemaController.php:330
+msgid "Page"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:550
+msgid "Preview is not available yet."
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:57
+#: src/editor/schemaOptions.ts:13
+#: includes/Modules/Schema/SchemaController.php:361
+msgid "Blog post"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:579
+msgid "Schema type by content type"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:58
+#: src/editor/schemaOptions.ts:12
+#: includes/Modules/Schema/SchemaController.php:362
+msgid "Article"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:584
+#: src/admin/views/SitemapsView.tsx:364
+msgid "Content type"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:585
+#: src/editor/components/SchemaTab.tsx:60
+msgid "Schema type"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:59
+#: src/editor/schemaOptions.ts:15
+#: includes/Modules/Schema/SchemaController.php:364
+msgid "Web page"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:60
+#: src/analyzer/messages.ts:37
+#: src/editor/schemaOptions.ts:27
+#: includes/Modules/Schema/SchemaController.php:370
+msgid "Product"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:61
+#: src/editor/components/AnalyzerPanel.tsx:134
+#: src/editor/schemaOptions.ts:31
+#: src/editor/schemaOptions.ts:68
+#: includes/Modules/Schema/SchemaController.php:374
+msgid "None"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:627
+msgid "Publish local business details"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:640
+msgid "Business type"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:647
+#: src/editor/schemaOptions.ts:28
+#: src/shared/glossary.ts:111
+#: includes/Modules/Schema/SchemaController.php:371
+#: includes/Modules/Schema/SchemaController.php:385
+msgid "Local business"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:664
+msgid "Business name"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:674
+msgid "Street address"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:684
+msgid "City"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:694
+msgid "Region"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:704
+msgid "Postal code"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:714
+msgid "Country"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:724
+msgid "Latitude"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:734
+msgid "Longitude"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:744
+msgid "Price range"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:754
+msgid "Opening hours"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:764
+msgid "Day"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:784
+msgid "Opens"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:800
+msgid "Closes"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:823
+#: src/blocks/faq/edit.tsx:109
+msgid "Remove"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:832
+msgid "Add hours"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:841
+msgid "preview"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:853
+msgid "Copied JSON-LD"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:854
+msgid "Copy JSON-LD"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:861
+msgid "Preview page ID"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:864
+msgid "Use 0 for the homepage."
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:868
+msgid "Refresh preview"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:873
+msgid "JSON-LD preview"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:881
+msgid "Check custom JSON-LD"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:884
+msgid "Per-post overrides are stored in _rankmyseo_schema_type and _rankmyseo_schema_custom. This check uses the same validation before anything is saved."
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:891
+msgid "Custom JSON-LD"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:896
+msgid "Check JSON-LD"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:901
+msgid "Valid"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:902
+msgid "Needs a fix"
+msgstr ""
+
+#: src/admin/views/SchemaView.tsx:911
+msgid "PHP filters"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:103
+msgid "Re-run Setup Wizard"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:109
+msgid "General Site Settings"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:119
+msgid "Used in default search titles and site structured data."
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:128
+msgid "Site represents"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:162
+msgid "Default mode for new users"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:169
+msgid "Simple (Guided plain-English view)"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:176
+msgid "Advanced (Full granular controls)"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:183
+msgid "Each WordPress user can switch modes anytime from the top bar."
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:198
+msgid "Keep SEO data if plugin is uninstalled"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:202
+msgid "On by default. Turn this off to delete RankMySEO tables, options, transients, scheduled tasks, and saved SEO fields when the plugin is deleted."
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:212
+msgid "Share anonymous plugin diagnostics (optional)"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:216
+msgid "Off by default. Helps improve compatibility by sharing only WordPress and PHP version totals."
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:233
+msgid "Save Settings"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:244
+msgid "Turn individual features on or off anytime. Changes save immediately."
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:254
+msgid "Off"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:308
+msgid "Page editors"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:309
+msgid "Page builders"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:318
+msgid "Search title, description, and social fields stay the same in the block editor, the classic editor, Elementor, and Divi."
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:329
+msgid "System Health & Diagnostics"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:333
+msgid "Plugin Version"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:339
+msgid "WordPress Version"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:345
+msgid "PHP Version"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:349
+msgid "Schema Version"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:355
+msgid "Capabilities"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:361
+msgid "Custom Tables"
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:79
+msgid "Settings saved."
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:92
+msgid "Manage your site basics, active SEO tools, and privacy preferences."
+msgstr ""
+
+#: src/admin/views/SettingsView.tsx:96
+msgid "Configure global plugin defaults, module toggles, data lifecycle, and system diagnostics."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:112
+msgid "Could not load sitemap settings. Please try again."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:140
+msgid "Could not save sitemap settings."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:161
+msgid "Sitemap settings are unavailable."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:178
+msgid "Include Posts"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:179
+msgid "Include Pages"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:180
+msgid "Include Products"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:184
+msgid "List Posts"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:185
+msgid "List Pages"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:186
+msgid "List Products"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:206
+msgid "Site Map & Search Engine Updates"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:210
+#: includes/Modules/Sitemaps/SitemapsModule.php:36
+msgid "Sitemaps & Crawl"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:222
+msgid "Keep an automatic map of your public pages and choose when search engines should be told about updates."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:226
+msgid "Paginated XML sitemaps, IndexNow submissions, and virtual robots.txt rules."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:237
+msgid "Sitemaps on"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:238
+msgid "Sitemaps off"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:293
+msgid "Sitemap is active"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:294
+msgid "Sitemap is off"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:310
+msgid "Turn sitemaps on to publish your XML sitemap. WordPress keeps its own sitemap until then."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:321
+msgid "Pages to include"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:322
+msgid "Sitemap contents"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:342
+msgid "Products are included when a product post type exists."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:36
+msgid "Redirect attachment pages to the parent or file"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:365
+msgid "In sitemap"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:376
+msgid "(not installed)"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:386
+#: src/admin/views/SitemapsView.tsx:410
+msgid "Include"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:40
+msgid "Hide attachment pages from search"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:41
+msgid "Hide internal search results from search"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:429
+#: includes/Modules/Sitemaps/WordPressSitemapSource.php:77
+msgid "Authors"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:433
+msgid "Include Authors"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:45
+msgid "Hide extra comment pages from search"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:454
+#: src/admin/views/SitemapsView.tsx:458
+msgid "Enable IndexNow instant indexing"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:469
+msgid "IndexNow stays off until you enable it. After you enable it, RankMySEO sends changed public page addresses to IndexNow at https://api.indexnow.org/indexnow when you publish, update, or delete them. The request includes your site host, your IndexNow key, and those addresses."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:480
+msgid "IndexNow key"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:489
+msgid "Key file:"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:49
+msgid "Remove replytocom links"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:50
+msgid "Remove the Really Simple Discovery link"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:506
+msgid "Could not rotate the IndexNow key."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:51
+msgid "Remove the Windows Live Writer link"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:515
+msgid "Rotate key"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:52
+msgid "Remove the shortlink tag"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:528
+msgid "Could not refresh the sitemap cache."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:537
+msgid "Regenerate sitemap cache"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:547
+#: src/admin/views/SitemapsView.tsx:602
+msgid "Ping URL now"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:593
+msgid "IndexNow did not accept that URL. Turn IndexNow on and use a URL from this site."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:611
+msgid "Recent submissions"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:615
+msgid "No IndexNow submissions yet."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:630
+msgid "Sent"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:631
+msgid "Failed"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:636
+msgid "URLs"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:649
+msgid "AI site guide"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:650
+msgid "llms.txt"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:656
+msgid "AI site guide on"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:657
+msgid "AI site guide off"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:661
+msgid "Publish a plain-text list of public pages at /llms.txt. It is built on this site and is not saved as a file."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:699
+msgid "Intro note"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:708
+msgid "Extra links, one address per line"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:719
+msgid "Links to leave out, one address per line"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:744
+msgid "Save guide notes"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:759
+msgid "Could not refresh the guide address."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:768
+msgid "Refresh and preview"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:777
+#: src/admin/views/SitemapsView.tsx:886
+msgid "Live preview"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:785
+msgid "Crawl safety"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:794
+msgid "Let search engines crawl my public pages"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:800
+msgid "Leave this on unless you intentionally want to block the whole site."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:811
+msgid "robots.txt source"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:815
+msgid "Safe preset"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:819
+msgid "Custom rules"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:831
+msgid "Preset"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:835
+msgid "Default (block wp-admin only)"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:842
+msgid "Open (allow the whole site)"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:862
+msgid "Custom robots.txt"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:879
+#: includes/Modules/Sitemaps/RobotsTxt.php:214
+msgid "These rules include Disallow: /, which blocks crawlers from the entire site."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:895
+msgid "URLs per sitemap"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:909
+msgid "Between 100 and 2000. The default is 1000."
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:916
+msgid "Include images in the sitemap"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:927
+msgid "Excluded post IDs"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:938
+msgid "Crawl hygiene"
+msgstr ""
+
+#: src/admin/views/SitemapsView.tsx:976
+msgid "Save crawl settings"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:136
+msgid "Your shop in search"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:146
+msgid "Product offers, catalog URLs, and return and shipping details. Everything stays on this site."
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:150
+msgid "Choose how products, prices, and sold-out items show up. These details stay on this site."
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:173
+msgid "WooCommerce is not active. These choices are saved and start working when WooCommerce is on."
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:20
+#: includes/Modules/WooCommerce/ProductDataTab.php:361
+msgid "Free returns"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:205
+msgid "List one offer for each product option"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:209
+msgid "Show each product option in search"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:22
+#: includes/Modules/WooCommerce/ProductDataTab.php:362
+msgid "The customer pays"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:223
+msgid "Add product price and stock to social tags"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:227
+msgid "Add price and stock when a product is shared"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:239
+msgid "Hide sold-out products from search"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:252
+msgid "Canonicalize filtered and sorted shop URLs"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:256
+msgid "Send filtered shop links to the main shop page"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:26
+#: includes/Modules/WooCommerce/ProductDataTab.php:363
+msgid "The customer pays return shipping"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:270
+msgid "Noindex filtered and sorted shop URLs"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:274
+msgid "Keep sorted and filtered shop links out of search"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:288
+msgid "Remove the /product/ permalink base"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:292
+msgid "Use shorter product links"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:30
+#: includes/Modules/WooCommerce/ProductDataTab.php:364
+msgid "Original shipping is not refunded"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:303
+msgid "Remove the /product-category/ permalink base"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:307
+msgid "Use shorter category links"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:319
+msgid "Add your return policy"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:327
+msgid "Add shipping details"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:337
+msgid "Filtered and sorted shop links use orderby, min_price, max_price, rating_filter, filter_*, and query_type_* parameters. Other query parameters stay in the address."
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:349
+#: includes/Modules/WooCommerce/ProductDataTab.php:97
+msgid "Return country"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:350
+#: src/admin/views/store/StoreView.tsx:487
+msgid "Two letters, such as US."
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:363
+#: includes/Modules/WooCommerce/ProductDataTab.php:99
+msgid "Return window in days"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:375
+#: includes/Modules/WooCommerce/ProductDataTab.php:101
+msgid "Who pays for the return"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:390
+#: includes/Modules/WooCommerce/ProductDataTab.php:98
+msgid "Return window"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:395
+#: includes/Modules/WooCommerce/ProductDataTab.php:335
+msgid "A set number of days"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:402
+#: includes/Modules/WooCommerce/ProductDataTab.php:336
+msgid "No time limit"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:409
+#: includes/Modules/WooCommerce/ProductDataTab.php:337
+msgid "Returns are not accepted"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:427
+#: includes/Modules/WooCommerce/ProductDataTab.php:100
+msgid "How shoppers send an item back"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:435
+#: includes/Modules/WooCommerce/ProductDataTab.php:348
+msgid "By mail"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:442
+#: includes/Modules/WooCommerce/ProductDataTab.php:349
+msgid "In store"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:449
+#: includes/Modules/WooCommerce/ProductDataTab.php:350
+msgid "At a drop-off point"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:467
+#: includes/Modules/WooCommerce/ProductDataTab.php:102
+msgid "Return policy link"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:486
+#: includes/Modules/WooCommerce/ProductDataTab.php:104
+msgid "Shipping country"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:501
+#: includes/Modules/WooCommerce/ProductDataTab.php:105
+msgid "Shipping price"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:502
+#: includes/Modules/WooCommerce/ProductDataTab.php:105
+msgid "Use 0 for free shipping."
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:516
+#: includes/Modules/WooCommerce/ProductDataTab.php:106
+msgid "Shipping currency"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:520
+msgid "Three letters. Leave blank to use the shop currency."
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:536
+#: includes/Modules/WooCommerce/ProductDataTab.php:107
+msgid "Handling time, minimum days"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:555
+#: includes/Modules/WooCommerce/ProductDataTab.php:108
+msgid "Handling time, maximum days"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:574
+#: includes/Modules/WooCommerce/ProductDataTab.php:109
+msgid "Transit time, minimum days"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:112
+#: src/admin/views/store/StoreView.tsx:59
+msgid "Could not load store settings."
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:593
+#: includes/Modules/WooCommerce/ProductDataTab.php:110
+msgid "Transit time, maximum days"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:611
+msgid "Previous product link base"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:623
+msgid "Previous category link base"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:644
+msgid "Save store settings"
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:648
+msgid "Store settings saved."
+msgstr ""
+
+#: src/admin/views/store/StoreView.tsx:93
+msgid "Could not save store settings."
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:170
+msgid "Search preview settings could not be loaded."
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:184
+msgid "Loading search previews"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:192
+msgid "Sample page"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:196
+msgid "A short sample excerpt."
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:197
+msgid "News"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:198
+msgid "Stories from the team."
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:204
+#: includes/Modules/Meta/MissingMetadataQuery.php:331
+#: includes/Modules/Sitemaps/WordPressSitemapSource.php:162
+#: includes/Rest/SitemapsController.php:506
+msgid "Posts"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:259
+msgid "Could not save search previews."
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:272
+msgid "Search previews"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:276
+msgid "Choose the titles and descriptions people see in Google and when a page is shared."
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:292
+msgid "Another SEO plugin is active, so RankMySEO is not printing titles yet."
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:302
+#: includes/Modules/Meta/TemplateDefaults.php:35
+msgid "Site name"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:314
+#: src/blocks/breadcrumbs/edit.tsx:36
+#: includes/Modules/Meta/TemplateDefaults.php:30
+msgid "Separator"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:330
+msgid "Homepage title"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:339
+msgid "Homepage description"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:362
+msgid "Default social image"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:398
+msgid "Show Posts in Google"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:400
+msgid "Show Pages in Google"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:402
+msgid "Show Products in Google"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:414
+msgid "Templates"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:417
+msgid "Image description pattern"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:418
+msgid "Used when filling a missing image description from the local template. The title and filename tokens are available."
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:431
+msgid "The homepage is a static page. Its own search title is used when that page has one."
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:435
+msgid "The homepage shows your latest posts."
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:45
+msgid "Author archive"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:454
+msgid "Title template"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:46
+msgid "Date archive"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:47
+#: includes/Modules/Schema/BreadcrumbTrail.php:185
+#: includes/Modules/Schema/ContextFactory.php:89
+msgid "Search results"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:479
+msgid "Hide this type from search"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:48
+msgid "Missing page"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:501
+msgid "Homepage preview:"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:505
+msgid "Post preview:"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:524
+msgid "Saving…"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:525
+msgid "Save search previews"
+msgstr ""
+
+#: src/admin/views/TitlesMetaView.tsx:529
+msgid "Search previews saved."
+msgstr ""
+
+#: src/analyzer/messages.ts:100
+msgid "Write a search description of about 120 to 155 characters."
+msgstr ""
+
+#: src/analyzer/messages.ts:105
+msgid "This page is hidden from search. Show it if you want visitors to find it."
 msgstr ""
 
 #: src/analyzer/messages.ts:11
 #: includes/Modules/Analyzer/ScoreBands.php:49
-#: includes/Modules/Chat/SiteHealth.php:67
+#: includes/Modules/Chat/SiteHealth.php:68
 msgid "Poor"
+msgstr ""
+
+#. translators: %d: recommended word count.
+#: src/analyzer/messages.ts:112
+msgid "Add more useful detail. Aim for at least %d words."
+msgstr ""
+
+#: src/analyzer/messages.ts:119
+msgid "Use one main heading, then smaller headings in order."
+msgstr ""
+
+#: src/analyzer/messages.ts:124
+msgid "Add a short description to every image."
+msgstr ""
+
+#: src/analyzer/messages.ts:128
+msgid "Cornerstone pages should link to at least 3 other pages on this site."
 msgstr ""
 
 #: src/analyzer/messages.ts:13
@@ -2626,358 +3211,516 @@ msgstr ""
 msgid "No keyword"
 msgstr ""
 
+#: src/analyzer/messages.ts:132
+msgid "Link to another page on this site."
+msgstr ""
+
+#. translators: %s: secondary keyword.
+#: src/analyzer/messages.ts:136
+msgid "Use “%s” in the page text."
+msgstr ""
+
+#. translators: %s: secondary keyword.
+#: src/analyzer/messages.ts:142
+msgid "Use “%s” in the search title."
+msgstr ""
+
+#. translators: %s: secondary keyword.
+#: src/analyzer/messages.ts:148
+msgid "Use “%s” in the search description."
+msgstr ""
+
+#. translators: %s: secondary keyword.
+#: src/analyzer/messages.ts:154
+msgid "Use “%s” in a heading or the opening paragraph."
+msgstr ""
+
+#. translators: %s: secondary keyword.
+#: src/analyzer/messages.ts:164
+msgid "“%s” appears too often. Use it more naturally."
+msgstr ""
+
+#. translators: %s: secondary keyword.
+#: src/analyzer/messages.ts:172
+msgid "Mention “%s” a few times in the page text."
+msgstr ""
+
+#: src/analyzer/messages.ts:179
+msgid "Link to a useful page on another site when it helps the reader."
+msgstr ""
+
+#: src/analyzer/messages.ts:184
+msgid "Break up long paragraphs so the page is easier to scan."
+msgstr ""
+
+#: src/analyzer/messages.ts:189
+msgid "Shorten long sentences so the page is easier to read."
+msgstr ""
+
+#: src/analyzer/messages.ts:194
+msgid "Add a heading about every 300 words."
+msgstr ""
+
+#: src/analyzer/messages.ts:197
+msgid "This product has a barcode or SKU."
+msgstr ""
+
+#: src/analyzer/messages.ts:198
+msgid "Add a barcode or SKU so shoppers can match this product."
+msgstr ""
+
 #: src/analyzer/messages.ts:20
 msgid "Pass"
+msgstr ""
+
+#: src/analyzer/messages.ts:203
+msgid "Write a short description of about 50 to 160 characters."
+msgstr ""
+
+#: src/analyzer/messages.ts:208
+msgid "Describe each product photo so shoppers know what it shows."
+msgstr ""
+
+#: src/analyzer/messages.ts:213
+msgid "Use shorter sentences so the page is easy to read."
 msgstr ""
 
 #: src/analyzer/messages.ts:22
 msgid "Improve"
 msgstr ""
 
+#. translators: 1: keyword density percentage, 2: number of mentions.
+#: src/analyzer/messages.ts:225
+#: src/analyzer/messages.ts:283
+msgid "Density %1$s%% from %2$d mentions."
+msgstr ""
+
+#. translators: 1: character count, 2: estimated pixel width.
+#: src/analyzer/messages.ts:232
+#: src/analyzer/messages.ts:239
+msgid "%1$d characters, about %2$d pixels."
+msgstr ""
+
 #: src/analyzer/messages.ts:24
 msgid "Critical"
+msgstr ""
+
+#. translators: 1: current word count, 2: target word count.
+#: src/analyzer/messages.ts:246
+msgid "%1$d words. Target %2$d."
+msgstr ""
+
+#. translators: 1: H1 count, 2: subheading count.
+#: src/analyzer/messages.ts:253
+msgid "%1$d main headings, %2$d subheadings."
+msgstr ""
+
+#. translators: 1: images with alt text, 2: total images.
+#: src/analyzer/messages.ts:260
+msgid "%1$d of %2$d images have a description."
+msgstr ""
+
+#. translators: 1: number of internal links, 2: links a cornerstone page should have.
+#: src/analyzer/messages.ts:268
+msgid "%1$d links to this site. Cornerstone pages should have at least %2$d."
+msgstr ""
+
+#. translators: %d: number of internal links.
+#: src/analyzer/messages.ts:277
+msgid "%d links to this site."
+msgstr ""
+
+#. translators: %d: number of external links.
+#: src/analyzer/messages.ts:290
+msgid "%d links to other sites."
+msgstr ""
+
+#. translators: 1: average paragraph length in words, 2: paragraphs over 150 words.
+#: src/analyzer/messages.ts:296
+msgid "Average paragraph %1$s words. %2$d over 150 words."
+msgstr ""
+
+#. translators: %s: average sentence length in words.
+#: src/analyzer/messages.ts:306
+msgid "Average sentence %s words."
 msgstr ""
 
 #: src/analyzer/messages.ts:31
 msgid "Keyword"
 msgstr ""
 
+#. translators: 1: subheading count, 2: subheadings needed.
+#: src/analyzer/messages.ts:312
+msgid "%1$d subheadings. About %2$d needed."
+msgstr ""
+
+#: src/analyzer/messages.ts:318
+msgid "Readability uses sentence length for this language."
+msgstr ""
+
+#. translators: 1: Flesch reading ease, 2: Flesch-Kincaid grade.
+#: src/analyzer/messages.ts:325
+msgid "Reading ease %1$s. Grade %2$s."
+msgstr ""
+
 #: src/analyzer/messages.ts:33
 msgid "Search snippet"
+msgstr ""
+
+#: src/analyzer/messages.ts:331
+msgid "Focus keyword is set."
+msgstr ""
+
+#: src/analyzer/messages.ts:332
+msgid "Focus keyword is empty."
+msgstr ""
+
+#: src/analyzer/messages.ts:334
+msgid "SKU or barcode on this product."
+msgstr ""
+
+#. translators: %d: short description length in characters.
+#: src/analyzer/messages.ts:338
+msgid "Short description is %d characters."
+msgstr ""
+
+#. translators: 1: photos with a description, 2: total product photos.
+#: src/analyzer/messages.ts:344
+msgid "%1$d of %2$d product photos have a description."
 msgstr ""
 
 #: src/analyzer/messages.ts:35
 msgid "Content"
 msgstr ""
 
-#: src/analyzer/messages.ts:37
-msgid "Readability"
-msgstr ""
-
-#: src/analyzer/messages.ts:49
-msgid "Choose the main phrase you want this page to be found for."
-msgstr ""
-
-#: src/analyzer/messages.ts:55
-msgid "The focus keyword is near the start of the search title."
-msgstr ""
-
-#: src/analyzer/messages.ts:59
-msgid "Add the focus keyword near the start of the search title."
-msgstr ""
-
-#: src/analyzer/messages.ts:64
-msgid "Mention the focus keyword once in the search description."
-msgstr ""
-
-#: src/analyzer/messages.ts:69
-msgid "Use the focus keyword in the page link."
-msgstr ""
-
-#: src/analyzer/messages.ts:71
-msgid "Use the focus keyword in the first 100 words."
-msgstr ""
-
-#: src/analyzer/messages.ts:76
-msgid "Use the focus keyword in a heading."
-msgstr ""
-
-#: src/analyzer/messages.ts:78
-msgid "Describe one image with the focus keyword."
-msgstr ""
-
-#: src/analyzer/messages.ts:84
-msgid "The focus keyword appears too often. Use it more naturally."
-msgstr ""
-
-#: src/analyzer/messages.ts:88
-msgid "Use the focus keyword a few times in the page text."
-msgstr ""
-
-#: src/analyzer/messages.ts:93
-msgid "Keep the search title around 30 to 60 characters."
-msgstr ""
-
-#: src/analyzer/messages.ts:98
-msgid "Write a search description of about 120 to 155 characters."
-msgstr ""
-
-#: src/analyzer/messages.ts:103
-msgid "This page is hidden from search. Show it if you want visitors to find it."
-msgstr ""
-
-#. translators: %d: recommended word count.
-#: src/analyzer/messages.ts:110
-msgid "Add more useful detail. Aim for at least %d words."
-msgstr ""
-
-#: src/analyzer/messages.ts:117
-msgid "Use one main heading, then smaller headings in order."
-msgstr ""
-
-#: src/analyzer/messages.ts:122
-msgid "Add a short description to every image."
-msgstr ""
-
-#: src/analyzer/messages.ts:124
-msgid "Link to another page on this site."
-msgstr ""
-
-#: src/analyzer/messages.ts:126
-msgid "Link to a useful page on another site when it helps the reader."
-msgstr ""
-
-#: src/analyzer/messages.ts:131
-msgid "Break up long paragraphs so the page is easier to scan."
-msgstr ""
-
-#: src/analyzer/messages.ts:136
-msgid "Shorten long sentences so the page is easier to read."
-msgstr ""
-
-#: src/analyzer/messages.ts:141
-msgid "Add a heading about every 300 words."
-msgstr ""
-
-#: src/analyzer/messages.ts:143
-msgid "Use shorter sentences so the page is easy to read."
-msgstr ""
-
-#. translators: 1: keyword density percentage, 2: number of mentions.
-#: src/analyzer/messages.ts:155
-msgid "Density %1$s%% from %2$d mentions."
-msgstr ""
-
-#. translators: 1: character count, 2: estimated pixel width.
-#: src/analyzer/messages.ts:162
-#: src/analyzer/messages.ts:169
-msgid "%1$d characters, about %2$d pixels."
-msgstr ""
-
-#. translators: 1: current word count, 2: target word count.
-#: src/analyzer/messages.ts:176
-msgid "%1$d words. Target %2$d."
-msgstr ""
-
-#. translators: 1: H1 count, 2: subheading count.
-#: src/analyzer/messages.ts:183
-msgid "%1$d main headings, %2$d subheadings."
-msgstr ""
-
-#. translators: 1: images with alt text, 2: total images.
-#: src/analyzer/messages.ts:190
-msgid "%1$d of %2$d images have a description."
-msgstr ""
-
-#. translators: %d: number of internal links.
-#: src/analyzer/messages.ts:197
-msgid "%d links to this site."
-msgstr ""
-
-#. translators: %d: number of external links.
-#: src/analyzer/messages.ts:203
-msgid "%d links to other sites."
-msgstr ""
-
-#. translators: 1: average paragraph length in words, 2: paragraphs over 150 words.
-#: src/analyzer/messages.ts:209
-msgid "Average paragraph %1$s words. %2$d over 150 words."
-msgstr ""
-
-#. translators: %s: average sentence length in words.
-#: src/analyzer/messages.ts:219
-msgid "Average sentence %s words."
-msgstr ""
-
-#. translators: 1: subheading count, 2: subheadings needed.
-#: src/analyzer/messages.ts:225
-msgid "%1$d subheadings. About %2$d needed."
-msgstr ""
-
-#: src/analyzer/messages.ts:231
-msgid "Readability uses sentence length for this language."
-msgstr ""
-
-#. translators: 1: Flesch reading ease, 2: Flesch-Kincaid grade.
-#: src/analyzer/messages.ts:238
-msgid "Reading ease %1$s. Grade %2$s."
-msgstr ""
-
-#: src/analyzer/messages.ts:244
-msgid "Focus keyword is set."
-msgstr ""
-
-#: src/analyzer/messages.ts:245
-msgid "Focus keyword is empty."
-msgstr ""
-
-#: src/analyzer/messages.ts:248
+#: src/analyzer/messages.ts:353
 msgid "Found."
 msgstr ""
 
-#: src/analyzer/messages.ts:249
+#: src/analyzer/messages.ts:354
 msgid "Not found."
 msgstr ""
 
-#: src/editor/components/AnalyzerPanel.tsx:39
-msgid "Add a focus keyword to score this page."
+#: src/analyzer/messages.ts:39
+msgid "Readability"
 msgstr ""
 
-#: src/editor/components/AnalyzerPanel.tsx:42
-msgid "This page covers the basics."
+#: src/analyzer/messages.ts:51
+msgid "Choose the main phrase you want this page to be found for."
 msgstr ""
 
-#: src/editor/components/AnalyzerPanel.tsx:44
-msgid "A few changes will make this page easier to find."
+#: src/analyzer/messages.ts:57
+msgid "The focus keyword is near the start of the search title."
 msgstr ""
 
-#: src/editor/components/AnalyzerPanel.tsx:98
-#: src/editor/components/AnalyzerPanel.tsx:104
+#: src/analyzer/messages.ts:61
+msgid "Add the focus keyword near the start of the search title."
+msgstr ""
+
+#: src/analyzer/messages.ts:66
+msgid "Mention the focus keyword once in the search description."
+msgstr ""
+
+#: src/analyzer/messages.ts:7
+#: includes/Modules/Analyzer/ScoreBands.php:45
+#: includes/Modules/Chat/SiteHealth.php:62
+msgid "Good"
+msgstr ""
+
+#: src/analyzer/messages.ts:71
+msgid "Use the focus keyword in the page link."
+msgstr ""
+
+#: src/analyzer/messages.ts:73
+msgid "Use the focus keyword in the first 100 words."
+msgstr ""
+
+#: src/analyzer/messages.ts:78
+msgid "Use the focus keyword in a heading."
+msgstr ""
+
+#: src/analyzer/messages.ts:80
+msgid "Describe one image with the focus keyword."
+msgstr ""
+
+#: src/analyzer/messages.ts:86
+msgid "The focus keyword appears too often. Use it more naturally."
+msgstr ""
+
+#: src/analyzer/messages.ts:9
+#: includes/Modules/Analyzer/ScoreBands.php:47
+#: includes/Modules/Chat/SiteHealth.php:65
+msgid "Needs work"
+msgstr ""
+
+#: src/analyzer/messages.ts:90
+msgid "Use the focus keyword a few times in the page text."
+msgstr ""
+
+#: src/analyzer/messages.ts:95
+msgid "Keep the search title around 30 to 60 characters."
+msgstr ""
+
+#: src/blocks/breadcrumbs/edit.tsx:12
+msgid "Section"
+msgstr ""
+
+#: src/blocks/breadcrumbs/edit.tsx:14
+msgid "Current page"
+msgstr ""
+
+#: src/blocks/breadcrumbs/edit.tsx:20
+#: src/shared/glossary.ts:104
+#: includes/Modules/Builders/BreadcrumbHtml.php:57
+#: includes/Modules/Schema/BreadcrumbRenderer.php:59
+msgid "Breadcrumb"
+msgstr ""
+
+#: src/blocks/breadcrumbs/edit.tsx:44
+msgid "Show home"
+msgstr ""
+
+#: src/blocks/breadcrumbs/edit.tsx:52
+msgid "Show current page"
+msgstr ""
+
+#: src/blocks/faq/edit.tsx:125
+msgid "Add question"
+msgstr ""
+
+#: src/blocks/faq/edit.tsx:36
+msgid "Answer layout"
+msgstr ""
+
+#: src/blocks/faq/edit.tsx:42
+msgid "Expandable questions"
+msgstr ""
+
+#: src/blocks/faq/edit.tsx:46
+msgid "Headings and answers"
+msgstr ""
+
+#: src/blocks/faq/edit.tsx:60
+msgid "Question"
+msgstr ""
+
+#: src/blocks/faq/edit.tsx:68
+msgid "Answer"
+msgstr ""
+
+#: src/blocks/faq/edit.tsx:84
+msgid "Move up"
+msgstr ""
+
+#: src/blocks/faq/edit.tsx:95
+msgid "Move down"
+msgstr ""
+
+#: src/blocks/register.ts:10
+msgid "Show the path to this page. Uses the same trail as the structured data."
+msgstr ""
+
+#: src/blocks/register.ts:27
+#: src/shared/glossary.ts:118
+msgid "FAQ"
+msgstr ""
+
+#: src/blocks/register.ts:28
+msgid "Questions and answers. The same pairs are added to the page structured data."
+msgstr ""
+
+#: src/blocks/register.ts:9
+msgid "Breadcrumbs"
+msgstr ""
+
+#: src/builders/BuilderSeoApp.tsx:174
+msgid "Open a page to edit its search settings."
+msgstr ""
+
+#: src/builders/BuilderSeoApp.tsx:216
+msgid "Saving search settings…"
+msgstr ""
+
+#: src/builders/BuilderSeoApp.tsx:218
+msgid "Search settings saved."
+msgstr ""
+
+#: src/builders/BuilderSeoApp.tsx:220
+msgid "Could not save search settings. Try again."
+msgstr ""
+
+#: src/builders/mount.tsx:278
+msgid "RankMySEO search settings"
+msgstr ""
+
+#: src/editor/components/AnalyzerPanel.tsx:107
+#: src/editor/components/AnalyzerPanel.tsx:113
 msgid "SEO score"
 msgstr ""
 
-#: src/editor/components/AnalyzerPanel.tsx:118
+#: src/editor/components/AnalyzerPanel.tsx:131
+msgid "Focus"
+msgstr ""
+
+#: src/editor/components/AnalyzerPanel.tsx:132
+msgid "Also"
+msgstr ""
+
+#: src/editor/components/AnalyzerPanel.tsx:145
 msgid "Another published page already targets this focus keyword."
 msgstr ""
 
-#: src/editor/components/AnalyzerPanel.tsx:137
+#: src/editor/components/AnalyzerPanel.tsx:164
 msgid "This page looks ready for search."
+msgstr ""
+
+#: src/editor/components/AnalyzerPanel.tsx:46
+msgid "Add a focus keyword to score this page."
+msgstr ""
+
+#: src/editor/components/AnalyzerPanel.tsx:49
+msgid "This page covers the basics."
+msgstr ""
+
+#: src/editor/components/AnalyzerPanel.tsx:51
+msgid "A few changes will make this page easier to find."
 msgstr ""
 
 #: src/editor/components/AskAiButton.tsx:10
 msgid "Ask AI about this page"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:156
-#: src/editor/index.tsx:189
-#: src/editor/index.tsx:249
+#: src/editor/components/CloudInsights.tsx:47
+msgid "RankMySEO for this page"
+msgstr ""
+
+#: src/editor/components/CloudInsights.tsx:80
+msgid "Ask about this result"
+msgstr ""
+
+#: src/editor/components/CloudInsights.tsx:85
+msgid "Review pending suggestions"
+msgstr ""
+
+#: src/editor/components/CloudInsights.tsx:86
+msgid "Open approval queue"
+msgstr ""
+
+#: src/editor/components/EditorPanel.tsx:182
+#: src/editor/index.tsx:303
+#: src/editor/index.tsx:363
 msgid "Search preview"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:162
+#: src/editor/components/EditorPanel.tsx:188
 msgid "This page is hidden from search. Switch to Advanced to change that."
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:185
-#: includes/Modules/Meta/QuickBulkEdit.php:155
-#: includes/Modules/Meta/TermFields.php:69
-msgid "Search title"
-msgstr ""
-
-#: src/editor/components/EditorPanel.tsx:193
+#: src/editor/components/EditorPanel.tsx:219
 msgid "Search title length"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:202
-#: includes/Modules/Meta/QuickBulkEdit.php:157
-#: includes/Modules/Meta/TermFields.php:70
-msgid "Search description"
-msgstr ""
-
-#: src/editor/components/EditorPanel.tsx:210
+#: src/editor/components/EditorPanel.tsx:236
 msgid "Search description length"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:222
-#: src/shared/glossary.ts:76
-#: includes/Modules/Importer/MetaCatalog.php:79
-#: includes/Modules/Meta/QuickBulkEdit.php:159
-msgid "Focus keyword"
-msgstr ""
-
-#: src/editor/components/EditorPanel.tsx:223
+#: src/editor/components/EditorPanel.tsx:249
 msgid "The main phrase you want this page to be found for."
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:248
+#: src/editor/components/EditorPanel.tsx:267
+msgid "This is a cornerstone page"
+msgstr ""
+
+#: src/editor/components/EditorPanel.tsx:270
+msgid "Cornerstone pages should be longer and link to at least 3 other pages on this site."
+msgstr ""
+
+#: src/editor/components/EditorPanel.tsx:311
 #: includes/Modules/Importer/MetaCatalog.php:83
 msgid "Social image"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:250
+#: src/editor/components/EditorPanel.tsx:313
 msgid "Image address"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:268
+#: src/editor/components/EditorPanel.tsx:331
 msgid "SEO details"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:272
+#: src/editor/components/EditorPanel.tsx:335
 msgid "General"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:273
+#: src/editor/components/EditorPanel.tsx:336
 msgid "Social"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:275
+#: src/editor/components/EditorPanel.tsx:338
 #: src/shared/components/ModeToggle.tsx:47
 msgid "Advanced"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:304
+#: src/editor/components/EditorPanel.tsx:367
 #: includes/Modules/Importer/MetaCatalog.php:80
 msgid "Secondary keywords"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:332
+#: src/editor/components/EditorPanel.tsx:395
 msgid "Facebook title"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:341
+#: src/editor/components/EditorPanel.tsx:404
 msgid "Facebook description"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:352
+#: src/editor/components/EditorPanel.tsx:415
 msgid "Facebook image"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:368
+#: src/editor/components/EditorPanel.tsx:431
 #: includes/Modules/Importer/MetaCatalog.php:84
 msgid "X title"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:377
+#: src/editor/components/EditorPanel.tsx:440
 #: includes/Modules/Importer/MetaCatalog.php:85
 msgid "X description"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:385
+#: src/editor/components/EditorPanel.tsx:448
 #: includes/Modules/Importer/MetaCatalog.php:86
 msgid "X image"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:397
+#: src/editor/components/EditorPanel.tsx:460
 #: includes/Modules/Importer/MetaCatalog.php:87
 msgid "X card"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:411
+#: src/editor/components/EditorPanel.tsx:474
 msgid "Large image"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:414
+#: src/editor/components/EditorPanel.tsx:477
 msgid "Small image"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:439
-msgid "Structured data for this page will appear here."
-msgstr ""
-
-#: src/editor/components/EditorPanel.tsx:451
+#: src/editor/components/EditorPanel.tsx:511
 #: src/shared/glossary.ts:41
 #: includes/Modules/Importer/MetaCatalog.php:77
 msgid "Canonical URL"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:477
-#: includes/Modules/Meta/QuickBulkEdit.php:162
-#: includes/Modules/Meta/QuickBulkEdit.php:185
+#: src/editor/components/EditorPanel.tsx:537
+#: includes/Modules/Meta/QuickBulkEdit.php:180
+#: includes/Modules/Meta/QuickBulkEdit.php:203
 #: includes/Modules/Meta/TermFields.php:73
 msgid "Hide from search"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:498
+#: src/editor/components/EditorPanel.tsx:558
 msgid "Do not follow links"
 msgstr ""
 
@@ -2999,6 +3742,80 @@ msgstr ""
 
 #: src/editor/components/LengthMeter.tsx:48
 msgid "characters"
+msgstr ""
+
+#: src/editor/components/LinkSuggestions.tsx:145
+msgid "Suggested internal links"
+msgstr ""
+
+#: src/editor/components/LinkSuggestions.tsx:147
+msgid "Suggested links on this site"
+msgstr ""
+
+#: src/editor/components/LinkSuggestions.tsx:149
+msgid "These published pages share a keyword, title, or category. Cornerstone pages and pages nothing else links to are preferred."
+msgstr ""
+
+#: src/editor/components/LinkSuggestions.tsx:171
+msgid "Copied"
+msgstr ""
+
+#: src/editor/components/LinkSuggestions.tsx:172
+msgid "Copy link"
+msgstr ""
+
+#: src/editor/components/LinkSuggestions.tsx:182
+msgid "Insert link"
+msgstr ""
+
+#: src/editor/components/LinkSuggestions.tsx:19
+msgid "Same keyword"
+msgstr ""
+
+#. translators: %s: link address.
+#: src/editor/components/LinkSuggestions.tsx:190
+msgid "Copied %s"
+msgstr ""
+
+#: src/editor/components/LinkSuggestions.tsx:21
+msgid "Similar title"
+msgstr ""
+
+#: src/editor/components/LinkSuggestions.tsx:23
+msgid "Similar link"
+msgstr ""
+
+#: src/editor/components/LinkSuggestions.tsx:25
+msgid "Same category"
+msgstr ""
+
+#: src/editor/components/LinkSuggestions.tsx:27
+#: includes/Modules/Meta/QuickBulkEdit.php:145
+msgid "Cornerstone"
+msgstr ""
+
+#: src/editor/components/LinkSuggestions.tsx:29
+msgid "No incoming links"
+msgstr ""
+
+#: src/editor/components/SchemaTab.tsx:46
+msgid "Automatic. This page uses the site default for its content type."
+msgstr ""
+
+#: src/editor/components/SchemaTab.tsx:50
+msgid "This page uses a schema type chosen here."
+msgstr ""
+
+#: src/editor/components/SchemaTab.tsx:66
+msgid "Automatic"
+msgstr ""
+
+#: src/editor/components/SchemaTab.tsx:75
+msgid "Automatic follows the site default. None leaves out article, product, FAQ, and how-to markup for this page."
+msgstr ""
+
+#: src/editor/components/SchemaTab.tsx:82
+msgid "Site-wide schema defaults"
 msgstr ""
 
 #: src/editor/components/SerpPreview.tsx:29
@@ -3053,6 +3870,46 @@ msgstr ""
 msgid "Insert"
 msgstr ""
 
+#: src/editor/schemaOptions.ts:14
+#: includes/Modules/Schema/SchemaController.php:363
+msgid "News article"
+msgstr ""
+
+#: src/editor/schemaOptions.ts:16
+#: includes/Modules/Schema/SchemaController.php:365
+msgid "About page"
+msgstr ""
+
+#: src/editor/schemaOptions.ts:17
+#: includes/Modules/Schema/SchemaController.php:366
+msgid "Contact page"
+msgstr ""
+
+#: src/editor/schemaOptions.ts:20
+#: includes/Modules/Schema/SchemaController.php:367
+msgid "Collection page"
+msgstr ""
+
+#: src/editor/schemaOptions.ts:22
+#: includes/Modules/Schema/SchemaController.php:368
+msgid "Profile page"
+msgstr ""
+
+#: src/editor/schemaOptions.ts:25
+#: includes/Modules/Schema/SchemaController.php:369
+msgid "Search results page"
+msgstr ""
+
+#: src/editor/schemaOptions.ts:29
+#: includes/Modules/Schema/SchemaController.php:372
+msgid "FAQ page"
+msgstr ""
+
+#: src/editor/schemaOptions.ts:30
+#: includes/Modules/Schema/SchemaController.php:373
+msgid "How-to"
+msgstr ""
+
 #: src/shared/components/ModeToggle.tsx:19
 msgid "Experience mode"
 msgstr ""
@@ -3069,18 +3926,20 @@ msgstr ""
 msgid "Something went wrong"
 msgstr ""
 
-#: src/shared/glossary.ts:27
-#: includes/Modules/Importer/MetaCatalog.php:76
-msgid "Meta description"
+#: src/shared/glossary.ts:105
+msgid "The path of links that shows where a page sits on your site, such as Home, then a category, then the page."
+msgstr ""
+
+#: src/shared/glossary.ts:112
+msgid "A business customers can visit in person, described with an address, phone number, and opening hours."
+msgstr ""
+
+#: src/shared/glossary.ts:119
+msgid "Questions and answers on a page. The markup stays useful for answer engines. Google stopped showing FAQ rich results in May 2026."
 msgstr ""
 
 #: src/shared/glossary.ts:28
 msgid "The short summary text shown under your page title in Google search results to help searchers decide whether to click."
-msgstr ""
-
-#: src/shared/glossary.ts:34
-#: includes/Modules/Importer/MetaCatalog.php:75
-msgid "SEO title"
 msgstr ""
 
 #: src/shared/glossary.ts:35
@@ -3108,7 +3967,7 @@ msgid "Hidden structured labels that explain to search engines what a page repre
 msgstr ""
 
 #: src/shared/glossary.ts:62
-#: includes/Modules/Chat/LocalAssistant.php:351
+#: includes/Modules/Chat/LocalAssistant.php:427
 msgid "XML sitemap"
 msgstr ""
 
@@ -3152,34 +4011,27 @@ msgstr ""
 msgid "A hidden block of structured data in the page code that describes the page in a format search engines can read."
 msgstr ""
 
-#: src/shared/glossary.ts:104
-msgid "Breadcrumb"
+#: src/shared/llms.ts:135
+#: includes/Modules/Sitemaps/LlmsTxt.php:311
+msgid "Included links"
 msgstr ""
 
-#: src/shared/glossary.ts:105
-msgid "The path of links that shows where a page sits on your site, such as Home, then a category, then the page."
-msgstr ""
-
-#: src/shared/glossary.ts:112
-msgid "A business customers can visit in person, described with an address, phone number, and opening hours."
-msgstr ""
-
-#: src/shared/glossary.ts:118
-msgid "FAQ"
-msgstr ""
-
-#: src/shared/glossary.ts:119
-msgid "Questions and answers on a page. The markup stays useful for answer engines. Google stopped showing FAQ rich results in May 2026."
+#: src/shared/llms.ts:84
+#: includes/Modules/Sitemaps/LlmsTxt.php:169
+#: includes/Modules/Sitemaps/LlmsTxt.php:345
+#: includes/Rest/SitemapsController.php:434
+msgid "Site"
 msgstr ""
 
 #. Plugin URI of the plugin
 #. Author URI of the plugin
-#: rankmyseo.php
+#: rankmyseo.php:4
+#: rankmyseo.php:10
 msgid "https://rankmyseo.com"
 msgstr ""
 
 #. Description of the plugin
-#: rankmyseo.php
+#: rankmyseo.php:5
 msgid "Standalone WordPress SEO plugin with Simple and Advanced modes, optional RankMySEO Cloud insights, and safe human-approved AI actions."
 msgstr ""
 
@@ -3192,66 +4044,78 @@ msgid "Titles & Meta — RankMySEO"
 msgstr ""
 
 #: includes/Admin/AdminMenu.php:81
-msgid "Schema — RankMySEO"
+msgid "Missing details — RankMySEO"
 msgstr ""
 
 #: includes/Admin/AdminMenu.php:88
-msgid "Sitemaps — RankMySEO"
+msgid "Schema — RankMySEO"
 msgstr ""
 
 #: includes/Admin/AdminMenu.php:95
-msgid "Redirects & 404s — RankMySEO"
+msgid "Store — RankMySEO"
 msgstr ""
 
 #: includes/Admin/AdminMenu.php:102
-msgid "Import — RankMySEO"
+msgid "Sitemaps — RankMySEO"
+msgstr ""
+
+#: includes/Admin/AdminMenu.php:109
+msgid "Redirects & 404s — RankMySEO"
 msgstr ""
 
 #: includes/Admin/AdminMenu.php:116
+msgid "Import — RankMySEO"
+msgstr ""
+
+#: includes/Admin/AdminMenu.php:130
 msgid "AI Queue — RankMySEO"
 msgstr ""
 
-#: includes/Admin/AdminMenu.php:123
+#: includes/Admin/AdminMenu.php:137
 msgid "Settings — RankMySEO"
 msgstr ""
 
-#: includes/Admin/AdminMenu.php:234
+#: includes/Admin/AdminMenu.php:248
 msgid "RankMySEO requires JavaScript to be enabled in your browser to use the admin interface."
 msgstr ""
 
-#: includes/Modules/AiActions/ActionCatalog.php:149
+#: includes/Modules/AiActions/ActionCatalog.php:155
 msgid "Update the search title"
 msgstr ""
 
-#: includes/Modules/AiActions/ActionCatalog.php:151
+#: includes/Modules/AiActions/ActionCatalog.php:157
 msgid "Update the search description"
 msgstr ""
 
-#: includes/Modules/AiActions/ActionCatalog.php:153
+#: includes/Modules/AiActions/ActionCatalog.php:159
 msgid "Update the preferred URL"
 msgstr ""
 
-#: includes/Modules/AiActions/ActionCatalog.php:155
+#: includes/Modules/AiActions/ActionCatalog.php:161
 msgid "Update structured data"
 msgstr ""
 
-#: includes/Modules/AiActions/ActionCatalog.php:159
+#: includes/Modules/AiActions/ActionCatalog.php:165
 msgid "Add an internal link"
 msgstr ""
 
-#: includes/Modules/AiActions/ActionCatalog.php:161
+#: includes/Modules/AiActions/ActionCatalog.php:167
 msgid "Update the page content"
 msgstr ""
 
-#: includes/Modules/AiActions/ActionCatalog.php:163
+#: includes/Modules/AiActions/ActionCatalog.php:169
 msgid "Create a draft"
 msgstr ""
 
-#: includes/Modules/AiActions/ActionCatalog.php:165
+#: includes/Modules/AiActions/ActionCatalog.php:171
+msgid "Update the image description"
+msgstr ""
+
+#: includes/Modules/AiActions/ActionCatalog.php:173
 msgid "Update search details"
 msgstr ""
 
-#: includes/Modules/AiActions/ActionCatalog.php:167
+#: includes/Modules/AiActions/ActionCatalog.php:175
 msgid "Review a suggested change"
 msgstr ""
 
@@ -3276,6 +4140,8 @@ msgid "Auto-apply is off for this change."
 msgstr ""
 
 #: includes/Modules/AiActions/ActionExecutor.php:129
+#: includes/Modules/Meta/TemplateFill.php:159
+#: includes/Rest/MissingMetadataController.php:241
 msgid "You cannot edit that page."
 msgstr ""
 
@@ -3319,40 +4185,49 @@ msgstr ""
 msgid "Undone. The previous version is back."
 msgstr ""
 
-#: includes/Modules/AiActions/ActionExecutor.php:348
-#: includes/Modules/AiActions/ActionExecutor.php:534
+#: includes/Modules/AiActions/ActionExecutor.php:360
+#: includes/Modules/AiActions/ActionExecutor.php:605
 msgid "That page is not on this site."
 msgstr ""
 
-#: includes/Modules/AiActions/ActionExecutor.php:370
+#: includes/Modules/AiActions/ActionExecutor.php:384
+msgid "That image is not on this site."
+msgstr ""
+
+#: includes/Modules/AiActions/ActionExecutor.php:390
+msgid "You cannot edit that image."
+msgstr ""
+
+#: includes/Modules/AiActions/ActionExecutor.php:400
+#: includes/Modules/AiActions/ActionExecutor.php:441
 msgid "That suggestion did not include a value to save."
 msgstr ""
 
-#: includes/Modules/AiActions/ActionExecutor.php:378
+#: includes/Modules/AiActions/ActionExecutor.php:449
 msgid "The homepage stays visible to search engines."
 msgstr ""
 
-#: includes/Modules/AiActions/ActionExecutor.php:477
+#: includes/Modules/AiActions/ActionExecutor.php:548
 msgid "A draft needs a title or some text."
 msgstr ""
 
-#: includes/Modules/AiActions/ActionExecutor.php:496
+#: includes/Modules/AiActions/ActionExecutor.php:567
 msgid "The draft could not be created."
 msgstr ""
 
-#: includes/Modules/AiActions/ActionExecutor.php:546
+#: includes/Modules/AiActions/ActionExecutor.php:617
 msgid "The link has to stay on this site."
 msgstr ""
 
-#: includes/Modules/AiActions/ActionExecutor.php:555
+#: includes/Modules/AiActions/ActionExecutor.php:626
 msgid "The new page text was empty, so nothing was changed."
 msgstr ""
 
-#: includes/Modules/AiActions/ActionExecutor.php:571
+#: includes/Modules/AiActions/ActionExecutor.php:642
 msgid "The page text could not be updated."
 msgstr ""
 
-#: includes/Modules/AiActions/ActionExecutor.php:599
+#: includes/Modules/AiActions/ActionExecutor.php:670
 msgid "That draft was published, so it was left in place."
 msgstr ""
 
@@ -3397,7 +4272,35 @@ msgstr ""
 msgid "Connect RankMySEO to see earlier questions."
 msgstr ""
 
-#: includes/Modules/AiActions/PayloadSanitizer.php:171
+#: includes/Modules/AiActions/MissingMetadataQueue.php:94
+msgid "Connect RankMySEO before drafting suggestions."
+msgstr ""
+
+#: includes/Modules/AiActions/MissingMetadataQueue.php:129
+msgid "Choose pages that are missing a title, description, or image description."
+msgstr ""
+
+#: includes/Modules/AiActions/MissingMetadataQueue.php:143
+msgid "RankMySEO could not draft suggestions right now."
+msgstr ""
+
+#: includes/Modules/AiActions/MissingMetadataQueue.php:157
+msgid "RankMySEO did not suggest a title, description, or image description for the selected pages."
+msgstr ""
+
+#. translators: %d: number of suggestions waiting for approval.
+#: includes/Modules/AiActions/MissingMetadataQueue.php:167
+#, php-format
+msgid "%d suggestion is waiting for approval. Nothing was changed yet."
+msgid_plural "%d suggestions are waiting for approval. Nothing was changed yet."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Modules/AiActions/MissingMetadataQueue.php:397
+msgid "Suggested for this page. Review the difference before approving it."
+msgstr ""
+
+#: includes/Modules/AiActions/PayloadSanitizer.php:179
 msgid "FAQ structured data"
 msgstr ""
 
@@ -3482,15 +4385,19 @@ msgstr ""
 msgid "Missing focus keyword"
 msgstr ""
 
-#: includes/Modules/Analyzer/AnalyzerModule.php:32
+#: includes/Modules/Analyzer/AdminColumn.php:86
+msgid "Cornerstone content"
+msgstr ""
+
+#: includes/Modules/Analyzer/AnalyzerModule.php:34
 msgid "On-Page Analyzer"
 msgstr ""
 
-#: includes/Modules/Analyzer/AnalyzerModule.php:39
+#: includes/Modules/Analyzer/AnalyzerModule.php:41
 msgid "Real-time keyword, snippet, structure, and readability scoring with a cannibalization check."
 msgstr ""
 
-#: includes/Modules/Analyzer/AnalyzerModule.php:46
+#: includes/Modules/Analyzer/AnalyzerModule.php:48
 msgid "Live writing checklist and 0–100 score inside the editor to help each post target your main keyword."
 msgstr ""
 
@@ -3499,7 +4406,12 @@ msgid "You do not have permission to check focus keywords."
 msgstr ""
 
 #: includes/Modules/Analyzer/CannibalizationQuery.php:59
+#: includes/Modules/Meta/MissingMetadataQuery.php:176
 msgid "(no title)"
+msgstr ""
+
+#: includes/Modules/Builders/Elementor/BreadcrumbsWidget.php:37
+msgid "RankMySEO Breadcrumbs"
 msgstr ""
 
 #: includes/Modules/Chat/ChatModule.php:40
@@ -3514,272 +4426,344 @@ msgstr ""
 msgid "Ask what to fix on this site. Answers come from WordPress itself until you choose to connect RankMySEO Cloud."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:189
+#: includes/Modules/Chat/LocalAssistant.php:220
 msgid "Write a plain search description of about 120–155 characters that says what the page offers."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:192
+#: includes/Modules/Chat/LocalAssistant.php:223
 msgid "Every published post and page already has a search description."
 msgstr ""
 
 #. translators: %d: number of published posts or pages.
-#: includes/Modules/Chat/LocalAssistant.php:195
+#: includes/Modules/Chat/LocalAssistant.php:226
 #, php-format
 msgid "I found %d published items with no search description. Searchers are more likely to click when that short summary is written by you."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:210
+#: includes/Modules/Chat/LocalAssistant.php:241
 msgid "Add an SEO title that leads with the topic and stays near 50–60 characters."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:213
+#: includes/Modules/Chat/LocalAssistant.php:244
 msgid "Every published post and page already has a custom SEO title."
 msgstr ""
 
 #. translators: %d: number of published posts or pages.
-#: includes/Modules/Chat/LocalAssistant.php:216
+#: includes/Modules/Chat/LocalAssistant.php:247
 #, php-format
 msgid "I found %d published items with no custom SEO title. The page name is being used on its own."
 msgstr ""
 
 #. translators: %d: SEO score threshold.
-#: includes/Modules/Chat/LocalAssistant.php:234
+#: includes/Modules/Chat/LocalAssistant.php:265
 #, php-format
 msgid "Open the item and improve the checks that pulled the SEO score under %d."
 msgstr ""
 
 #. translators: %d: SEO score threshold.
-#: includes/Modules/Chat/LocalAssistant.php:241
+#: includes/Modules/Chat/LocalAssistant.php:272
 #, php-format
 msgid "No published item has an SEO score under %d."
 msgstr ""
 
 #. translators: 1: number of items, 2: SEO score threshold.
-#: includes/Modules/Chat/LocalAssistant.php:246
+#: includes/Modules/Chat/LocalAssistant.php:277
 #, php-format
 msgid "I found %1$d published items with an SEO score under %2$d."
 msgstr ""
 
 #. translators: %d: suggested minimum word count.
-#: includes/Modules/Chat/LocalAssistant.php:265
+#: includes/Modules/Chat/LocalAssistant.php:296
 #, php-format
 msgid "Add useful detail until the page is at least about %d words, with clear subheadings."
 msgstr ""
 
 #. translators: %d: word-count threshold.
-#: includes/Modules/Chat/LocalAssistant.php:272
+#: includes/Modules/Chat/LocalAssistant.php:303
 #, php-format
 msgid "No published post or page is under about %d words."
 msgstr ""
 
 #. translators: 1: number of items, 2: word-count threshold.
-#: includes/Modules/Chat/LocalAssistant.php:277
+#: includes/Modules/Chat/LocalAssistant.php:308
 #, php-format
 msgid "I found %1$d published items under about %2$d words. Thin pages are harder for searchers to trust."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:293
+#: includes/Modules/Chat/LocalAssistant.php:324
 msgid "Send visitors to a live page by creating a redirect for this broken link."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:296
+#: includes/Modules/Chat/LocalAssistant.php:327
 msgid "There are no unresolved broken links in the local 404 log."
 msgstr ""
 
 #. translators: %d: number of open 404 rows.
-#: includes/Modules/Chat/LocalAssistant.php:299
+#: includes/Modules/Chat/LocalAssistant.php:330
 #, php-format
 msgid "I found %d unresolved broken links. The newest ones are listed below."
 msgstr ""
 
 #. translators: 1: total redirect rules, 2: active redirect rules.
-#: includes/Modules/Chat/LocalAssistant.php:318
+#: includes/Modules/Chat/LocalAssistant.php:349
 #, php-format
 msgid "This site has %1$d redirect rules, and %2$d of them are active. Redirects are stored locally and are not sent anywhere."
 msgstr ""
 
 #. translators: %d: number of active redirects.
-#: includes/Modules/Chat/LocalAssistant.php:328
+#: includes/Modules/Chat/LocalAssistant.php:359
 #, php-format
 msgid "%d active redirects"
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:335
+#: includes/Modules/Chat/LocalAssistant.php:366
 msgid "Open Redirects to review rules, hit counts, and broken links."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:350
+#. translators: %s: absolute path of the physical llms.txt file.
+#: includes/Modules/Chat/LocalAssistant.php:387
+#, php-format
+msgid "A real llms.txt file is on disk at %s, so the guide inside RankMySEO will not be the one visitors receive. Remove or rename that file, then turn the guide on under Sitemaps."
+msgstr ""
+
+#. translators: 1: public llms.txt URL, 2: number of links in the file.
+#: includes/Modules/Chat/LocalAssistant.php:393
+#, php-format
+msgid "The llms.txt guide is on at %1$s. It lists %2$d public links and is built on this site. Nothing is sent anywhere."
+msgstr ""
+
+#: includes/Modules/Chat/LocalAssistant.php:398
+msgid "The llms.txt guide is off. Turn it on under Sitemaps when you want a plain-text list of your public pages for AI tools. It stays on this site and is not written to disk."
+msgstr ""
+
+#: includes/Modules/Chat/LocalAssistant.php:410
+msgid "Open Sitemaps to review the guide, the pages it lists, and any extra links."
+msgstr ""
+
+#: includes/Modules/Chat/LocalAssistant.php:411
+msgid "Open Sitemaps and turn on the AI site guide."
+msgstr ""
+
+#: includes/Modules/Chat/LocalAssistant.php:426
 msgid "Structured data"
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:366
+#: includes/Modules/Chat/LocalAssistant.php:442
 msgid "Turned on."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:367
+#: includes/Modules/Chat/LocalAssistant.php:443
 msgid "Turned off. You can enable it from Settings."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:374
+#: includes/Modules/Chat/LocalAssistant.php:450
 msgid "The sitemap tool is on."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:375
+#: includes/Modules/Chat/LocalAssistant.php:451
 msgid "The sitemap tool is off, so WordPress keeps its own default sitemap behavior."
 msgstr ""
 
-#. translators: 1: sitemap sentence, 2: active redirect count, 3: open 404 count.
-#: includes/Modules/Chat/LocalAssistant.php:379
-#, php-format
-msgid "Module check is local only. %1$s There are %2$d active redirects and %3$d open broken links."
+#: includes/Modules/Chat/LocalAssistant.php:454
+msgid "The llms.txt guide is on."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:386
+#: includes/Modules/Chat/LocalAssistant.php:455
+msgid "The llms.txt guide is off."
+msgstr ""
+
+#. translators: 1: sitemap sentence, 2: active redirect count, 3: open 404 count, 4: llms.txt sentence.
+#: includes/Modules/Chat/LocalAssistant.php:459
+#, php-format
+msgid "Module check is local only. %1$s There are %2$d active redirects and %3$d open broken links. %4$s"
+msgstr ""
+
+#: includes/Modules/Chat/LocalAssistant.php:467
 msgid "Some plugin tables are missing. Re-save Settings or reactivate the plugin to repair them."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:415
+#: includes/Modules/Chat/LocalAssistant.php:496
 msgid "I could not find a post or page with that id, title, or slug. Try “inspect post 42” or the exact title in quotes."
 msgstr ""
 
 #. translators: 1: item title, 2: word count.
-#: includes/Modules/Chat/LocalAssistant.php:428
+#: includes/Modules/Chat/LocalAssistant.php:509
 #, php-format
 msgid "Local inspection for “%1$s”. It is about %2$d words. Nothing was changed."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:444
+#: includes/Modules/Chat/LocalAssistant.php:525
 msgid "I can check titles, descriptions, thin pages, SEO scores, broken links, redirects, and module status on this site. Live rankings, traffic changes, and rewritten copy need an optional RankMySEO Cloud connection. No request was sent."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:448
+#: includes/Modules/Chat/LocalAssistant.php:529
 msgid "Cloud is optional. Local checks keep working if you skip it."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:464
-#: includes/Modules/Chat/LocalAssistant.php:617
+#: includes/Modules/Chat/LocalAssistant.php:545
+#: includes/Modules/Chat/LocalAssistant.php:730
 msgid "Add a search description."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:467
+#: includes/Modules/Chat/LocalAssistant.php:548
 msgid "Create a redirect for this broken link."
 msgstr ""
 
+#: includes/Modules/Chat/LocalAssistant.php:551
+msgid "Link to this page from a related post."
+msgstr ""
+
 #. translators: 1: score from 0 to 100, 2: plain summary.
-#: includes/Modules/Chat/LocalAssistant.php:472
+#: includes/Modules/Chat/LocalAssistant.php:556
 #, php-format
 msgid "Local site health is %1$d/100. %2$s"
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:614
+#: includes/Modules/Chat/LocalAssistant.php:606
+msgid "No published page is missing incoming links from the rest of the site."
+msgstr ""
+
+#. translators: %d: number of published posts or pages.
+#: includes/Modules/Chat/LocalAssistant.php:610
+#, php-format
+msgid "%d published page has no links pointing to it from other pages. Linking to it from a related page helps visitors and search find it."
+msgid_plural "%d published pages have no links pointing to them from other pages. Linking to them from a related page helps visitors and search find them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Modules/Chat/LocalAssistant.php:619
+msgid "Add a link to this page from a related post."
+msgstr ""
+
+#: includes/Modules/Chat/LocalAssistant.php:727
 msgid "Add a custom SEO title."
 msgstr ""
 
 #. translators: %d: stored SEO score.
-#: includes/Modules/Chat/LocalAssistant.php:622
+#: includes/Modules/Chat/LocalAssistant.php:735
 #, php-format
 msgid "The stored SEO score is %d. Start with the title and description."
 msgstr ""
 
 #. translators: %d: word count.
-#: includes/Modules/Chat/LocalAssistant.php:629
+#: includes/Modules/Chat/LocalAssistant.php:742
 #, php-format
 msgid "The page is about %d words. Add a section that answers the searcher’s question."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:634
+#: includes/Modules/Chat/LocalAssistant.php:747
 msgid "The stored SEO fields look complete. Open the editor if you want to tune them."
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:720
+#: includes/Modules/Chat/LocalAssistant.php:833
 msgid "Missing descriptions"
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:725
+#: includes/Modules/Chat/LocalAssistant.php:838
 msgid "Missing SEO titles"
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:726
-#: includes/Rest/DashboardController.php:196
+#: includes/Modules/Chat/LocalAssistant.php:839
+#: includes/Rest/DashboardController.php:242
 msgid "Find posts missing SEO titles"
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:730
+#: includes/Modules/Chat/LocalAssistant.php:843
 msgid "Low SEO scores"
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:731
-#: includes/Rest/DashboardController.php:241
+#: includes/Modules/Chat/LocalAssistant.php:844
+#: includes/Rest/DashboardController.php:323
 msgid "Show low SEO score posts"
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:735
+#: includes/Modules/Chat/LocalAssistant.php:848
 msgid "Thin posts"
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:736
-#: includes/Rest/DashboardController.php:211
+#: includes/Modules/Chat/LocalAssistant.php:849
+#: includes/Rest/DashboardController.php:262
 msgid "Show thin posts"
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:740
+#: includes/Modules/Chat/LocalAssistant.php:853
 msgid "Broken links"
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:745
+#: includes/Modules/Chat/LocalAssistant.php:858
 msgid "Redirect counts"
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:746
+#: includes/Modules/Chat/LocalAssistant.php:859
 msgid "How many redirects do I have?"
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:750
+#: includes/Modules/Chat/LocalAssistant.php:863
 msgid "Sitemap and modules"
 msgstr ""
 
-#: includes/Modules/Chat/LocalAssistant.php:751
+#: includes/Modules/Chat/LocalAssistant.php:864
 msgid "Check sitemap and module health"
 msgstr ""
 
-#: includes/Modules/Chat/SiteHealth.php:91
+#: includes/Modules/Chat/LocalAssistant.php:868
+msgid "Orphan pages"
+msgstr ""
+
+#: includes/Modules/Chat/SiteHealth.php:92
 msgid "Search engines are discouraged from indexing this site."
 msgstr ""
 
 #. translators: %d: number of published posts or pages.
-#: includes/Modules/Chat/SiteHealth.php:97
+#: includes/Modules/Chat/SiteHealth.php:98
 #, php-format
-msgid "%d published items are missing a search description."
-msgstr ""
+msgid "%d published item is missing a search description."
+msgid_plural "%d published items are missing a search description."
+msgstr[0] ""
+msgstr[1] ""
 
 #. translators: %d: number of published posts or pages.
-#: includes/Modules/Chat/SiteHealth.php:105
+#: includes/Modules/Chat/SiteHealth.php:111
 #, php-format
-msgid "%d published items are missing an SEO title."
-msgstr ""
+msgid "%d published item is missing an SEO title."
+msgid_plural "%d published items are missing an SEO title."
+msgstr[0] ""
+msgstr[1] ""
 
 #. translators: %d: number of thin published posts or pages.
-#: includes/Modules/Chat/SiteHealth.php:113
+#: includes/Modules/Chat/SiteHealth.php:124
 #, php-format
-msgid "%d published items look thin."
-msgstr ""
+msgid "%d published item looks thin."
+msgid_plural "%d published items look thin."
+msgstr[0] ""
+msgstr[1] ""
 
 #. translators: %d: number of unresolved broken links.
-#: includes/Modules/Chat/SiteHealth.php:121
+#: includes/Modules/Chat/SiteHealth.php:137
 #, php-format
-msgid "%d broken links are still open."
-msgstr ""
+msgid "%d broken link is still open."
+msgid_plural "%d broken links are still open."
+msgstr[0] ""
+msgstr[1] ""
 
-#: includes/Modules/Chat/SiteHealth.php:128
+#. translators: %d: number of published posts or pages with no incoming links.
+#: includes/Modules/Chat/SiteHealth.php:151
+#, php-format
+msgid "%d published page has no incoming links."
+msgid_plural "%d published pages have no incoming links."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Modules/Chat/SiteHealth.php:163
 msgid "Local check looks calm. Search engines are allowed to index this site, and no urgent on-page gaps stood out."
 msgstr ""
 
-#: includes/Modules/Chat/SiteHealth.php:131
+#: includes/Modules/Chat/SiteHealth.php:166
 msgid "Search engines are discouraged from indexing this site. Fix that before worrying about individual pages."
 msgstr ""
 
 #. translators: 1: health label such as Good or Needs work, 2: sentence listing local gaps.
-#: includes/Modules/Chat/SiteHealth.php:136
+#: includes/Modules/Chat/SiteHealth.php:171
 #, php-format
 msgid "Site health is %1$s. %2$s"
 msgstr ""
@@ -3859,6 +4843,54 @@ msgstr ""
 msgid "Optionally connect RankMySEO to see keyword rankings and suggested page edits in WordPress."
 msgstr ""
 
+#: includes/Modules/Cloud/EditorInsightReader.php:233
+msgid "Refresh"
+msgstr ""
+
+#: includes/Modules/Cloud/EditorInsightReader.php:235
+msgid "Tune"
+msgstr ""
+
+#: includes/Modules/Cloud/EditorInsightReader.php:237
+msgid "Expand"
+msgstr ""
+
+#: includes/Modules/Cloud/EditorInsightReader.php:239
+msgid "Rewrite"
+msgstr ""
+
+#: includes/Modules/Cloud/EditorInsightReader.php:241
+msgid "Merge"
+msgstr ""
+
+#: includes/Modules/Cloud/EditorInsightReader.php:243
+msgid "Wait"
+msgstr ""
+
+#: includes/Modules/Cloud/EditorInsightReader.php:256
+msgid "Update this page so it stays current."
+msgstr ""
+
+#: includes/Modules/Cloud/EditorInsightReader.php:258
+msgid "Small edits can help this page."
+msgstr ""
+
+#: includes/Modules/Cloud/EditorInsightReader.php:260
+msgid "This page needs more useful detail."
+msgstr ""
+
+#: includes/Modules/Cloud/EditorInsightReader.php:262
+msgid "Rewriting this page is the next step."
+msgstr ""
+
+#: includes/Modules/Cloud/EditorInsightReader.php:264
+msgid "This page overlaps another page. Consider combining them."
+msgstr ""
+
+#: includes/Modules/Cloud/EditorInsightReader.php:266
+msgid "Leave this page as it is for now."
+msgstr ""
+
 #: includes/Modules/Cloud/PairingService.php:116
 msgid "RankMySEO did not return a connection code. Try again."
 msgstr ""
@@ -3932,7 +4964,7 @@ msgstr ""
 msgid "Social description"
 msgstr ""
 
-#: includes/Modules/Meta/ClassicMetabox.php:152
+#: includes/Modules/Meta/ClassicMetabox.php:155
 msgid "JavaScript is off, so the live preview is hidden. The saved search title and description above stay attached to this page."
 msgstr ""
 
@@ -3948,46 +4980,85 @@ msgstr ""
 msgid "Print RankMySEO tags anyway"
 msgstr ""
 
-#: includes/Modules/Meta/MetaModule.php:36
+#: includes/Modules/Meta/MetaModule.php:40
 msgid "Control SEO titles, meta descriptions, canonical URLs, wp_robots directives, OpenGraph, and social card previews."
 msgstr ""
 
-#: includes/Modules/Meta/MetaModule.php:43
+#: includes/Modules/Meta/MetaModule.php:47
 msgid "Customize how your pages look in Google search results and when shared on social media."
 msgstr ""
 
+#: includes/Modules/Meta/MissingMetadataQuery.php:325
+#: includes/Modules/Sitemaps/WordPressSitemapSource.php:163
+#: includes/Rest/SitemapsController.php:509
+msgid "Pages"
+msgstr ""
+
+#: includes/Modules/Meta/MissingMetadataQuery.php:327
+#: includes/Rest/SitemapsController.php:525
+msgid "Products"
+msgstr ""
+
+#: includes/Modules/Meta/MissingMetadataQuery.php:329
+msgid "Images"
+msgstr ""
+
 #: includes/Modules/Meta/QueryReader.php:27
-#: includes/Modules/Meta/TemplateDefaults.php:163
+#: includes/Modules/Meta/TemplateDefaults.php:168
 msgid "Page not found"
 msgstr ""
 
-#: includes/Modules/Meta/QuickBulkEdit.php:73
-#: includes/Modules/Meta/QuickBulkEdit.php:79
+#: includes/Modules/Meta/QuickBulkEdit.php:86
+#: includes/Modules/Meta/QuickBulkEdit.php:92
+#: includes/Modules/WooCommerce/ProductDataTab.php:65
 msgid "SEO"
 msgstr ""
 
-#: includes/Modules/Meta/QuickBulkEdit.php:118
+#: includes/Modules/Meta/QuickBulkEdit.php:131
 msgid "No score yet"
 msgstr ""
 
-#: includes/Modules/Meta/QuickBulkEdit.php:127
+#: includes/Modules/Meta/QuickBulkEdit.php:140
 msgid "Hidden"
 msgstr ""
 
-#: includes/Modules/Meta/QuickBulkEdit.php:181
+#: includes/Modules/Meta/QuickBulkEdit.php:199
 msgid "Search visibility"
 msgstr ""
 
-#: includes/Modules/Meta/QuickBulkEdit.php:183
+#: includes/Modules/Meta/QuickBulkEdit.php:201
+#: includes/Modules/Meta/QuickBulkEdit.php:207
+#: includes/Modules/Meta/QuickBulkEdit.php:213
+#: includes/Modules/Meta/QuickBulkEdit.php:219
 msgid "— No change —"
 msgstr ""
 
-#: includes/Modules/Meta/QuickBulkEdit.php:184
+#: includes/Modules/Meta/QuickBulkEdit.php:202
 msgid "Show in search"
 msgstr ""
 
-#: includes/Modules/Meta/TemplateDefaults.php:25
-msgid "Title"
+#: includes/Modules/Meta/QuickBulkEdit.php:208
+msgid "Apply title template"
+msgstr ""
+
+#: includes/Modules/Meta/QuickBulkEdit.php:209
+msgid "Clear custom title"
+msgstr ""
+
+#: includes/Modules/Meta/QuickBulkEdit.php:214
+msgid "Apply description template"
+msgstr ""
+
+#: includes/Modules/Meta/QuickBulkEdit.php:215
+msgid "Clear custom description"
+msgstr ""
+
+#: includes/Modules/Meta/QuickBulkEdit.php:217
+msgid "Custom search details"
+msgstr ""
+
+#: includes/Modules/Meta/QuickBulkEdit.php:220
+msgid "Clear custom title, description, and keyword"
 msgstr ""
 
 #: includes/Modules/Meta/TemplateDefaults.php:26
@@ -4051,6 +5122,7 @@ msgid "The current month name."
 msgstr ""
 
 #: includes/Modules/Meta/TemplateDefaults.php:70
+#: includes/Modules/Schema/BreadcrumbTrail.php:426
 msgid "Author"
 msgstr ""
 
@@ -4096,6 +5168,18 @@ msgstr ""
 
 #: includes/Modules/Meta/TemplateDefaults.php:96
 msgid "The plural label of the post type."
+msgstr ""
+
+#: includes/Modules/Meta/TemplateDefaults.php:100
+msgid "File name"
+msgstr ""
+
+#: includes/Modules/Meta/TemplateDefaults.php:101
+msgid "The image file name, without the extension."
+msgstr ""
+
+#: includes/Modules/Meta/TemplateFill.php:166
+msgid "That page is not on this list."
 msgstr ""
 
 #: includes/Modules/Meta/TermFields.php:77
@@ -4204,6 +5288,17 @@ msgstr ""
 msgid "Spot broken links and send visitors to the right page automatically when a URL changes."
 msgstr ""
 
+#. translators: %s: search words.
+#: includes/Modules/Schema/BreadcrumbTrail.php:182
+#, php-format
+msgid "Search results for “%s”"
+msgstr ""
+
+#: includes/Modules/Schema/BreadcrumbTrail.php:394
+#: includes/Modules/Schema/ContextFactory.php:95
+msgid "Archive"
+msgstr ""
+
 #: includes/Modules/Schema/ConflictScanner.php:45
 msgid "Another SEO plugin is active and may also publish structured data. Turn off its schema output so each page has one JSON-LD graph."
 msgstr ""
@@ -4216,8 +5311,8 @@ msgstr ""
 msgid "WooCommerce is still printing its own product details. Turn on automatic product schema to replace that duplicate."
 msgstr ""
 
-#: includes/Modules/Schema/ContextFactory.php:78
-msgid "Archive"
+#: includes/Modules/Schema/FaqContent.php:175
+msgid "Questions"
 msgstr ""
 
 #: includes/Modules/Schema/SchemaController.php:183
@@ -4232,92 +5327,60 @@ msgstr ""
 msgid "This JSON-LD is valid and safe to store on a page."
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:363
-msgid "News article"
-msgstr ""
-
-#: includes/Modules/Schema/SchemaController.php:365
-msgid "About page"
-msgstr ""
-
-#: includes/Modules/Schema/SchemaController.php:366
-msgid "Contact page"
-msgstr ""
-
-#: includes/Modules/Schema/SchemaController.php:367
-msgid "Collection page"
-msgstr ""
-
-#: includes/Modules/Schema/SchemaController.php:368
-msgid "Profile page"
-msgstr ""
-
-#: includes/Modules/Schema/SchemaController.php:369
-msgid "Search results page"
-msgstr ""
-
-#: includes/Modules/Schema/SchemaController.php:372
-msgid "FAQ page"
-msgstr ""
-
-#: includes/Modules/Schema/SchemaController.php:385
+#: includes/Modules/Schema/SchemaController.php:386
 msgid "Dentist"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:386
+#: includes/Modules/Schema/SchemaController.php:387
 msgid "Restaurant"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:387
-msgid "Store"
-msgstr ""
-
-#: includes/Modules/Schema/SchemaController.php:388
+#: includes/Modules/Schema/SchemaController.php:389
 msgid "Medical business"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:389
+#: includes/Modules/Schema/SchemaController.php:390
 msgid "Legal service"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:390
+#: includes/Modules/Schema/SchemaController.php:391
 msgid "Professional service"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:391
+#: includes/Modules/Schema/SchemaController.php:392
 msgid "Health and beauty"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:392
+#: includes/Modules/Schema/SchemaController.php:393
 msgid "Home and construction"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:393
+#: includes/Modules/Schema/SchemaController.php:394
 msgid "Automotive business"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:394
+#: includes/Modules/Schema/SchemaController.php:395
 msgid "Food establishment"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:395
+#: includes/Modules/Schema/SchemaController.php:396
 msgid "Lodging"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaMeta.php:202
+#: includes/Modules/Schema/SchemaMeta.php:233
 msgid "Custom JSON-LD is too large (maximum 50,000 characters)."
 msgstr ""
 
-#: includes/Modules/Schema/SchemaMeta.php:209
-#: includes/Modules/Schema/SchemaMeta.php:215
+#: includes/Modules/Schema/SchemaMeta.php:240
+#: includes/Modules/Schema/SchemaMeta.php:246
 msgid "Custom JSON-LD must be a JSON object or array."
 msgstr ""
 
-#: includes/Modules/Schema/SchemaMeta.php:223
+#: includes/Modules/Schema/SchemaMeta.php:254
 msgid "Custom JSON-LD did not contain any usable fields."
 msgstr ""
 
-#: includes/Modules/Schema/SchemaMeta.php:231
+#: includes/Modules/Schema/SchemaMeta.php:262
 msgid "Custom JSON-LD could not be encoded."
 msgstr ""
 
@@ -4337,6 +5400,18 @@ msgstr ""
 msgid "Enter a public URL on this site."
 msgstr ""
 
+#. translators: %s: absolute path of the physical llms.txt file.
+#: includes/Modules/Sitemaps/LlmsTxt.php:127
+#, php-format
+msgid "A physical llms.txt file is present at %s. The web server will serve that file, so this virtual guide will not run. Remove or rename the file to use the guide below."
+msgstr ""
+
+#. translators: %s: site name.
+#: includes/Modules/Sitemaps/LlmsTxt.php:363
+#, php-format
+msgid "Public pages on %s."
+msgstr ""
+
 #. translators: %s: absolute path of the physical robots.txt file.
 #: includes/Modules/Sitemaps/RobotsTxt.php:205
 #, php-format
@@ -4344,24 +5419,19 @@ msgid "A physical robots.txt file is present at %s. WordPress will serve that fi
 msgstr ""
 
 #: includes/Modules/Sitemaps/SitemapsModule.php:43
-msgid "Paginated XML sitemaps, virtual IndexNow key and async pings, robots.txt editor, and crawl hygiene controls."
+msgid "Paginated XML sitemaps, virtual IndexNow key and async pings, robots.txt editor, optional llms.txt guide, and crawl hygiene controls."
 msgstr ""
 
 #: includes/Modules/Sitemaps/SitemapsModule.php:50
 msgid "Keep an up-to-date map of your site for search engines and notify them when you publish new pages."
 msgstr ""
 
-#: includes/Modules/Sitemaps/SitemapsModule.php:221
+#: includes/Modules/Sitemaps/SitemapsModule.php:234
 msgid "IndexNow queue processed."
 msgstr ""
 
-#: includes/Modules/Sitemaps/SitemapsModule.php:226
+#: includes/Modules/Sitemaps/SitemapsModule.php:239
 msgid "Sitemap cache flushed."
-msgstr ""
-
-#: includes/Modules/Sitemaps/WordPressSitemapSource.php:163
-#: includes/Rest/SitemapsController.php:387
-msgid "Pages"
 msgstr ""
 
 #: includes/Modules/Sitemaps/WordPressSitemapSource.php:179
@@ -4384,6 +5454,76 @@ msgstr ""
 #: includes/Modules/Sitemaps/WpIndexNowTransport.php:61
 #, php-format
 msgid "IndexNow returned HTTP %d."
+msgstr ""
+
+#: includes/Modules/WooCommerce/ProductDataTab.php:92
+msgid "These details stay on this site and help search engines understand the product."
+msgstr ""
+
+#: includes/Modules/WooCommerce/ProductDataTab.php:93
+msgid "Brand"
+msgstr ""
+
+#: includes/Modules/WooCommerce/ProductDataTab.php:93
+msgid "The maker or brand name shown with this product."
+msgstr ""
+
+#: includes/Modules/WooCommerce/ProductDataTab.php:94
+#: includes/Modules/WooCommerce/ProductDataTab.php:130
+msgid "Barcode (GTIN, EAN, UPC, or ISBN)"
+msgstr ""
+
+#: includes/Modules/WooCommerce/ProductDataTab.php:94
+msgid "Digits only. An ISBN-10 may end in X."
+msgstr ""
+
+#: includes/Modules/WooCommerce/ProductDataTab.php:95
+#: includes/Modules/WooCommerce/ProductDataTab.php:134
+msgid "Manufacturer number (MPN)"
+msgstr ""
+
+#: includes/Modules/WooCommerce/ProductDataTab.php:95
+msgid "The maker’s own part number, when it is different from the barcode."
+msgstr ""
+
+#: includes/Modules/WooCommerce/ProductDataTab.php:96
+msgid "Return policy for this product"
+msgstr ""
+
+#: includes/Modules/WooCommerce/ProductDataTab.php:97
+msgid "Two letters, such as US. Used when this product has its own return policy."
+msgstr ""
+
+#: includes/Modules/WooCommerce/ProductDataTab.php:103
+msgid "Shipping for this product"
+msgstr ""
+
+#: includes/Modules/WooCommerce/ProductDataTab.php:104
+msgid "Two letters. Used when this product has its own shipping details."
+msgstr ""
+
+#: includes/Modules/WooCommerce/ProductDataTab.php:106
+msgid "Three letters, such as USD. Leave blank to use the shop currency."
+msgstr ""
+
+#: includes/Modules/WooCommerce/ProductDataTab.php:302
+msgid "Use the store default"
+msgstr ""
+
+#: includes/Modules/WooCommerce/ProductDataTab.php:303
+msgid "Use a policy just for this product"
+msgstr ""
+
+#: includes/Modules/WooCommerce/ProductDataTab.php:304
+msgid "Do not show a policy on this product"
+msgstr ""
+
+#: includes/Modules/WooCommerce/WooCommerceModule.php:54
+msgid "Product identifiers, variation offers, return and shipping details, catalog URL rules, and product share tags. Nothing is sent off the site."
+msgstr ""
+
+#: includes/Modules/WooCommerce/WooCommerceModule.php:61
+msgid "Help shoppers and search engines understand your products, prices, and sold-out items."
 msgstr ""
 
 #: includes/Rest/AbstractController.php:44
@@ -4414,109 +5554,151 @@ msgstr ""
 msgid "Type a question to check your site."
 msgstr ""
 
-#: includes/Rest/DashboardController.php:152
+#: includes/Rest/DashboardController.php:188
 msgid "Finish guided setup"
 msgstr ""
 
-#: includes/Rest/DashboardController.php:153
+#: includes/Rest/DashboardController.php:189
 msgid "Save your site name, brand, and which SEO tools stay on. It takes a minute and stays on this site."
 msgstr ""
 
-#: includes/Rest/DashboardController.php:155
+#: includes/Rest/DashboardController.php:191
 msgid "What should I fix first?"
 msgstr ""
 
-#: includes/Rest/DashboardController.php:163
+#: includes/Rest/DashboardController.php:199
 msgid "Allow search engines to index this site"
 msgstr ""
 
-#: includes/Rest/DashboardController.php:164
+#: includes/Rest/DashboardController.php:200
 msgid "WordPress is set to discourage search engines. Uncheck that under Settings → Reading when the site is ready."
 msgstr ""
 
-#: includes/Rest/DashboardController.php:166
-#: includes/Rest/DashboardController.php:252
+#: includes/Rest/DashboardController.php:202
+#: includes/Rest/DashboardController.php:334
 msgid "How is my site SEO?"
 msgstr ""
 
 #. translators: %d: number of published posts or pages.
-#: includes/Rest/DashboardController.php:176
+#: includes/Rest/DashboardController.php:212
 #, php-format
-msgid "%d published items are missing a search description"
-msgstr ""
+msgid "%d published item is missing a search description"
+msgid_plural "%d published items are missing a search description"
+msgstr[0] ""
+msgstr[1] ""
 
-#: includes/Rest/DashboardController.php:179
+#: includes/Rest/DashboardController.php:220
 msgid "A short description under the title helps searchers decide to click."
 msgstr ""
 
 #. translators: %d: number of published posts or pages.
-#: includes/Rest/DashboardController.php:191
+#: includes/Rest/DashboardController.php:232
 #, php-format
-msgid "%d published items are missing an SEO title"
-msgstr ""
+msgid "%d published item is missing an SEO title"
+msgid_plural "%d published items are missing an SEO title"
+msgstr[0] ""
+msgstr[1] ""
 
-#: includes/Rest/DashboardController.php:194
+#: includes/Rest/DashboardController.php:240
 msgid "A custom SEO title can lead with the topic instead of repeating only the page name."
 msgstr ""
 
 #. translators: %d: number of thin published posts or pages.
-#: includes/Rest/DashboardController.php:206
+#: includes/Rest/DashboardController.php:252
 #, php-format
-msgid "%d published items look thin"
-msgstr ""
+msgid "%d published item looks thin"
+msgid_plural "%d published items look thin"
+msgstr[0] ""
+msgstr[1] ""
 
-#: includes/Rest/DashboardController.php:209
+#: includes/Rest/DashboardController.php:260
 msgid "Pages with very little text give searchers less to land on. Add a section that answers their question."
 msgstr ""
 
 #. translators: %d: number of unresolved broken links.
-#: includes/Rest/DashboardController.php:221
+#: includes/Rest/DashboardController.php:272
 #, php-format
-msgid "%d broken links need a redirect"
-msgstr ""
+msgid "%d broken link needs a redirect"
+msgid_plural "%d broken links need a redirect"
+msgstr[0] ""
+msgstr[1] ""
 
-#: includes/Rest/DashboardController.php:224
+#: includes/Rest/DashboardController.php:280
 msgid "Visitors hitting these addresses get a missing page. Send them to a live page instead."
 msgstr ""
 
-#. translators: %d: number of low-scoring published items.
-#: includes/Rest/DashboardController.php:236
+#. translators: %d: number of published posts or pages with no incoming links.
+#: includes/Rest/DashboardController.php:293
 #, php-format
-msgid "%d published items have a low SEO score"
+msgid "%d published page has no incoming links"
+msgid_plural "%d published pages have no incoming links"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Rest/DashboardController.php:301
+msgid "Other pages on this site do not link to these. A link from a related page helps visitors find them."
 msgstr ""
 
-#: includes/Rest/DashboardController.php:239
+#. translators: %d: number of low-scoring published items.
+#: includes/Rest/DashboardController.php:313
+#, php-format
+msgid "%d published item has a low SEO score"
+msgid_plural "%d published items have a low SEO score"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Rest/DashboardController.php:321
 msgid "Scores under 60 usually mean the title, description, or content still needs a pass."
 msgstr ""
 
-#: includes/Rest/DashboardController.php:249
+#: includes/Rest/DashboardController.php:331
 msgid "No urgent on-page gaps"
 msgstr ""
 
-#: includes/Rest/DashboardController.php:250
+#: includes/Rest/DashboardController.php:332
 msgid "Local checks did not find missing descriptions, thin pages, or open broken links."
+msgstr ""
+
+#: includes/Rest/EditorInsightsController.php:84
+msgid "You cannot view search details for that page."
 msgstr ""
 
 #: includes/Rest/ImporterController.php:241
 msgid "The import could not continue."
 msgstr ""
 
-#: includes/Rest/MetaController.php:237
-#: includes/Rest/MetaController.php:260
+#: includes/Rest/MetaController.php:240
+#: includes/Rest/MetaController.php:263
 msgid "That page could not be found."
 msgstr ""
 
-#: includes/Rest/MetaController.php:286
-#: includes/Rest/MetaController.php:309
+#: includes/Rest/MetaController.php:292
+#: includes/Rest/MetaController.php:315
 msgid "That archive could not be found."
 msgstr ""
 
-#: includes/Rest/MetaController.php:338
+#: includes/Rest/MetaController.php:349
 msgid "You do not have permission to edit SEO fields for this page."
 msgstr ""
 
-#: includes/Rest/MetaController.php:358
+#: includes/Rest/MetaController.php:374
 msgid "You do not have permission to edit SEO fields for this archive."
+msgstr ""
+
+#: includes/Rest/MetaController.php:400
+msgid "The security check for this SEO save failed. Reload the editor and try again."
+msgstr ""
+
+#: includes/Rest/MissingMetadataController.php:185
+msgid "Choose at least one page."
+msgstr ""
+
+#: includes/Rest/MissingMetadataController.php:202
+msgid "Those suggestions could not be queued."
+msgstr ""
+
+#: includes/Rest/MissingMetadataController.php:220
+msgid "That page could not be saved."
 msgstr ""
 
 #: includes/Rest/RedirectsController.php:318
@@ -4531,12 +5713,20 @@ msgstr ""
 msgid "The security nonce is invalid. Reload the page and try again."
 msgstr ""
 
-#: includes/Rest/SitemapsController.php:360
-msgid "WordPress is set to discourage search engines. Crawlers are asked not to index this site until you allow them under Settings → Reading."
+#: includes/Rest/SitemapsController.php:386
+msgid "Rewrite rules were refreshed. A real llms.txt file is still on disk, so visitors will get that file instead of this guide."
 msgstr ""
 
-#: includes/Rest/SitemapsController.php:403
-msgid "Products"
+#: includes/Rest/SitemapsController.php:388
+msgid "Rewrite rules were refreshed. The guide is ready at the address below."
+msgstr ""
+
+#: includes/Rest/SitemapsController.php:390
+msgid "Rewrite rules were refreshed. Turn the guide on before that address will respond."
+msgstr ""
+
+#: includes/Rest/SitemapsController.php:482
+msgid "WordPress is set to discourage search engines. Crawlers are asked not to index this site until you allow them under Settings → Reading."
 msgstr ""
 
 #: rankmyseo.php:38

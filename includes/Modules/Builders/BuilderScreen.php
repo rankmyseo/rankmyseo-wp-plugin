@@ -22,9 +22,11 @@ final class BuilderScreen {
 	 */
 	public function edited_post_id(): int {
 		// Read-only editor routing. SEO saves use the REST nonce.
-		$post_param = isset( $_GET['post'] ) && ! is_array( $_GET['post'] ) ? wp_unslash( (string) $_GET['post'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( is_string( $post_param ) && '' !== $post_param ) {
-			return absint( $post_param );
+		if ( isset( $_GET['post'] ) && ! is_array( $_GET['post'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$post_id = absint( wp_unslash( $_GET['post'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( $post_id > 0 ) {
+				return $post_id;
+			}
 		}
 
 		if ( function_exists( 'get_the_ID' ) ) {
@@ -72,12 +74,11 @@ final class BuilderScreen {
 	 */
 	private function has_builder_flag(): bool {
 		// Read-only builder screen flag. SEO saves use the REST nonce.
-		$raw = isset( $_GET['et_fb'] ) && ! is_array( $_GET['et_fb'] ) ? wp_unslash( (string) $_GET['et_fb'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( ! is_string( $raw ) || '' === $raw ) {
+		if ( ! isset( $_GET['et_fb'] ) || is_array( $_GET['et_fb'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return false;
 		}
 
-		$flag = sanitize_text_field( $raw );
+		$flag = sanitize_text_field( wp_unslash( $_GET['et_fb'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 		return '1' === $flag || 'true' === $flag;
 	}
