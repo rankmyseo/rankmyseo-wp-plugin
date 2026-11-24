@@ -20,6 +20,7 @@ use RankMySEO\Modules\Chat\LocalAssistant;
 use RankMySEO\Modules\Chat\SiteHealth;
 use RankMySEO\Modules\Chat\SiteIndex;
 use RankMySEO\Modules\Chat\WordPressSiteIndex;
+use RankMySEO\Modules\Cloud\TokenVault;
 use RankMySEO\Modules\ModuleManager;
 use RankMySEO\Rest\ChatController;
 use RankMySEO\Rest\DashboardController;
@@ -145,6 +146,36 @@ final class OnboardingDashboardChatTest extends TestCase {
 		);
 		$this->assertCount( 5, $data['fixes'] );
 		$this->assertSame( 'Find posts missing meta descriptions', $data['fixes'][1]['prompt'] );
+	}
+
+	public function test_dashboard_summary_uses_the_real_cloud_connection(): void {
+		$vault = new TokenVault();
+		$vault->save_secrets(
+			[
+				'token' => 'rms_wp_abcdefSECRETSECRET',
+			]
+		);
+		$vault->update_public(
+			[
+				'connected'          => true,
+				'reconnect_required' => false,
+				'health'             => 'connected',
+			]
+		);
+
+		$settings   = new Settings();
+		$onboarding = new OnboardingStore( $settings );
+		$index      = new FakeSiteIndex();
+		$wpdb       = new wpdb();
+		$wpdb->existing_tables = array_values( Schema::get_table_names( 'wp_' ) );
+		$migrator   = new Migrator( $wpdb, static function (): void {} );
+		$assistant  = new LocalAssistant( $index, $settings, $onboarding, $migrator );
+		$modules    = new ModuleManager( $settings );
+		$controller = new DashboardController( $assistant, $index, $onboarding, $modules, $migrator, null, $vault );
+		$data       = $controller->get_summary()->get_data();
+
+		$this->assertTrue( $data['cloud']['connected'] );
+		$this->assertSame( 'cloud', $data['cloud']['tier'] );
 	}
 
 	public function test_local_chat_routes_intents_items_and_follow_ups(): void {

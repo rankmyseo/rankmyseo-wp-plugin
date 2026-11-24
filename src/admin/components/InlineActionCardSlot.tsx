@@ -5,6 +5,7 @@ import {
 	type BadgeTone,
 } from '../../shared/components/StatePrimitives';
 import type { ChatActionCardData, RiskTier } from '../../shared/types';
+import { readablePreview } from '../utils/previewText';
 
 export interface InlineActionCardSlotProps {
 	card: ChatActionCardData;
@@ -31,6 +32,8 @@ export function InlineActionCardSlot( {
 		high: __( 'High risk', 'rankmyseo' ),
 	};
 
+	const beforeText = readablePreview( card.beforeText );
+
 	return (
 		<div className="rms-action-card" data-status={ card.status }>
 			<div className="rms-action-card-header">
@@ -52,12 +55,16 @@ export function InlineActionCardSlot( {
 					<span className="rms-diff-label">
 						{ __( 'Before', 'rankmyseo' ) }
 					</span>
-					<del>
-						<span className="rms-sr-only">
-							{ __( 'Removed:', 'rankmyseo' ) }{ ' ' }
-						</span>
-						{ card.beforeText || __( '(empty)', 'rankmyseo' ) }
-					</del>
+					{ beforeText ? (
+						<del>
+							<span className="rms-sr-only">
+								{ __( 'Removed:', 'rankmyseo' ) }{ ' ' }
+							</span>
+							{ beforeText }
+						</del>
+					) : (
+						<span>{ __( '(empty)', 'rankmyseo' ) }</span>
+					) }
 				</div>
 				<div className="rms-diff-row rms-diff-after">
 					<span className="rms-diff-label">

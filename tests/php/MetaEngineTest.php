@@ -20,7 +20,9 @@ use RankMySEO\Modules\Meta\MetaKeys;
 use RankMySEO\Modules\Meta\MetaRegistry;
 use RankMySEO\Modules\Meta\MetaSanitizer;
 use RankMySEO\Modules\Meta\MetaStore;
+use RankMySEO\Modules\Meta\QueryReader;
 use RankMySEO\Modules\Meta\QuerySnapshot;
+use RankMySEO\Modules\Schema\SchemaMeta;
 use RankMySEO\Modules\Meta\QuickBulkEdit;
 use RankMySEO\Modules\Meta\Robots;
 use RankMySEO\Modules\Meta\TemplateContext;
@@ -42,6 +44,69 @@ final class MetaEngineTest extends TestCase {
 		$_POST    = [];
 		$_REQUEST = [];
 		$this->builder = new DocumentBuilder( new TemplateEngine() );
+	}
+
+	public function test_shop_archive_uses_the_shop_page_seo_fields(): void {
+		$shop                     = new WP_Post();
+		$shop->ID                 = 50;
+		$shop->post_title         = 'Shop';
+		$shop->post_name          = 'shop';
+		$shop->post_type          = 'page';
+		$shop->post_content       = 'Coffee gear';
+		$shop->post_excerpt       = 'Beans and kettles';
+		RankMySEO_Test_State::$posts[50] = $shop;
+		RankMySEO_Test_State::$shop_page_id = 50;
+		RankMySEO_Test_State::$post_meta[50] = [
+			MetaKeys::TITLE          => 'Shop Artisan Roast coffee and brew gear',
+			MetaKeys::DESCRIPTION    => 'Beans, drippers, and kettles.',
+			MetaKeys::CANONICAL      => 'https://example.com/shop/',
+			MetaKeys::OG_TITLE       => 'Shop the roastery',
+			MetaKeys::OG_DESCRIPTION => 'Social beans',
+			MetaKeys::TWITTER_TITLE  => 'Shop on X',
+			MetaKeys::ROBOTS         => [
+				'noindex'  => false,
+				'nofollow' => true,
+			],
+		];
+
+		RankMySEO_Test_State::$is_post_type_archive   = true;
+		RankMySEO_Test_State::$query_vars['post_type'] = 'product';
+		$snapshot = ( new QueryReader() )->current();
+		$this->assertSame( 'singular', $snapshot->kind );
+		$this->assertSame( 50, $snapshot->object_id );
+		$this->assertSame( 'page', $snapshot->post_type );
+
+		$meta      = ( new MetaStore() )->read_post( $snapshot->object_id );
+		$templates = ( new TitleSettings( new Settings() ) )->all();
+		$this->assertSame(
+			'Shop Artisan Roast coffee and brew gear',
+			$this->builder->title( $snapshot, $meta, $templates, '|', 'Artisan Roast Coffee', '' )
+		);
+		$this->assertSame(
+			'Beans, drippers, and kettles.',
+			$this->builder->description( $snapshot, $meta, $templates, '|', 'Artisan Roast Coffee', '' )
+		);
+		$head = $this->builder->head( $snapshot, $meta, $templates, '|', 'Artisan Roast Coffee', '' );
+		$this->assertSame( 'https://example.com/shop/', $head->canonical );
+		$this->assertSame( 'Shop the roastery', $head->og_title );
+		$this->assertSame( 'Social beans', $head->og_description );
+		$this->assertSame( 'Shop on X', $head->twitter_title );
+		$robots = $this->builder->robots( $snapshot, $meta, $templates );
+		$this->assertFalse( $robots['noindex'] );
+		$this->assertTrue( $robots['nofollow'] );
+
+		RankMySEO_Test_State::$is_post_type_archive = false;
+		RankMySEO_Test_State::$is_shop              = true;
+		$via_shop = ( new QueryReader() )->current();
+		$this->assertSame( 50, $via_shop->object_id );
+		$this->assertSame( 'singular', $via_shop->kind );
+
+		RankMySEO_Test_State::$shop_page_id = 0;
+		RankMySEO_Test_State::$is_shop      = false;
+		RankMySEO_Test_State::$is_post_type_archive = true;
+		$archive = ( new QueryReader() )->current();
+		$this->assertSame( 'post_type_archive', $archive->kind );
+		$this->assertSame( 0, $archive->object_id );
 	}
 
 	public function test_template_engine_replaces_tokens_and_drops_empty_separators(): void {
@@ -238,6 +303,12 @@ final class MetaEngineTest extends TestCase {
 		$metabox->save_post( 9, $post );
 		$this->assertSame( 'Saved title', get_post_meta( 9, MetaKeys::TITLE, true ) );
 		$this->assertSame( '', get_post_meta( 9, MetaKeys::CANONICAL, true ) );
+		$_POST['rankmyseo_schema_type'] = 'HowTo';
+		$metabox->save_post( 9, $post );
+		$this->assertSame( 'HowTo', get_post_meta( 9, SchemaMeta::META_TYPE, true ) );
+		$_POST['rankmyseo_schema_type'] = '';
+		$metabox->save_post( 9, $post );
+		$this->assertSame( '', get_post_meta( 9, SchemaMeta::META_TYPE, true ) );
 		$robots = get_post_meta( 9, MetaKeys::ROBOTS, true );
 		$this->assertIsArray( $robots );
 		$this->assertTrue( $robots['noindex'] );
@@ -336,6 +407,17 @@ final class MetaEngineTest extends TestCase {
 		$response = $controller->update_post_meta( $write );
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( 'REST title', $response->get_data()['meta']['title'] );
+		$this->assertSame( '', $response->get_data()['meta']['schema_type'] );
+
+		$write->set_json_params(
+			[
+				'title'       => 'REST title',
+				'schema_type' => 'FAQPage',
+			]
+		);
+		$schema_response = $controller->update_post_meta( $write );
+		$this->assertSame( 'FAQPage', $schema_response->get_data()['meta']['schema_type'] );
+		$this->assertSame( 'FAQPage', get_post_meta( 8, SchemaMeta::META_TYPE, true ) );
 
 		$preview = new WP_REST_Request();
 		$preview->set_json_params(

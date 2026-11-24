@@ -12,6 +12,7 @@ namespace RankMySEO\Rest;
 use RankMySEO\Core\Settings;
 use RankMySEO\Modules\Analyzer\AnalyzerMeta;
 use RankMySEO\Modules\Meta\ConflictGuard;
+use RankMySEO\Modules\Schema\SchemaMeta;
 use RankMySEO\Modules\Meta\MetaKeys;
 use RankMySEO\Modules\Meta\DocumentBuilder;
 use RankMySEO\Modules\Meta\MetaStore;
@@ -242,7 +243,7 @@ final class MetaController extends AbstractController {
 		return $this->success_response(
 			[
 				'id'   => $post_id,
-				'meta' => $this->store->read_post( $post_id ),
+				'meta' => $this->with_schema_type( $post_id, $this->store->read_post( $post_id ) ),
 			]
 		);
 	}
@@ -265,12 +266,13 @@ final class MetaController extends AbstractController {
 		$payload = $this->payload( $request );
 		$meta    = $this->store->write_post( $post_id, $payload );
 		$this->persist_analyzer_meta( $post_id, $payload );
+		$this->persist_schema_type( $post_id, $payload );
 
 		return $this->success_response(
 			[
 				'id'      => $post_id,
 				'updated' => true,
-				'meta'    => $meta,
+				'meta'    => $this->with_schema_type( $post_id, $meta ),
 			]
 		);
 	}
@@ -427,6 +429,41 @@ final class MetaController extends AbstractController {
 		}
 
 		update_post_meta( $post_id, AnalyzerMeta::SUMMARY, $clean );
+	}
+
+	/**
+	 * Attach the per-post schema override to a meta bundle.
+	 *
+	 * @param int                  $post_id Post ID.
+	 * @param array<string, mixed> $meta    Titles meta.
+	 * @return array<string, mixed>
+	 */
+	private function with_schema_type( int $post_id, array $meta ): array {
+		$meta['schema_type'] = SchemaMeta::read_type( $post_id );
+		return $meta;
+	}
+
+	/**
+	 * Store a schema type override when the editor sent one.
+	 *
+	 * Missing keys are left untouched so a title-only save does not clear the override.
+	 *
+	 * @param int                  $post_id Post ID.
+	 * @param array<string, mixed> $payload Request payload.
+	 * @return void
+	 */
+	private function persist_schema_type( int $post_id, array $payload ): void {
+		if ( array_key_exists( 'schema_type', $payload ) ) {
+			SchemaMeta::write_type( $post_id, $payload['schema_type'] );
+			return;
+		}
+		if ( array_key_exists( 'schemaType', $payload ) ) {
+			SchemaMeta::write_type( $post_id, $payload['schemaType'] );
+			return;
+		}
+		if ( array_key_exists( SchemaMeta::META_TYPE, $payload ) ) {
+			SchemaMeta::write_type( $post_id, $payload[ SchemaMeta::META_TYPE ] );
+		}
 	}
 
 	/**

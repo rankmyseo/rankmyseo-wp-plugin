@@ -94,6 +94,13 @@ final class GraphBuilder {
 			}
 		}
 
+		if ( $this->is_howto( $context ) ) {
+			$howto = $this->filter_piece( 'howto', $this->howto_piece( $context ), $context );
+			if ( [] !== $howto ) {
+				$pieces[] = $howto;
+			}
+		}
+
 		if ( $this->include_faq( $context ) ) {
 			$faq = $this->filter_piece( 'faq', $this->faq_piece( $context ), $context );
 			if ( [] !== $faq ) {
@@ -144,6 +151,9 @@ final class GraphBuilder {
 				break;
 			case 'faq':
 				$filtered = apply_filters( 'rankmyseo_schema_piece_faq', $piece, $context );
+				break;
+			case 'howto':
+				$filtered = apply_filters( 'rankmyseo_schema_piece_howto', $piece, $context );
 				break;
 			case 'localbusiness':
 				$filtered = apply_filters( 'rankmyseo_schema_piece_localbusiness', $piece, $context );
@@ -905,6 +915,9 @@ final class GraphBuilder {
 		if ( $this->is_product( $context ) ) {
 			return SchemaIds::node_id( $context->permalink, 'product', $context->home_url );
 		}
+		if ( $this->is_howto( $context ) ) {
+			return SchemaIds::node_id( $context->permalink, 'howto', $context->home_url );
+		}
 		if ( 'FAQPage' === $context->schema_type && [] !== $context->faqs ) {
 			return SchemaIds::node_id( $context->permalink, 'faq', $context->home_url );
 		}
@@ -933,6 +946,60 @@ final class GraphBuilder {
 	 */
 	private function is_product( SchemaContext $context ): bool {
 		return 'Product' === $context->schema_type;
+	}
+
+	/**
+	 * Whether the page should include a HowTo node.
+	 *
+	 * @param SchemaContext $context Page context.
+	 * @return bool
+	 */
+	private function is_howto( SchemaContext $context ): bool {
+		return 'HowTo' === $context->schema_type;
+	}
+
+	/**
+	 * HowTo node. Steps are included when the page content has them.
+	 *
+	 * @param SchemaContext $context Page context.
+	 * @return array<string, mixed>
+	 */
+	private function howto_piece( SchemaContext $context ): array {
+		$piece = [
+			'@type'            => 'HowTo',
+			'@id'              => SchemaIds::node_id( $context->permalink, 'howto', $context->home_url ),
+			'name'             => $this->text( '' !== $context->title ? $context->title : $context->site_name, 110 ),
+			'url'              => $context->permalink,
+			'mainEntityOfPage' => [
+				'@id' => SchemaIds::node_id( $context->permalink, 'webpage', $context->home_url ),
+			],
+		];
+
+		$piece = $this->with_text( $piece, 'description', $context->description, 500 );
+		$steps = [];
+		foreach ( $context->howto_steps as $step ) {
+			$name = $this->text( (string) ( $step['name'] ?? '' ), 110 );
+			$text = $this->text( (string) ( $step['text'] ?? '' ), 500 );
+			if ( '' === $name && '' === $text ) {
+				continue;
+			}
+			$item = [
+				'@type'    => 'HowToStep',
+				'position' => count( $steps ) + 1,
+			];
+			if ( '' !== $name ) {
+				$item['name'] = $name;
+			}
+			if ( '' !== $text ) {
+				$item['text'] = $text;
+			}
+			$steps[] = $item;
+		}
+		if ( [] !== $steps ) {
+			$piece['step'] = $steps;
+		}
+
+		return $piece;
 	}
 
 	/**

@@ -42,6 +42,9 @@ interface EditorConfig {
 	askAiEvent?: string;
 	locale?: string;
 	product?: ProductSignals;
+	schemaDefaults?: Record< string, string >;
+	schemaSettingsUrl?: string;
+	productSchemaEnabled?: boolean;
 }
 
 interface EditorStores {
@@ -277,6 +280,9 @@ function EditorBody(): JSX.Element {
 			onAnalysis={ persistAnalysis }
 			onInsertLink={ insertLink }
 			insight={ insight }
+			schemaDefaults={ settings.schemaDefaults }
+			schemaSettingsUrl={ settings.schemaSettingsUrl }
+			productSchemaEnabled={ settings.productSchemaEnabled }
 		/>
 	);
 }

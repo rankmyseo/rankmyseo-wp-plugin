@@ -540,6 +540,14 @@ final class LlmsTxt {
 			$path = untrailingslashit( $path );
 		}
 
-		return $scheme . '://' . strtolower( (string) $parts['host'] ) . $path;
+		$host = strtolower( (string) $parts['host'] );
+		if ( isset( $parts['port'] ) ) {
+			$port = (int) $parts['port'];
+			if ( $port > 0 && $port <= 65535 ) {
+				$host .= ':' . $port;
+			}
+		}
+
+		return $scheme . '://' . $host . $path;
 	}
 }

@@ -30,6 +30,9 @@ export interface BuilderEditorConfig {
 	restRoot?: string;
 	nonce?: string;
 	locale?: string;
+	schemaDefaults?: Record< string, string >;
+	schemaSettingsUrl?: string;
+	productSchemaEnabled?: boolean;
 	postId?: number;
 	postType?: string;
 	postTitle?: string;
@@ -203,6 +206,9 @@ export function BuilderSeoApp( {
 				postId={ settings.postId }
 				postType={ settings.postType || 'post' }
 				locale={ settings.locale || 'en' }
+				schemaDefaults={ settings.schemaDefaults }
+				schemaSettingsUrl={ settings.schemaSettingsUrl }
+				productSchemaEnabled={ settings.productSchemaEnabled }
 				onAnalysis={ onAnalysis }
 			/>
 			<p className="rankmyseo-save-status" role="status">

@@ -6,6 +6,7 @@ import {
 	type BadgeTone,
 } from '../../shared/components/StatePrimitives';
 import type { AiAction, RiskTier } from '../../shared/types';
+import { readablePreview } from '../utils/previewText';
 import { diffWords } from '../utils/wordDiff';
 
 export interface InlineActionCardProps {
@@ -40,7 +41,8 @@ export function InlineActionCard( {
 	const [ editing, setEditing ] = useState( false );
 	const [ draft, setDraft ] = useState( action.after_text );
 	const [ confirmHigh, setConfirmHigh ] = useState( false );
-	const parts = diffWords( action.before_text, action.after_text );
+	const beforeText = readablePreview( action.before_text );
+	const parts = diffWords( beforeText, action.after_text );
 	const pending = action.status === 'pending' || action.status === 'stale';
 	const awaitingConfirm = action.risk_tier === 'high' && confirmHigh;
 

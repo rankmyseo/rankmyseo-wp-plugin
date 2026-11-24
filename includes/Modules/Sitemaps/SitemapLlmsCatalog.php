@@ -80,13 +80,16 @@ final class SitemapLlmsCatalog implements LlmsCatalog {
 	}
 
 	/**
-	 * Title and excerpt for a permalink, falling back to the URL itself.
+	 * Title and excerpt for a permalink.
+	 *
+	 * Shop and other post-type archives are not posts, so url_to_postid() is 0.
+	 * Those links use the Shop page title or the archive label instead of the raw URL.
 	 *
 	 * @param string $url Public URL.
 	 * @return array{title: string, description: string}
 	 */
 	private function describe( string $url ): array {
-		$title       = $url;
+		$title       = '';
 		$description = '';
 		if ( function_exists( 'url_to_postid' ) ) {
 			$post_id = (int) url_to_postid( $url );
@@ -98,6 +101,12 @@ final class SitemapLlmsCatalog implements LlmsCatalog {
 		}
 
 		if ( '' === $title ) {
+			$title = $this->shop_title( $url );
+		}
+		if ( '' === $title ) {
+			$title = $this->archive_label( $url );
+		}
+		if ( '' === $title ) {
 			$title = $url;
 		}
 
@@ -105,5 +114,157 @@ final class SitemapLlmsCatalog implements LlmsCatalog {
 			'title'       => $title,
 			'description' => $description,
 		];
+	}
+
+	/**
+	 * Shop page title when the URL is the WooCommerce shop archive.
+	 *
+	 * @param string $url Public URL.
+	 * @return string
+	 */
+	private function shop_title( string $url ): string {
+		if ( ! function_exists( 'wc_get_page_id' ) ) {
+			return '';
+		}
+
+		$shop_id = (int) wc_get_page_id( 'shop' );
+		if ( $shop_id <= 0 || ! $this->matches_shop( $shop_id, $url ) ) {
+			return '';
+		}
+
+		return $this->post_title( $shop_id );
+	}
+
+	/**
+	 * Whether a URL is the Shop page or the product archive.
+	 *
+	 * @param int    $shop_id Shop page ID.
+	 * @param string $url     Public URL.
+	 * @return bool
+	 */
+	private function matches_shop( int $shop_id, string $url ): bool {
+		$candidates = [];
+		if ( function_exists( 'get_permalink' ) ) {
+			$permalink = get_permalink( $shop_id );
+			if ( is_string( $permalink ) && '' !== $permalink ) {
+				$candidates[] = $permalink;
+			}
+		}
+		if ( function_exists( 'get_post_type_archive_link' ) ) {
+			$archive = get_post_type_archive_link( 'product' );
+			if ( is_string( $archive ) && '' !== $archive ) {
+				$candidates[] = $archive;
+			}
+		}
+
+		foreach ( $candidates as $candidate ) {
+			if ( $this->same_url( $candidate, $url ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Plural label for a post type archive URL.
+	 *
+	 * @param string $url Public URL.
+	 * @return string
+	 */
+	private function archive_label( string $url ): string {
+		if ( function_exists( 'get_post_types' ) && function_exists( 'get_post_type_archive_link' ) ) {
+			$types = get_post_types( [ 'public' => true ], 'objects' );
+			if ( is_array( $types ) ) {
+				foreach ( $types as $type ) {
+					if ( ! is_object( $type ) || empty( $type->name ) || empty( $type->has_archive ) ) {
+						continue;
+					}
+					$link = get_post_type_archive_link( (string) $type->name );
+					if ( ! is_string( $link ) || ! $this->same_url( $link, $url ) ) {
+						continue;
+					}
+					$label = isset( $type->labels->name ) ? trim( wp_strip_all_tags( (string) $type->labels->name ) ) : '';
+					if ( '' !== $label ) {
+						return $label;
+					}
+				}
+			}
+		}
+
+		$path = (string) ( wp_parse_url( $url, PHP_URL_PATH ) ?? '' );
+		$slug = trim( basename( untrailingslashit( $path ) ) );
+		if ( '' === $slug || ! function_exists( 'get_post_type_object' ) || ! function_exists( 'get_post_type_archive_link' ) ) {
+			return '';
+		}
+
+		$object = get_post_type_object( $slug );
+		if ( ! is_object( $object ) ) {
+			return '';
+		}
+		$name = '' !== $object->name ? $object->name : $slug;
+		if ( empty( $object->has_archive ) && 'product' !== $name ) {
+			return '';
+		}
+		$link = get_post_type_archive_link( $name );
+		if ( ! is_string( $link ) || ! $this->same_url( $link, $url ) ) {
+			return '';
+		}
+
+		return isset( $object->labels->name ) ? trim( wp_strip_all_tags( (string) $object->labels->name ) ) : '';
+	}
+
+	/**
+	 * Plain title for a post, preferring get_the_title() when WordPress provides it.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return string
+	 */
+	private function post_title( int $post_id ): string {
+		if ( function_exists( 'get_the_title' ) ) {
+			$title = get_the_title( $post_id );
+			if ( is_string( $title ) ) {
+				$title = trim( wp_strip_all_tags( $title ) );
+				if ( '' !== $title ) {
+					return $title;
+				}
+			}
+		}
+
+		$post = get_post( $post_id );
+		if ( $post instanceof WP_Post ) {
+			return trim( wp_strip_all_tags( (string) $post->post_title ) );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Compare two public URLs without the query, fragment, or trailing slash.
+	 *
+	 * @param string $left  First URL.
+	 * @param string $right Second URL.
+	 * @return bool
+	 */
+	private function same_url( string $left, string $right ): bool {
+		$normalize = static function ( string $url ): string {
+			$parts = wp_parse_url( $url );
+			if ( ! is_array( $parts ) || empty( $parts['host'] ) ) {
+				return strtolower( untrailingslashit( $url ) );
+			}
+			$scheme = strtolower( (string) ( $parts['scheme'] ?? 'http' ) );
+			$host   = strtolower( (string) $parts['host'] );
+			if ( isset( $parts['port'] ) ) {
+				$port = (int) $parts['port'];
+				if ( $port > 0 ) {
+					$host .= ':' . $port;
+				}
+			}
+			$path = isset( $parts['path'] ) ? untrailingslashit( (string) $parts['path'] ) : '';
+
+			return $scheme . '://' . $host . $path;
+		};
+
+		return '' !== $left && '' !== $right && $normalize( $left ) === $normalize( $right );
 	}
 }

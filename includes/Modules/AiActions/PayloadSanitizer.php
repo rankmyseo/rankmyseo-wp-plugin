@@ -31,6 +31,29 @@ final class PayloadSanitizer {
 	public const ALT_MAX         = 300;
 
 	/**
+	 * Text fields a card can show as a single line.
+	 *
+	 * @var list<string>
+	 */
+	private const PREVIEW_TEXT_KEYS = array(
+		'suggested',
+		'seoTitle',
+		'title',
+		'seo_title',
+		'seoDescription',
+		'description',
+		'metaDescription',
+		'content',
+		'body',
+		'current',
+		'canonical',
+		'schemaType',
+		'schema_type',
+		'imageAlt',
+		'alt',
+	);
+
+	/**
 	 * Plain text with shortcodes and markup removed.
 	 *
 	 * @param string $value Raw text.
@@ -148,34 +171,52 @@ final class PayloadSanitizer {
 			return trim( $source . ' → ' . $target );
 		}
 
-		$text = self::text_field(
-			$payload,
-			array(
-				'suggested',
-				'seoTitle',
-				'title',
-				'seo_title',
-				'seoDescription',
-				'description',
-				'metaDescription',
-				'content',
-				'body',
-				'current',
-				'canonical',
-				'schemaType',
-				'schema_type',
-				'imageAlt',
-				'alt',
-			)
-		);
+		$text = self::text_field( $payload, self::PREVIEW_TEXT_KEYS );
 		if ( '' !== $text ) {
 			return self::plain( $text, 500 );
 		}
 		if ( isset( $payload['faq'] ) && is_array( $payload['faq'] ) ) {
 			return __( 'FAQ structured data', 'rankmyseo' );
 		}
+		if ( self::text_payload_is_blank( $payload ) ) {
+			return '';
+		}
 		$encoded = wp_json_encode( $payload );
 		return is_string( $encoded ) ? self::plain( $encoded, 240 ) : '';
+	}
+
+	/**
+	 * Whether every recognized text field is empty.
+	 *
+	 * An empty title is stored as {"seoTitle":""}. Encoding that array makes the
+	 * approval card strike through raw JSON. A blank text payload is an empty string.
+	 *
+	 * @param array<string, mixed> $payload Payload.
+	 * @return bool
+	 */
+	private static function text_payload_is_blank( array $payload ): bool {
+		$saw_text_key = false;
+		foreach ( $payload as $key => $value ) {
+			if ( ! is_string( $key ) ) {
+				return false;
+			}
+			if ( in_array( $key, self::PREVIEW_TEXT_KEYS, true ) ) {
+				$saw_text_key = true;
+				if ( is_string( $value ) && '' !== trim( $value ) ) {
+					return false;
+				}
+				if ( ! is_string( $value ) && null !== $value && '' !== $value && array() !== $value ) {
+					return false;
+				}
+				continue;
+			}
+			if ( null === $value || '' === $value || array() === $value ) {
+				continue;
+			}
+			return false;
+		}
+
+		return $saw_text_key;
 	}
 
 	/**

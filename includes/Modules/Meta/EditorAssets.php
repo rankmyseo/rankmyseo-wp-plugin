@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace RankMySEO\Modules\Meta;
 
+use RankMySEO\Modules\Schema\SchemaMeta;
+use RankMySEO\Modules\Schema\SchemaSettings;
 use RankMySEO\Modules\WooCommerce\ProductMeta;
 
 use RankMySEO\Core\Settings;
@@ -141,6 +143,7 @@ final class EditorAssets {
 			'askAiEvent' => 'rankmyseo:ask-ai',
 			'locale'     => function_exists( 'get_locale' ) ? (string) get_locale() : 'en',
 		];
+		$config = array_merge( $config, ( new SchemaSettings() )->editor_hints() );
 
 		$post = get_post();
 		if ( $post instanceof \WP_Post && 'product' === $post->post_type ) {
@@ -161,6 +164,7 @@ final class EditorAssets {
 
 		if ( $post instanceof \WP_Post ) {
 			$meta                = $this->store->read_post( (int) $post->ID );
+			$meta['schema_type'] = SchemaMeta::read_type( (int) $post->ID );
 			$config['postId']    = (int) $post->ID;
 			$config['postType']  = (string) $post->post_type;
 			$config['postTitle'] = (string) $post->post_title;

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace RankMySEO\Modules\Meta;
 
 use RankMySEO\Core\Settings;
+use RankMySEO\Modules\Schema\SchemaMeta;
 
 /**
  * Saves SEO fields from the classic post form even when JavaScript is unavailable.
@@ -110,6 +111,7 @@ final class ClassicMetabox {
 			'rankmyseo_twitter_description' => (string) $meta['twitter_description'],
 			'rankmyseo_twitter_image'       => (string) $meta['twitter_image'],
 			'rankmyseo_twitter_card'        => '' !== (string) $meta['twitter_card'] ? (string) $meta['twitter_card'] : 'summary_large_image',
+			'rankmyseo_schema_type'         => SchemaMeta::read_type( (int) $post->ID ),
 		];
 
 		echo '<div id="rankmyseo-classic-fields" class="rankmyseo-classic-fields">';
@@ -186,6 +188,9 @@ final class ClassicMetabox {
 		}
 
 		$this->store->write_post( $post_id, $this->bundle_from_request() );
+		if ( isset( $_POST['rankmyseo_schema_type'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce is verified above.
+			SchemaMeta::write_type( $post_id, wp_unslash( $_POST['rankmyseo_schema_type'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- SchemaMeta::write_type sanitizes the type.
+		}
 	}
 
 	/**

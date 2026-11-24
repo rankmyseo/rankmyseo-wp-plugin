@@ -415,6 +415,7 @@ final class SchemaGraphTest extends TestCase {
 
 		$this->assertSame( '', SchemaMeta::sanitize_custom( 'not-json' ) );
 		$this->assertSame( 'BlogPosting', SchemaMeta::sanitize_type( 'BlogPosting' ) );
+		$this->assertSame( 'HowTo', SchemaMeta::sanitize_type( 'HowTo' ) );
 		$this->assertSame( '', SchemaMeta::sanitize_type( '<script>nope' ) );
 
 		$encoded = SchemaMeta::sanitize_custom( '{"@type":"Thing","name":"Safe </script>"}' );
@@ -531,6 +532,46 @@ final class SchemaGraphTest extends TestCase {
 		$this->assertSame( 'https://example.com/hello-world#webpage', $article['mainEntityOfPage']['@id'] );
 		$this->assertNotNull( $this->find_node( $document, 'FAQPage' ) );
 		$this->assertSame( 'News', $context->breadcrumbs[1]['name'] );
+	}
+
+	public function test_per_post_schema_override_changes_the_json_ld_type(): void {
+		$post               = new WP_Post();
+		$post->ID           = 43;
+		$post->post_title   = 'Brew guide';
+		$post->post_name    = 'brew-guide';
+		$post->post_type    = 'post';
+		$post->post_excerpt = 'A short guide';
+		$post->post_content = '<ol><li>Heat the kettle</li><li>Bloom the grounds</li></ol>';
+		RankMySEO_Test_State::$posts[43] = $post;
+		RankMySEO_Test_State::$post_meta[43][ SchemaMeta::META_TYPE ] = 'HowTo';
+
+		$settings = new SchemaSettings();
+		$settings->update( [ 'name' => 'Acme Co' ] );
+		$context = ( new ContextFactory( $settings ) )->for_post( 43 );
+		$this->assertSame( 'HowTo', $context->schema_type );
+
+		$document = ( new GraphBuilder() )->build( $context );
+		$howto    = $this->node( $document, 'HowTo' );
+		$webpage  = $this->node( $document, 'WebPage' );
+		$this->assertSame( 'Brew guide', $howto['name'] );
+		$this->assertSame( 'Heat the kettle', $howto['step'][0]['name'] );
+		$this->assertSame( 'Bloom the grounds', $howto['step'][1]['text'] );
+		$this->assertSame( $howto['@id'], $webpage['mainEntity']['@id'] );
+		$this->assertNull( $this->find_node( $document, 'BlogPosting' ) );
+
+		RankMySEO_Test_State::$post_meta[43][ SchemaMeta::META_TYPE ] = 'Article';
+		$article_context = ( new ContextFactory( $settings ) )->for_post( 43 );
+		$article_graph   = ( new GraphBuilder() )->build( $article_context );
+		$this->assertSame( 'Article', $article_context->schema_type );
+		$this->assertNotNull( $this->find_node( $article_graph, 'Article' ) );
+		$this->assertNull( $this->find_node( $article_graph, 'BlogPosting' ) );
+		$this->assertNull( $this->find_node( $article_graph, 'HowTo' ) );
+
+		RankMySEO_Test_State::$post_meta[43][ SchemaMeta::META_TYPE ] = 'none';
+		$none = ( new GraphBuilder() )->build( ( new ContextFactory( $settings ) )->for_post( 43 ) );
+		$this->assertNull( $this->find_node( $none, 'HowTo' ) );
+		$this->assertNull( $this->find_node( $none, 'Article' ) );
+		$this->assertNotNull( $this->find_node( $none, 'WebPage' ) );
 	}
 
 	public function test_frontend_prints_json_ld_and_skips_admin(): void {

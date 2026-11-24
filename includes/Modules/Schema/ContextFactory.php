@@ -170,6 +170,9 @@ final class ContextFactory {
 		$context->schema_type           = $schema_type;
 		$context->author_is_site_person = 'person' === $context->entity_type && $context->author_name === $context->site_name;
 		$context->faqs                  = FaqContent::for_post( $post );
+		if ( 'HowTo' === $schema_type ) {
+			$context->howto_steps = HowToSteps::from_html( (string) $post->post_content );
+		}
 
 		$custom                = get_post_meta( $post_id, SchemaMeta::META_CUSTOM, true );
 		$context->custom_graph = SchemaMeta::decode_graph( is_string( $custom ) ? $custom : '' );

@@ -442,6 +442,9 @@ declare global {
 			nonce?: string;
 			askAiEvent?: string;
 			locale?: string;
+			schemaDefaults?: Record< string, string >;
+			schemaSettingsUrl?: string;
+			productSchemaEnabled?: boolean;
 			product?: {
 				sku: string;
 				gtin: string;

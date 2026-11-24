@@ -471,7 +471,9 @@ final class Plugin {
 				assert( $migrator instanceof Migrator );
 				$links = $container->get( LinkIndexer::class );
 				assert( $links instanceof LinkIndexer );
-				return new DashboardController( $assistant, $index, $onboarding, $modules, $migrator, $links );
+				$vault = $container->get( TokenVault::class );
+				assert( $vault instanceof TokenVault );
+				return new DashboardController( $assistant, $index, $onboarding, $modules, $migrator, $links, $vault );
 			}
 		);
 

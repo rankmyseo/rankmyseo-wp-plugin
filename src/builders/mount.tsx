@@ -20,6 +20,121 @@ function mountReact( host: HTMLElement, node: ReactElement ): MountedRoot {
 	return root;
 }
 
+const ELEMENTOR_ANCHORS = [
+	'#elementor-panel-footer-tools',
+	'#elementor-panel-header-wrapper',
+	'#elementor-panel-header',
+	'.elementor-panel-header',
+	'.elementor-panel-navigation',
+	'.elementor-panel-header-buttons',
+];
+
+interface ElementorHookBag {
+	addAction?: ( name: string, callback: () => void ) => void;
+	removeAction?: ( name: string, callback: () => void ) => void;
+}
+
+interface ElementorEventBus {
+	on?: ( event: string, callback: () => void ) => void;
+	off?: ( event: string, callback: () => void ) => void;
+	hooks?: ElementorHookBag;
+}
+
+interface JqueryEvented {
+	on?: ( event: string, callback: () => void ) => void;
+	off?: ( event: string, callback: () => void ) => void;
+}
+
+function findElementorAnchor( doc: Document, panel: HTMLElement ): HTMLElement {
+	for ( const selector of ELEMENTOR_ANCHORS ) {
+		const inPanel = panel.querySelector( selector );
+		if ( inPanel instanceof HTMLElement ) {
+			return inPanel;
+		}
+		const anywhere = doc.querySelector( selector );
+		if ( anywhere instanceof HTMLElement ) {
+			return anywhere;
+		}
+	}
+	return panel;
+}
+
+function listenForElementorReady( onReady: () => void ): () => void {
+	const cleanups: Array< () => void > = [];
+	const win = window as Window & {
+		elementor?: ElementorEventBus;
+		$e?: { hooks?: ElementorHookBag };
+		jQuery?: ( target: Window ) => JqueryEvented;
+	};
+
+	const bindHook = (
+		hooks: ElementorHookBag | undefined,
+		name: string
+	): void => {
+		if ( ! hooks || 'function' !== typeof hooks.addAction ) {
+			return;
+		}
+		const callback = (): void => {
+			onReady();
+		};
+		try {
+			hooks.addAction( name, callback );
+			if ( 'function' === typeof hooks.removeAction ) {
+				cleanups.push( () => {
+					hooks.removeAction?.( name, callback );
+				} );
+			}
+		} catch {
+			// Elementor hook signatures differ between major versions.
+		}
+	};
+
+	bindHook( win.elementor?.hooks, 'elementor/panel/init' );
+	bindHook( win.$e?.hooks, 'elementor/panel/init' );
+
+	const bus = win.elementor;
+	if ( bus && 'function' === typeof bus.on ) {
+		const callback = (): void => {
+			onReady();
+		};
+		try {
+			bus.on( 'elementor:init', callback );
+			bus.on( 'panel:init', callback );
+			cleanups.push( () => {
+				bus.off?.( 'elementor:init', callback );
+				bus.off?.( 'panel:init', callback );
+			} );
+		} catch {
+			// The editor event bus is optional.
+		}
+	}
+
+	if ( 'function' === typeof win.jQuery ) {
+		try {
+			const target = win.jQuery( window );
+			const callback = (): void => {
+				onReady();
+			};
+			target.on?.( 'elementor:init', callback );
+			cleanups.push( () => {
+				target.off?.( 'elementor:init', callback );
+			} );
+		} catch {
+			// jQuery is not required for the panel observer.
+		}
+	}
+
+	return () => {
+		cleanups.forEach( ( cleanup ) => {
+			try {
+				cleanup();
+			} catch {
+				// The editor may already have torn the bus down.
+			}
+		} );
+	};
+}
+
 function elementorGlobal(): ElementorLike | null {
 	const candidate = ( window as Window & { elementor?: ElementorLike } )
 		.elementor;
@@ -31,7 +146,6 @@ export function mountElementorPanel(
 	settings: BuilderEditorConfig
 ): () => void {
 	let observer: MutationObserver | null = null;
-	let timer = 0;
 	let root: MountedRoot | null = null;
 	let stopped = false;
 
@@ -43,10 +157,7 @@ export function mountElementorPanel(
 		if ( ! panel ) {
 			return false;
 		}
-		const tools =
-			doc.getElementById( 'elementor-panel-footer-tools' ) ||
-			doc.getElementById( 'elementor-panel-header-wrapper' ) ||
-			panel;
+		const tools = findElementorAnchor( doc, panel );
 		const slot = doc.createElement( 'div' );
 		slot.className = 'rms-root rankmyseo-elementor-slot';
 		const button = doc.createElement( 'button' );
@@ -100,11 +211,18 @@ export function mountElementorPanel(
 		return true;
 	};
 
+	const stopListening = listenForElementorReady( () => {
+		if ( mount() ) {
+			observer?.disconnect();
+			observer = null;
+		}
+	} );
+
 	try {
 		if (
 			! mount() &&
 			typeof MutationObserver !== 'undefined' &&
-			doc.body
+			( doc.documentElement || doc.body )
 		) {
 			observer = new MutationObserver( () => {
 				if ( mount() ) {
@@ -112,11 +230,10 @@ export function mountElementorPanel(
 					observer = null;
 				}
 			} );
-			observer.observe( doc.body, { childList: true, subtree: true } );
-			timer = window.setTimeout( () => {
-				observer?.disconnect();
-				observer = null;
-			}, 15000 );
+			observer.observe( doc.documentElement || doc.body, {
+				childList: true,
+				subtree: true,
+			} );
 		}
 	} catch {
 		// Elementor's panel markup differs between versions.
@@ -124,7 +241,7 @@ export function mountElementorPanel(
 
 	return () => {
 		stopped = true;
-		window.clearTimeout( timer );
+		stopListening();
 		observer?.disconnect();
 		try {
 			root?.unmount();

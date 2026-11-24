@@ -370,6 +370,7 @@ final class SchemaController extends AbstractController {
 			'Product'           => __( 'Product', 'rankmyseo' ),
 			'LocalBusiness'     => __( 'Local business', 'rankmyseo' ),
 			'FAQPage'           => __( 'FAQ page', 'rankmyseo' ),
+			'HowTo'             => __( 'How-to', 'rankmyseo' ),
 			'none'              => __( 'None', 'rankmyseo' ),
 		];
 	}

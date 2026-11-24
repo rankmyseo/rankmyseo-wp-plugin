@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { InlineActionCard } from '../../src/admin/components/InlineActionCard';
-import type { AiAction } from '../../src/shared/types';
+import { InlineActionCardSlot } from '../../src/admin/components/InlineActionCardSlot';
+import { readablePreview } from '../../src/admin/utils/previewText';
+import type { AiAction, ChatActionCardData } from '../../src/shared/types';
 
 function action( overrides: Partial< AiAction > = {} ): AiAction {
 	return {
@@ -57,6 +59,48 @@ describe( 'InlineActionCard', () => {
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Reject' } ) );
 		expect( onReject ).toHaveBeenCalledWith( 7 );
+	} );
+
+	it( 'does not strike through raw JSON when the previous title was empty', () => {
+		expect( readablePreview( '{"seoTitle":""}' ) ).toBe( '' );
+		expect( readablePreview( '{"seoDescription":"  "}' ) ).toBe( '' );
+		expect( readablePreview( 'Old title' ) ).toBe( 'Old title' );
+
+		render(
+			<InlineActionCard
+				action={ action( {
+					before_text: '{"seoTitle":""}',
+					after_text: 'Shop Artisan Roast coffee and brew gear',
+					before: { seoTitle: '' },
+					after: {
+						seoTitle: 'Shop Artisan Roast coffee and brew gear',
+					},
+				} ) }
+			/>
+		);
+
+		expect( document.body ).not.toHaveTextContent( '{"seoTitle":""}' );
+		expect( document.querySelector( 'del' ) ).toBeNull();
+		expect( document.querySelector( 'ins' ) ).toHaveTextContent(
+			'Shop Artisan Roast coffee and brew gear'
+		);
+
+		const card: ChatActionCardData = {
+			id: 'card-1',
+			title: 'Update the search title',
+			targetLabel: 'Shop',
+			riskTier: 'low',
+			beforeText: '{"seoTitle":""}',
+			proposedText: 'Beans, drippers, and kettles.',
+			rationale: 'The shop page had no description.',
+			status: 'pending',
+		};
+		render( <InlineActionCardSlot card={ card } /> );
+		expect( screen.getByText( '(empty)' ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( 'Beans, drippers, and kettles.' )
+		).toBeInTheDocument();
+		expect( document.body ).not.toHaveTextContent( '{"seoTitle":""}' );
 	} );
 
 	it( 'asks for a second click on a high-risk change and offers rollback after apply', () => {

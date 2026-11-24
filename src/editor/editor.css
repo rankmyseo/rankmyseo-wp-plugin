@@ -180,6 +180,32 @@
 	min-height: 8px;
 }
 
+.rms-schema-panel {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin: 0;
+	padding: 12px;
+	background: var(--rms-paper);
+	border: 1px solid var(--rms-rule);
+	border-radius: var(--rms-radius-card);
+	color: var(--rms-ink);
+}
+
+.rms-schema-effective,
+.rms-schema-note {
+	margin: 0;
+}
+
+.rms-schema-note {
+	color: var(--rms-ink-muted);
+}
+
+.rms-schema-link {
+	color: var(--rms-accent);
+	font-weight: 700;
+}
+
 .rms-analyzer {
 	display: flex;
 	flex-direction: column;
