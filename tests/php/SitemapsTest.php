@@ -13,6 +13,8 @@ use PHPUnit\Framework\TestCase;
 use RankMySEO\Container;
 use RankMySEO\Core\Settings;
 use RankMySEO\Modules\Sitemaps\IndexNow;
+use RankMySEO\Modules\Sitemaps\LlmsTxt;
+use RankMySEO\Modules\Sitemaps\SitemapLlmsCatalog;
 use RankMySEO\Modules\Sitemaps\RobotsMeta;
 use RankMySEO\Modules\Sitemaps\RobotsTxt;
 use RankMySEO\Modules\Sitemaps\SitemapCache;
@@ -274,6 +276,7 @@ final class SitemapsTest extends TestCase {
 		$this->assertContains( '^sitemap_index\\.xml$', $patterns );
 		$this->assertContains( '^rankmyseo-sitemap\\.xsl$', $patterns );
 		$this->assertNotContains( '^([a-f0-9]{32})\\.txt$', $patterns );
+		$this->assertNotContains( '^llms\\.txt$', $patterns );
 
 		$settings->update( [ 'indexnow_enabled' => true ] );
 		RankMySEO_Test_State::$rewrites = [];
@@ -287,8 +290,9 @@ final class SitemapsTest extends TestCase {
 		$settings = new SitemapSettings();
 		$indexnow = new IndexNow( $settings, new WpIndexNowTransport() );
 		$robots   = new RobotsTxt( $settings, '/tmp/none', static fn(): bool => true );
-		$source   = new WordPressSitemapSource( $settings, new wpdb() );
-		$controller = new SitemapsController( $core, $settings, $indexnow, $robots, $source );
+		$source     = new WordPressSitemapSource( $settings, new wpdb() );
+		$llms       = new LlmsTxt( $settings, new SitemapLlmsCatalog( $source ), '/tmp/none', static fn(): bool => true );
+		$controller = new SitemapsController( $core, $settings, $indexnow, $robots, $llms, $source );
 
 		$controller->register_routes();
 		$routes = array_map(
@@ -299,6 +303,7 @@ final class SitemapsTest extends TestCase {
 		$this->assertContains( 'rankmyseo/v1/sitemaps/flush', $routes );
 		$this->assertContains( 'rankmyseo/v1/sitemaps/indexnow/ping', $routes );
 		$this->assertContains( 'rankmyseo/v1/sitemaps/robots', $routes );
+		$this->assertContains( 'rankmyseo/v1/sitemaps/llms/test', $routes );
 
 		$status = $controller->get_status()->get_data();
 		$this->assertTrue( $status['module_enabled'] );
@@ -306,6 +311,9 @@ final class SitemapsTest extends TestCase {
 		$this->assertSame( 'https://api.indexnow.org/indexnow', $status['indexnow']['endpoint'] );
 		$this->assertTrue( $status['robots']['physical_file'] );
 		$this->assertContains( 'physical_file', array_column( $status['robots']['warnings'], 'code' ) );
+		$this->assertFalse( $status['llms']['enabled'] );
+		$this->assertTrue( $status['llms']['physical_file'] );
+		$this->assertContains( 'physical_file', array_column( $status['llms']['warnings'], 'code' ) );
 
 		$request = new WP_REST_Request();
 		$request->set_json_params(

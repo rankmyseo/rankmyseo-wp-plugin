@@ -159,6 +159,7 @@ final class OnboardingDashboardChatTest extends TestCase {
 		$this->assertSame( 'open_404s', $assistant->detect_intent( 'Show recent unresolved 404s' ) );
 		$this->assertSame( 'redirects', $assistant->detect_intent( 'How many redirects do I have?' ) );
 		$this->assertSame( 'module_health', $assistant->detect_intent( 'Check sitemap and module health' ) );
+		$this->assertSame( 'llms_txt', $assistant->detect_intent( 'Is the llms.txt guide on?' ) );
 		$this->assertSame( 'inspect_post', $assistant->detect_intent( 'Inspect post 42' ) );
 		$this->assertSame( 'inspect_post', $assistant->detect_intent( 'Check the page titled "Pricing Guide"' ) );
 		$this->assertSame( 'site_health', $assistant->detect_intent( 'What should I fix first?' ) );

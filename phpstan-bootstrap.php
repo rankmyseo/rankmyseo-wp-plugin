@@ -31,6 +31,63 @@ if ( ! defined( 'RANKMYSEO_BASENAME' ) ) {
 	define( 'RANKMYSEO_BASENAME', 'rankmyseo/rankmyseo.php' );
 }
 
+if ( ! function_exists( 'wc_get_page_id' ) ) {
+	/**
+	 * PHPStan stub. WooCommerce provides the real function at runtime.
+	 *
+	 * @param string $page Page key such as shop.
+	 * @return int
+	 */
+	function wc_get_page_id( string $page ): int {
+		unset( $page );
+		return 0;
+	}
+}
+
+if ( ! function_exists( 'is_shop' ) ) {
+	/**
+	 * PHPStan stub. WooCommerce provides the real function at runtime.
+	 *
+	 * @return bool
+	 */
+	function is_shop(): bool {
+		return false;
+	}
+}
+
+if ( ! function_exists( 'is_product' ) ) {
+	/**
+	 * PHPStan stub. WooCommerce provides the real function at runtime.
+	 *
+	 * @return bool
+	 */
+	function is_product(): bool {
+		return false;
+	}
+}
+
+if ( ! function_exists( 'is_product_category' ) ) {
+	/**
+	 * PHPStan stub. WooCommerce provides the real function at runtime.
+	 *
+	 * @return bool
+	 */
+	function is_product_category(): bool {
+		return false;
+	}
+}
+
+if ( ! function_exists( 'is_product_tag' ) ) {
+	/**
+	 * PHPStan stub. WooCommerce provides the real function at runtime.
+	 *
+	 * @return bool
+	 */
+	function is_product_tag(): bool {
+		return false;
+	}
+}
+
 if ( ! function_exists( 'wc_get_product' ) ) {
 	/**
 	 * PHPStan stub. WooCommerce provides the real function at runtime.

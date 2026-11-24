@@ -141,6 +141,15 @@ export function buildLocalAssistantReply(
 			label: __( 'Open Redirects & 404s', 'rankmyseo' ),
 			pageId: 'redirects',
 		} );
+	} else if ( normalized.includes( 'llms' ) ) {
+		content = __(
+			'The AI site guide is optional and stays on this site. Open Sitemaps to turn it on, preview the public pages it lists, and check whether a real llms.txt file is already on disk.',
+			'rankmyseo'
+		);
+		quickLinks.push( {
+			label: __( 'Open Sitemaps', 'rankmyseo' ),
+			pageId: 'sitemaps',
+		} );
 	} else if (
 		normalized.includes( 'sitemap' ) ||
 		normalized.includes( 'robots' ) ||

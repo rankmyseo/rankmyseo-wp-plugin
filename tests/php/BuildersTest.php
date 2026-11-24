@@ -67,14 +67,15 @@ final class BuildersTest extends TestCase {
 		RankMySEO_Test_State::$posts[5] = $parent;
 		RankMySEO_Test_State::$posts[6] = $child;
 
-		$page = BreadcrumbTrail::for_post( $child, 'https://example.com/', 'Child', 'https://example.com/parent/child/' );
+		$trail = new BreadcrumbTrail();
+		$page  = $trail->for_post( $child );
 
-		$this->assertSame( 'Home', $page['crumbs'][0]['name'] );
-		$this->assertSame( 'https://example.com/', $page['crumbs'][0]['url'] );
-		$this->assertSame( 'Parent Page', $page['crumbs'][1]['name'] );
-		$this->assertSame( 'https://example.com/parent/', $page['crumbs'][1]['url'] );
-		$this->assertSame( 'Child', $page['crumbs'][2]['name'] );
-		$this->assertSame( '', $page['section'] );
+		$this->assertSame( 'Home', $page[0]['name'] );
+		$this->assertSame( 'https://example.com/', $page[0]['url'] );
+		$this->assertSame( 'Parent Page', $page[1]['name'] );
+		$this->assertSame( 'https://example.com/parent/', $page[1]['url'] );
+		$this->assertSame( 'Child', $page[2]['name'] );
+		$this->assertSame( '', $trail->article_section( $child ) );
 
 		$post              = new WP_Post();
 		$post->ID          = 7;
@@ -86,11 +87,11 @@ final class BuildersTest extends TestCase {
 		RankMySEO_Test_State::$posts[7]      = $post;
 		RankMySEO_Test_State::$categories[7] = [ $term ];
 
-		$article = BreadcrumbTrail::for_post( $post, 'https://example.com', 'Hello', 'https://example.com/hello/' );
+		$article = $trail->for_post( $post );
 
-		$this->assertSame( 'News', $article['section'] );
-		$this->assertSame( 'News', $article['crumbs'][1]['name'] );
-		$this->assertSame( 'https://example.com/category/news/', $article['crumbs'][1]['url'] );
+		$this->assertSame( 'News', $trail->article_section( $post ) );
+		$this->assertSame( 'News', $article[1]['name'] );
+		$this->assertSame( 'https://example.com/category/news/', $article[1]['url'] );
 	}
 
 	public function test_breadcrumb_html_is_accessible_and_escaped(): void {

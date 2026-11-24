@@ -186,11 +186,78 @@ final class RankMySEO_Test_State {
 	/** @var list<array{handle: string, src: string, deps: array<int, mixed>, ver: mixed, in_footer: bool}> */
 	public static array $enqueued_scripts = [];
 
-	/** @var list<array{handle: string, src: string, deps: array<int, mixed>, ver: mixed}> */
+	/**
+	 * Styles keyed by handle. Registration and enqueue share this map.
+	 *
+	 * @var array<string, string>
+	 */
 	public static array $enqueued_styles = [];
 
 	/** @var array<string, array{name: string, data: mixed}> */
 	public static array $localized_scripts = [];
+
+	/** @var bool */
+	public static bool $is_search = false;
+
+	/** @var bool */
+	public static bool $is_archive = false;
+
+	/** @var bool */
+	public static bool $is_front_page = false;
+
+	/** @var bool */
+	public static bool $is_home = false;
+
+	/** @var bool */
+	public static bool $is_category = false;
+
+	/** @var bool */
+	public static bool $is_tag = false;
+
+	/** @var bool */
+	public static bool $is_tax = false;
+
+	/** @var bool */
+	public static bool $is_author = false;
+
+	/** @var bool */
+	public static bool $is_date = false;
+
+	/** @var bool */
+	public static bool $is_post_type_archive = false;
+
+	/** @var bool */
+	public static bool $is_shop = false;
+
+	/** @var bool */
+	public static bool $is_product = false;
+
+	/** @var bool */
+	public static bool $is_product_category = false;
+
+	/** @var bool */
+	public static bool $is_product_tag = false;
+
+	/** @var int */
+	public static int $shop_page_id = 0;
+
+	/** @var string */
+	public static string $search_query = '';
+
+	/** @var object|null */
+	public static $queried_object = null;
+
+	/** @var array<int, array<string, array<int, WP_Term>>> */
+	public static array $post_terms = [];
+
+	/** @var array<string, callable> */
+	public static array $shortcodes = [];
+
+	/** @var array<string, array<string, mixed>> */
+	public static array $block_types = [];
+
+	/** @var int */
+	public static int $rewrite_flushes = 0;
 
 	public static function reset(): void {
 		self::$options           = [ 'blog_public' => '1' ];
@@ -246,12 +313,33 @@ final class RankMySEO_Test_State {
 			'name'        => 'Test Site',
 			'description' => 'A test site',
 		];
-		self::$next_post_id       = 100;
-		self::$did_actions        = [];
-		self::$enqueued_scripts   = [];
-		self::$enqueued_styles    = [];
-		self::$localized_scripts  = [];
-		self::$roles              = [
+		self::$next_post_id         = 100;
+		self::$did_actions          = [];
+		self::$enqueued_scripts     = [];
+		self::$enqueued_styles      = [];
+		self::$localized_scripts    = [];
+		self::$is_search            = false;
+		self::$is_archive           = false;
+		self::$is_front_page        = false;
+		self::$is_home              = false;
+		self::$is_category          = false;
+		self::$is_tag               = false;
+		self::$is_tax               = false;
+		self::$is_author            = false;
+		self::$is_date              = false;
+		self::$is_post_type_archive = false;
+		self::$is_shop              = false;
+		self::$is_product           = false;
+		self::$is_product_category  = false;
+		self::$is_product_tag       = false;
+		self::$shop_page_id         = 0;
+		self::$search_query         = '';
+		self::$queried_object       = null;
+		self::$post_terms           = [];
+		self::$shortcodes           = [];
+		self::$block_types          = [];
+		self::$rewrite_flushes      = 0;
+		self::$roles                = [
 			'administrator' => new WP_Role( 'administrator', [ 'manage_options' => true, 'edit_posts' => true ] ),
 			'editor'        => new WP_Role( 'editor', [ 'edit_posts' => true ] ),
 			'subscriber'    => new WP_Role( 'subscriber', [ 'read' => true ] ),
@@ -1150,13 +1238,12 @@ if ( ! function_exists( 'wp_enqueue_style' ) ) {
 	 * @param mixed $deps
 	 */
 	function wp_enqueue_style( string $handle, string $src = '', $deps = [], $ver = false, string $media = 'all' ): void {
-		unset( $media );
-		RankMySEO_Test_State::$enqueued_styles[] = [
-			'handle' => $handle,
-			'src'    => $src,
-			'deps'   => is_array( $deps ) ? $deps : [],
-			'ver'    => $ver,
-		];
+		unset( $deps, $ver, $media );
+		if ( '' !== $src ) {
+			RankMySEO_Test_State::$enqueued_styles[ $handle ] = $src;
+		} elseif ( ! isset( RankMySEO_Test_State::$enqueued_styles[ $handle ] ) ) {
+			RankMySEO_Test_State::$enqueued_styles[ $handle ] = '';
+		}
 	}
 }
 
@@ -1364,6 +1451,7 @@ if ( ! class_exists( 'WP_Term' ) ) {
 		public string $slug = '';
 		public string $taxonomy = 'category';
 		public string $description = '';
+		public int $parent = 0;
 	}
 }
 
@@ -1468,13 +1556,211 @@ if ( ! function_exists( 'is_singular' ) ) {
 
 if ( ! function_exists( 'is_search' ) ) {
 	function is_search(): bool {
-		return false;
+		return RankMySEO_Test_State::$is_search;
 	}
 }
 
 if ( ! function_exists( 'is_archive' ) ) {
 	function is_archive(): bool {
-		return false;
+		return RankMySEO_Test_State::$is_archive;
+	}
+}
+
+if ( ! function_exists( 'is_front_page' ) ) {
+	function is_front_page(): bool {
+		return RankMySEO_Test_State::$is_front_page;
+	}
+}
+
+if ( ! function_exists( 'is_home' ) ) {
+	function is_home(): bool {
+		return RankMySEO_Test_State::$is_home;
+	}
+}
+
+if ( ! function_exists( 'is_category' ) ) {
+	function is_category(): bool {
+		return RankMySEO_Test_State::$is_category;
+	}
+}
+
+if ( ! function_exists( 'is_tag' ) ) {
+	function is_tag(): bool {
+		return RankMySEO_Test_State::$is_tag;
+	}
+}
+
+if ( ! function_exists( 'is_tax' ) ) {
+	function is_tax(): bool {
+		return RankMySEO_Test_State::$is_tax;
+	}
+}
+
+if ( ! function_exists( 'is_author' ) ) {
+	function is_author(): bool {
+		return RankMySEO_Test_State::$is_author;
+	}
+}
+
+if ( ! function_exists( 'is_date' ) ) {
+	function is_date(): bool {
+		return RankMySEO_Test_State::$is_date;
+	}
+}
+
+if ( ! function_exists( 'is_post_type_archive' ) ) {
+	function is_post_type_archive(): bool {
+		return RankMySEO_Test_State::$is_post_type_archive;
+	}
+}
+
+if ( ! function_exists( 'is_shop' ) ) {
+	function is_shop(): bool {
+		return RankMySEO_Test_State::$is_shop;
+	}
+}
+
+if ( ! function_exists( 'is_product' ) ) {
+	function is_product(): bool {
+		return RankMySEO_Test_State::$is_product;
+	}
+}
+
+if ( ! function_exists( 'is_product_category' ) ) {
+	function is_product_category(): bool {
+		return RankMySEO_Test_State::$is_product_category;
+	}
+}
+
+if ( ! function_exists( 'is_product_tag' ) ) {
+	function is_product_tag(): bool {
+		return RankMySEO_Test_State::$is_product_tag;
+	}
+}
+
+if ( ! function_exists( 'wc_get_page_id' ) ) {
+	function wc_get_page_id( string $page ): int {
+		return 'shop' === $page ? RankMySEO_Test_State::$shop_page_id : 0;
+	}
+}
+
+if ( ! function_exists( 'get_search_query' ) ) {
+	function get_search_query(): string {
+		return RankMySEO_Test_State::$search_query;
+	}
+}
+
+if ( ! function_exists( 'get_queried_object' ) ) {
+	function get_queried_object(): ?object {
+		return RankMySEO_Test_State::$queried_object;
+	}
+}
+
+if ( ! function_exists( 'get_the_terms' ) ) {
+	/** @return array<int, WP_Term>|false */
+	function get_the_terms( int $post_id, string $taxonomy ) {
+		$terms = RankMySEO_Test_State::$post_terms[ $post_id ][ $taxonomy ] ?? [];
+		return [] === $terms ? false : $terms;
+	}
+}
+
+if ( ! function_exists( 'get_term_link' ) ) {
+	/** @param mixed $term */
+	function get_term_link( $term, string $taxonomy = '' ): string {
+		$slug = $term instanceof WP_Term ? $term->slug : 'term';
+		$name = '' !== $taxonomy ? $taxonomy : ( $term instanceof WP_Term ? $term->taxonomy : 'term' );
+		return home_url( $name . '/' . $slug . '/' );
+	}
+}
+
+if ( ! function_exists( 'get_object_taxonomies' ) ) {
+	/** @param mixed $object_type */
+	function get_object_taxonomies( $object_type, string $output = 'names' ): array {
+		unset( $object_type, $output );
+		return [];
+	}
+}
+
+if ( ! function_exists( 'get_author_posts_url' ) ) {
+	function get_author_posts_url( int $author_id ): string {
+		return home_url( 'author/' . $author_id . '/' );
+	}
+}
+
+if ( ! function_exists( 'get_post_type_object' ) ) {
+	function get_post_type_object( string $post_type ): ?object {
+		if ( '' === $post_type ) {
+			return null;
+		}
+		return (object) [
+			'name'   => $post_type,
+			'labels' => (object) [ 'name' => ucfirst( $post_type ) ],
+		];
+	}
+}
+
+if ( ! function_exists( 'get_post_type_archive_link' ) ) {
+	function get_post_type_archive_link( string $post_type ): string {
+		return home_url( $post_type . '/' );
+	}
+}
+
+if ( ! function_exists( 'url_to_postid' ) ) {
+	function url_to_postid( string $url ): int {
+		foreach ( RankMySEO_Test_State::$permalinks as $post_id => $permalink ) {
+			if ( $permalink === $url ) {
+				return (int) $post_id;
+			}
+		}
+		return 0;
+	}
+}
+
+if ( ! function_exists( 'add_shortcode' ) ) {
+	function add_shortcode( string $tag, callable $callback ): void {
+		RankMySEO_Test_State::$shortcodes[ $tag ] = $callback;
+	}
+}
+
+if ( ! function_exists( 'register_block_type' ) ) {
+	/** @param mixed $args */
+	function register_block_type( string $name, $args = [] ): void {
+		RankMySEO_Test_State::$block_types[ $name ] = is_array( $args ) ? $args : [];
+	}
+}
+
+if ( ! function_exists( 'wp_register_style' ) ) {
+	/** @param mixed $deps */
+	function wp_register_style( string $handle, string $src, $deps = [], $ver = false ): bool {
+		unset( $deps, $ver );
+		RankMySEO_Test_State::$enqueued_styles[ $handle ] = $src;
+		return true;
+	}
+}
+
+if ( ! function_exists( 'did_action' ) ) {
+	function did_action( string $hook_name ): int {
+		return RankMySEO_Test_State::$did_actions[ $hook_name ] ?? 0;
+	}
+}
+
+if ( ! function_exists( 'wp_print_styles' ) ) {
+	function wp_print_styles( string $handle = '' ): void {
+		unset( $handle );
+	}
+}
+
+if ( ! function_exists( 'flush_rewrite_rules' ) ) {
+	function flush_rewrite_rules( bool $hard = true ): void {
+		unset( $hard );
+		++RankMySEO_Test_State::$rewrite_flushes;
+	}
+}
+
+if ( ! function_exists( 'date_i18n' ) ) {
+	function date_i18n( string $format, $timestamp = false ): string {
+		$time = false === $timestamp ? time() : (int) $timestamp;
+		return gmdate( $format, $time );
 	}
 }
 

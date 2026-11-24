@@ -11,6 +11,7 @@ namespace RankMySEO\Rest;
 
 use RankMySEO\Core\Settings;
 use RankMySEO\Modules\Sitemaps\IndexNow;
+use RankMySEO\Modules\Sitemaps\LlmsTxt;
 use RankMySEO\Modules\Sitemaps\RobotsTxt;
 use RankMySEO\Modules\Sitemaps\SitemapLinks;
 use RankMySEO\Modules\Sitemaps\SitemapSettings;
@@ -52,6 +53,13 @@ final class SitemapsController extends AbstractController {
 	private RobotsTxt $robots;
 
 	/**
+	 * Virtual llms.txt service.
+	 *
+	 * @var LlmsTxt
+	 */
+	private LlmsTxt $llms;
+
+	/**
 	 * Content source used for the admin matrix.
 	 *
 	 * @var WordPressSitemapSource
@@ -65,6 +73,7 @@ final class SitemapsController extends AbstractController {
 	 * @param SitemapSettings        $sitemap_settings Sitemap settings.
 	 * @param IndexNow               $indexnow         IndexNow service.
 	 * @param RobotsTxt              $robots           Robots.txt service.
+	 * @param LlmsTxt                $llms             Virtual llms.txt service.
 	 * @param WordPressSitemapSource $source           Sitemap content source.
 	 */
 	public function __construct(
@@ -72,12 +81,14 @@ final class SitemapsController extends AbstractController {
 		SitemapSettings $sitemap_settings,
 		IndexNow $indexnow,
 		RobotsTxt $robots,
+		LlmsTxt $llms,
 		WordPressSitemapSource $source
 	) {
 		$this->settings         = $settings;
 		$this->sitemap_settings = $sitemap_settings;
 		$this->indexnow         = $indexnow;
 		$this->robots           = $robots;
+		$this->llms             = $llms;
 		$this->source           = $source;
 	}
 
@@ -134,6 +145,18 @@ final class SitemapsController extends AbstractController {
 				array_merge( $read, [ 'callback' => [ $this, 'get_robots' ] ] ),
 				array_merge( $post, [ 'callback' => [ $this, 'update_robots' ] ] ),
 			]
+		);
+
+		register_rest_route(
+			self::REST_NAMESPACE,
+			'/sitemaps/llms',
+			array_merge( $read, [ 'callback' => [ $this, 'get_llms' ] ] )
+		);
+
+		register_rest_route(
+			self::REST_NAMESPACE,
+			'/sitemaps/llms/test',
+			array_merge( $post, [ 'callback' => [ $this, 'test_llms' ] ] )
 		);
 	}
 
@@ -273,10 +296,12 @@ final class SitemapsController extends AbstractController {
 	 */
 	private function persist( array $params ): void {
 		$was_enabled = $this->sitemap_settings->is_indexnow_enabled();
+		$was_llms    = $this->sitemap_settings->llms_enabled();
 		$this->sitemap_settings->update( $params );
 		$now_enabled = $this->sitemap_settings->is_indexnow_enabled();
+		$now_llms    = $this->sitemap_settings->llms_enabled();
 		$this->indexnow->on_toggled( $was_enabled, $now_enabled );
-		if ( $was_enabled !== $now_enabled ) {
+		if ( $was_enabled !== $now_enabled || $was_llms !== $now_llms ) {
 			update_option( 'rankmyseo_flush_rewrite_rules', 1, false );
 		}
 		$this->sitemap_settings->flush_cache();
@@ -329,7 +354,50 @@ final class SitemapsController extends AbstractController {
 				'log'      => $this->sitemap_settings->get_log(),
 			],
 			'robots'             => $this->robots_payload(),
+			'llms'               => $this->llms_payload(),
 		];
+	}
+
+	/**
+	 * GET /rankmyseo/v1/sitemaps/llms.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function get_llms(): WP_REST_Response {
+		return $this->success_response( $this->llms_payload() );
+	}
+
+	/**
+	 * POST /rankmyseo/v1/sitemaps/llms/test.
+	 *
+	 * Refreshes rewrite rules and returns the markdown that would be served.
+	 * It does not request the public URL and does not write a file.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function test_llms(): WP_REST_Response {
+		if ( function_exists( 'flush_rewrite_rules' ) ) {
+			flush_rewrite_rules( false );
+		} else {
+			update_option( 'rankmyseo_flush_rewrite_rules', 1, false );
+		}
+
+		if ( $this->llms->has_physical_file() ) {
+			$message = __( 'Rewrite rules were refreshed. A real llms.txt file is still on disk, so visitors will get that file instead of this guide.', 'rankmyseo' );
+		} elseif ( $this->llms->is_enabled() ) {
+			$message = __( 'Rewrite rules were refreshed. The guide is ready at the address below.', 'rankmyseo' );
+		} else {
+			$message = __( 'Rewrite rules were refreshed. Turn the guide on before that address will respond.', 'rankmyseo' );
+		}
+
+		return $this->success_response(
+			[
+				'flushed' => true,
+				'message' => $message,
+				'llms'    => $this->llms_payload(),
+				'status'  => $this->status_payload(),
+			]
+		);
 	}
 
 	/**
@@ -343,6 +411,60 @@ final class SitemapsController extends AbstractController {
 		$settings['indexnow_key']       = $this->sitemap_settings->ensure_key();
 		$settings['hide_utility_pages'] = $this->sitemap_settings->hides_utility_pages();
 		return $settings;
+	}
+
+	/**
+	 * Virtual llms.txt preview, physical-file check, and the link groups used by the live preview.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function llms_payload(): array {
+		$include = $this->sitemap_settings->llms_include_urls();
+		$exclude = $this->sitemap_settings->llms_exclude_urls();
+		$name    = function_exists( 'get_bloginfo' ) ? (string) get_bloginfo( 'name' ) : '';
+		$summary = function_exists( 'get_bloginfo' ) ? (string) get_bloginfo( 'description' ) : '';
+
+		return [
+			'enabled'       => $this->llms->is_enabled(),
+			'url'           => $this->llms->public_url(),
+			'intro'         => $this->sitemap_settings->llms_intro(),
+			'include_urls'  => implode( "\n", $include ),
+			'exclude_urls'  => implode( "\n", $exclude ),
+			'post_types'    => $this->llms_type_rows(),
+			'site_name'     => '' !== $name ? $name : __( 'Site', 'rankmyseo' ),
+			'summary'       => $summary,
+			'home_url'      => home_url( '/' ),
+			'groups'        => $this->llms->automatic_groups(),
+			'preview'       => $this->llms->render(),
+			'link_count'    => $this->llms->link_count(),
+			'physical_file' => $this->llms->has_physical_file(),
+			'physical_path' => $this->llms->physical_path(),
+			'warnings'      => $this->llms->warnings(),
+		];
+	}
+
+	/**
+	 * Post type rows for the llms.txt checklist.
+	 *
+	 * @return list<array{name: string, label: string, included: bool, available: bool, sitemap_included: bool}>
+	 */
+	private function llms_type_rows(): array {
+		$map  = $this->sitemap_settings->llms_post_types();
+		$rows = [];
+		foreach ( $this->post_type_rows() as $row ) {
+			$name       = $row['name'];
+			$sitemap_on = $this->sitemap_settings->is_post_type_included( $name );
+			$llms_on    = $sitemap_on && ( ! array_key_exists( $name, $map ) || ! empty( $map[ $name ] ) );
+			$rows[]     = [
+				'name'             => $name,
+				'label'            => $row['label'],
+				'included'         => $llms_on,
+				'available'        => $row['available'],
+				'sitemap_included' => $sitemap_on,
+			];
+		}
+
+		return $rows;
 	}
 
 	/**

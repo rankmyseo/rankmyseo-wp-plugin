@@ -1,0 +1,27 @@
+.rankmyseo-faq {
+	font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+	color: currentColor;
+	line-height: 1.5;
+}
+
+.rankmyseo-faq__item {
+	border-bottom: 1px solid currentColor;
+	padding: 0.75rem 0;
+}
+
+.rankmyseo-faq__question {
+	font-weight: 600;
+}
+
+.rankmyseo-faq__item summary {
+	cursor: pointer;
+}
+
+.rankmyseo-faq__item summary:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
+}
+
+.rankmyseo-faq__answer p {
+	margin: 0.75rem 0 0;
+}

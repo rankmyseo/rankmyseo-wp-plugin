@@ -84,6 +84,56 @@ function createSitemapStatus(
 			physical_path: '/var/www/html/robots.txt',
 			warnings: [],
 		},
+		llms: {
+			enabled: false,
+			url: 'https://example.com/llms.txt',
+			intro: '',
+			include_urls: '',
+			exclude_urls: '',
+			post_types: [
+				{
+					name: 'post',
+					label: 'Posts',
+					included: true,
+					available: true,
+					sitemap_included: true,
+				},
+				{
+					name: 'page',
+					label: 'Pages',
+					included: true,
+					available: true,
+					sitemap_included: true,
+				},
+				{
+					name: 'product',
+					label: 'Products',
+					included: false,
+					available: false,
+					sitemap_included: false,
+				},
+			],
+			site_name: 'Acme Store',
+			summary: 'Shoes and care',
+			home_url: 'https://example.com/',
+			groups: [
+				{
+					label: 'Site',
+					links: [
+						{
+							title: 'Acme Store',
+							url: 'https://example.com/',
+							description: '',
+						},
+					],
+				},
+			],
+			preview: '# Acme Store\n\n> Shoes and care\n',
+			link_count: 1,
+			physical_file: false,
+			physical_path: '/var/www/html/llms.txt',
+			warnings: [],
+		},
 		...overrides,
 	};
 }
@@ -253,6 +303,11 @@ describe( 'Sitemaps & Crawl screen', () => {
 		expect(
 			screen.getByLabelText( 'Let search engines crawl my public pages' )
 		).toBeChecked();
+		expect(
+			screen.getByLabelText( 'AI site guide off' )
+		).toBeInTheDocument();
+		expect( screen.getByLabelText( 'List Posts' ) ).toBeChecked();
+		expect( screen.getByLabelText( 'Intro note' ) ).toBeInTheDocument();
 
 		fireEvent.click(
 			screen.getByLabelText( 'Enable IndexNow instant indexing' )
@@ -272,15 +327,27 @@ describe( 'Sitemaps & Crawl screen', () => {
 	it( 'shows the advanced matrix, robots editor, and Disallow guardrail', async () => {
 		installAdmin( 'advanced' );
 		const fixtures = settingsFixture();
+		const base = createSitemapStatus();
 		const sitemap = createSitemapStatus( {
 			robots: {
-				...createSitemapStatus().robots,
+				...base.robots,
 				physical_file: true,
 				warnings: [
 					{
 						code: 'physical_file',
 						message:
 							'A physical robots.txt file is present at /var/www/html/robots.txt. WordPress will serve that file, so these virtual rules will not run.',
+					},
+				],
+			},
+			llms: {
+				...base.llms,
+				physical_file: true,
+				warnings: [
+					{
+						code: 'physical_file',
+						message:
+							'A physical llms.txt file is present at /var/www/html/llms.txt. The web server will serve that file.',
 					},
 				],
 			},
@@ -325,6 +392,16 @@ describe( 'Sitemaps & Crawl screen', () => {
 		).toBeDisabled();
 		expect(
 			screen.getByText( /physical robots\.txt file is present/ )
+		).toBeInTheDocument();
+		expect( screen.getByLabelText( 'Intro note' ) ).toBeInTheDocument();
+		expect(
+			screen.getByLabelText( 'Links to leave out, one address per line' )
+		).toBeInTheDocument();
+		expect( screen.getAllByText( 'Live preview' ).length ).toBeGreaterThan(
+			1
+		);
+		expect(
+			screen.getByText( /physical llms\.txt file is present/ )
 		).toBeInTheDocument();
 
 		fireEvent.click(

@@ -284,6 +284,19 @@ export function rotateIndexNowKey(): Promise<
 	} );
 }
 
+export function testLlmsFile(): Promise<
+	SitemapMutationResponse & {
+		flushed: boolean;
+		message: string;
+		llms: SitemapStatus[ 'llms' ];
+	}
+> {
+	return apiFetch( {
+		path: '/rankmyseo/v1/sitemaps/llms/test',
+		method: 'POST',
+	} );
+}
+
 export function pingIndexNow( url: string ): Promise< {
 	result: { ok: boolean; code: number; message: string };
 	log: SitemapStatus[ 'indexnow' ][ 'log' ];

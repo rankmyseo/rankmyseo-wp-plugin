@@ -75,16 +75,7 @@ final class BreadcrumbsWidget extends \Elementor\Widget_Base {
 			return '';
 		}
 
-		$permalink = get_permalink( $post );
-		$home      = function_exists( 'home_url' ) ? (string) home_url( '/' ) : '';
-		$trail     = BreadcrumbTrail::for_post(
-			$post,
-			$home,
-			(string) $post->post_title,
-			is_string( $permalink ) ? $permalink : ''
-		);
-
-		return BreadcrumbHtml::render( $trail['crumbs'] );
+		return BreadcrumbHtml::render( ( new BreadcrumbTrail() )->for_post( $post ) );
 	}
 
 	/**

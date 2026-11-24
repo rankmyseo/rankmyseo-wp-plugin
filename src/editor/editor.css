@@ -292,3 +292,32 @@
 	padding: 8px 10px;
 	background: var(--rms-card);
 }
+
+.rankmyseo-block {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.rankmyseo-block-breadcrumbs ol {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.rankmyseo-faq-editor {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 8px 0;
+	border-bottom: 1px solid var(--rms-rule);
+}
+
+.rankmyseo-faq-editor__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}

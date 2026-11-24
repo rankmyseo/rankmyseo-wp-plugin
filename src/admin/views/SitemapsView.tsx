@@ -12,7 +12,9 @@ import {
 	pingIndexNow,
 	rotateIndexNowKey,
 	saveSitemapSettings,
+	testLlmsFile,
 } from '../../shared/api';
+import { renderLlmsMarkdown } from '../../shared/llms';
 import { Term } from '../../shared/components/Term';
 import {
 	ErrorBanner,
@@ -78,6 +80,10 @@ export function SitemapsView(): JSX.Element {
 	const [ crawl, setCrawl ] = useState< SitemapCrawlFlags | null >( null );
 	const [ pingUrl, setPingUrl ] = useState( '' );
 	const [ pingMessage, setPingMessage ] = useState< string | null >( null );
+	const [ llmsIntro, setLlmsIntro ] = useState( '' );
+	const [ llmsInclude, setLlmsInclude ] = useState( '' );
+	const [ llmsExclude, setLlmsExclude ] = useState( '' );
+	const [ llmsMessage, setLlmsMessage ] = useState< string | null >( null );
 
 	const applyStatus = ( next: SitemapStatus ): void => {
 		setStatus( next );
@@ -89,6 +95,9 @@ export function SitemapsView(): JSX.Element {
 		setRobotsDraft( next.robots.custom );
 		setExcludedIds( next.excluded_post_ids.join( ', ' ) );
 		setCrawl( next.crawl );
+		setLlmsIntro( next.llms.intro );
+		setLlmsInclude( next.llms.include_urls );
+		setLlmsExclude( next.llms.exclude_urls );
 	};
 
 	const load = async (): Promise< void > => {
@@ -170,6 +179,22 @@ export function SitemapsView(): JSX.Element {
 		{ name: 'page', label: __( 'Include Pages', 'rankmyseo' ) },
 		{ name: 'product', label: __( 'Include Products', 'rankmyseo' ) },
 	];
+	const llmsTypes = simple
+		? [
+				{ name: 'post', label: __( 'List Posts', 'rankmyseo' ) },
+				{ name: 'page', label: __( 'List Pages', 'rankmyseo' ) },
+				{ name: 'product', label: __( 'List Products', 'rankmyseo' ) },
+		  ]
+		: status.llms.post_types;
+	const llmsPreview = renderLlmsMarkdown( {
+		siteName: status.llms.site_name,
+		summary: status.llms.summary,
+		intro: llmsIntro,
+		homeUrl: status.llms.home_url,
+		groups: status.llms.groups,
+		includeUrls: llmsInclude,
+		excludeUrls: llmsExclude,
+	} );
 
 	return (
 		<div className="rms-stack">
@@ -231,6 +256,16 @@ export function SitemapsView(): JSX.Element {
 					} }
 				/>
 			) }
+
+			{ status.llms.warnings.map( ( warning ) => (
+				<div
+					key={ `llms-${ warning.code }` }
+					className="rms-warning"
+					role="alert"
+				>
+					{ warning.message }
+				</div>
+			) ) }
 
 			{ status.robots.warnings.map( ( warning ) => (
 				<div
@@ -606,6 +641,142 @@ export function SitemapsView(): JSX.Element {
 						) }
 					</div>
 				) }
+			</section>
+
+			<section className="rms-card">
+				<h2 className="rms-section-title">
+					{ simple
+						? __( 'AI site guide', 'rankmyseo' )
+						: __( 'llms.txt', 'rankmyseo' ) }
+				</h2>
+				<ToggleControl
+					__nextHasNoMarginBottom
+					label={
+						status.llms.enabled
+							? __( 'AI site guide on', 'rankmyseo' )
+							: __( 'AI site guide off', 'rankmyseo' )
+					}
+					checked={ status.llms.enabled }
+					disabled={ busy }
+					help={ __(
+						'Publish a plain-text list of public pages at /llms.txt. It is built on this site and is not saved as a file.',
+						'rankmyseo'
+					) }
+					onChange={ ( next ) => {
+						void persist( { llms_enabled: next } );
+					} }
+				/>
+				<p className="rms-sitemap-url">{ status.llms.url }</p>
+				<div className="rms-sitemap-grid">
+					{ llmsTypes.map( ( row ) => {
+						const source = status.llms.post_types.find(
+							( item ) => item.name === row.name
+						);
+						return (
+							<CheckboxControl
+								key={ row.name }
+								__nextHasNoMarginBottom
+								label={ row.label }
+								checked={ source?.included ?? false }
+								disabled={
+									busy ||
+									! ( source?.sitemap_included ?? false )
+								}
+								onChange={ ( next ) => {
+									void persist( {
+										llms_post_types: flagMap(
+											status.llms.post_types,
+											row.name,
+											next
+										),
+									} );
+								} }
+							/>
+						);
+					} ) }
+				</div>
+				<label className="rms-field-label" htmlFor="rms-llms-intro">
+					{ __( 'Intro note', 'rankmyseo' ) }
+				</label>
+				<textarea
+					id="rms-llms-intro"
+					className="rms-robots-editor"
+					value={ llmsIntro }
+					onChange={ ( event ) => setLlmsIntro( event.target.value ) }
+				/>
+				<label className="rms-field-label" htmlFor="rms-llms-include">
+					{ __( 'Extra links, one address per line', 'rankmyseo' ) }
+				</label>
+				<textarea
+					id="rms-llms-include"
+					className="rms-robots-editor"
+					value={ llmsInclude }
+					onChange={ ( event ) =>
+						setLlmsInclude( event.target.value )
+					}
+				/>
+				<label className="rms-field-label" htmlFor="rms-llms-exclude">
+					{ __(
+						'Links to leave out, one address per line',
+						'rankmyseo'
+					) }
+				</label>
+				<textarea
+					id="rms-llms-exclude"
+					className="rms-robots-editor"
+					value={ llmsExclude }
+					onChange={ ( event ) =>
+						setLlmsExclude( event.target.value )
+					}
+				/>
+				<div className="rms-page-header-actions">
+					<Button
+						variant="secondary"
+						disabled={ busy }
+						onClick={ () => {
+							void persist( {
+								llms_intro: llmsIntro,
+								llms_include_urls: llmsInclude,
+								llms_exclude_urls: llmsExclude,
+							} );
+						} }
+					>
+						{ __( 'Save guide notes', 'rankmyseo' ) }
+					</Button>
+					<Button
+						variant="secondary"
+						disabled={ busy }
+						onClick={ () => {
+							setBusy( true );
+							setLlmsMessage( null );
+							void testLlmsFile()
+								.then( ( response ) => {
+									setLlmsMessage( response.message );
+									applyStatus( response.status );
+								} )
+								.catch( () =>
+									setError(
+										__(
+											'Could not refresh the guide address.',
+											'rankmyseo'
+										)
+									)
+								)
+								.finally( () => setBusy( false ) );
+						} }
+					>
+						{ __( 'Refresh and preview', 'rankmyseo' ) }
+					</Button>
+				</div>
+				{ llmsMessage && (
+					<p role="status" className="rms-muted">
+						{ llmsMessage }
+					</p>
+				) }
+				<h3 className="rms-card-title">
+					{ __( 'Live preview', 'rankmyseo' ) }
+				</h3>
+				<pre className="rms-robots-preview">{ llmsPreview }</pre>
 			</section>
 
 			<section className="rms-card">

@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import type { ReactNode } from 'react';
 import { summaryPayload, type AnalysisResult } from '../analyzer';
+import { registerRankMySEOBlocks } from '../blocks/register';
 import type { UiMode } from '../shared/types';
 import { EditorPanel } from './components/EditorPanel';
 import {
@@ -254,6 +255,8 @@ function RankMySeoPlugin(): JSX.Element {
 		</>
 	);
 }
+
+registerRankMySEOBlocks();
 
 registerPlugin( 'rankmyseo-meta', {
 	render: RankMySeoPlugin,

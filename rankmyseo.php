@@ -64,6 +64,8 @@ if ( file_exists( RANKMYSEO_DIR . 'vendor/autoload.php' ) ) {
 	);
 }
 
+require_once RANKMYSEO_DIR . 'includes/template-functions.php';
+
 register_activation_hook( RANKMYSEO_FILE, [ \RankMySEO\Core\Activator::class, 'activate' ] );
 register_deactivation_hook( RANKMYSEO_FILE, [ \RankMySEO\Core\Deactivator::class, 'deactivate' ] );
 
