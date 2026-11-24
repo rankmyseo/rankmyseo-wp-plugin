@@ -13,6 +13,8 @@ use RankMySEO\Core\Settings;
 use RankMySEO\Modules\Meta\MetaStore;
 use RankMySEO\Modules\Meta\TemplateDefaults;
 use RankMySEO\Modules\Meta\TitleSettings;
+use RankMySEO\Modules\Schema\SchemaMeta;
+use RankMySEO\Modules\Schema\SchemaSettings;
 use WP_Post;
 
 /**
@@ -80,6 +82,7 @@ final class BuilderConfig {
 			'permalink' => '',
 			'fields'    => [],
 		];
+		$config = array_merge( $config, ( new SchemaSettings() )->editor_hints() );
 
 		if ( $post_id <= 0 ) {
 			return $config;
@@ -92,11 +95,13 @@ final class BuilderConfig {
 
 		$permalink = get_permalink( $post );
 
-		$config['postId']    = (int) $post->ID;
-		$config['postType']  = (string) $post->post_type;
-		$config['postTitle'] = (string) $post->post_title;
-		$config['permalink'] = is_string( $permalink ) ? $permalink : '';
-		$config['fields']    = $this->store->read_post( (int) $post->ID );
+		$config['postId']      = (int) $post->ID;
+		$config['postType']    = (string) $post->post_type;
+		$config['postTitle']   = (string) $post->post_title;
+		$config['permalink']   = is_string( $permalink ) ? $permalink : '';
+		$fields                = $this->store->read_post( (int) $post->ID );
+		$fields['schema_type'] = SchemaMeta::read_type( (int) $post->ID );
+		$config['fields']      = $fields;
 
 		return $config;
 	}

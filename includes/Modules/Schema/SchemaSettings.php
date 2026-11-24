@@ -167,6 +167,34 @@ final class SchemaSettings {
 	}
 
 	/**
+	 * Site defaults and the admin screen for the per-page schema control.
+	 *
+	 * @return array{schemaDefaults: array<string, string>, schemaSettingsUrl: string, productSchemaEnabled: bool}
+	 */
+	public function editor_hints(): array {
+		$map      = $this->all()['post_type_schema'];
+		$defaults = [];
+		if ( is_array( $map ) ) {
+			foreach ( $map as $post_type => $schema_type ) {
+				$key  = sanitize_key( (string) $post_type );
+				$type = SchemaMeta::sanitize_type( is_string( $schema_type ) ? $schema_type : '' );
+				if ( '' === $key || '' === $type ) {
+					continue;
+				}
+				$defaults[ $key ] = $type;
+			}
+		}
+
+		$url = function_exists( 'admin_url' ) ? (string) admin_url( 'admin.php?page=rankmyseo-schema' ) : 'admin.php?page=rankmyseo-schema';
+
+		return [
+			'schemaDefaults'       => $defaults,
+			'schemaSettingsUrl'    => $url,
+			'productSchemaEnabled' => $this->is_product_schema_enabled(),
+		];
+	}
+
+	/**
 	 * Schema type configured for a post type.
 	 *
 	 * @param string $post_type Post type name.

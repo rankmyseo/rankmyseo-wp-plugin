@@ -30,6 +30,7 @@ import { CloudInsights } from './CloudInsights';
 import { LengthMeter } from './LengthMeter';
 import { SerpPreview } from './SerpPreview';
 import { SocialPreview } from './SocialPreview';
+import { SchemaTab } from './SchemaTab';
 import { VariablePicker } from './VariablePicker';
 
 export interface EditorPanelProps {
@@ -56,6 +57,9 @@ export interface EditorPanelProps {
 	onAnalysis?: ( result: AnalysisResult, signature: string ) => void;
 	onInsertLink?: ( html: string ) => void;
 	insight?: EditorInsight | null;
+	schemaDefaults?: Record< string, string >;
+	schemaSettingsUrl?: string;
+	productSchemaEnabled?: boolean;
 }
 
 function slugFromPermalink( permalink: string ): string {
@@ -99,6 +103,9 @@ export function EditorPanel( {
 	onAnalysis,
 	onInsertLink,
 	insight = null,
+	schemaDefaults = {},
+	schemaSettingsUrl,
+	productSchemaEnabled = true,
 }: EditorPanelProps ): JSX.Element {
 	const [ tab, setTab ] = useState< AdvancedTab >( 'general' );
 	const fieldId = useId();
@@ -485,20 +492,17 @@ export function EditorPanel( {
 					) }
 
 					{ tab === 'schema' && (
-						<div role="tabpanel">
-							<div
-								id="rankmyseo-schema-slot"
-								data-rankmyseo-schema-slot="1"
-								className="rms-slot"
-							>
-								<p>
-									{ __(
-										'Structured data for this page will appear here.',
-										'rankmyseo'
-									) }
-								</p>
-							</div>
-						</div>
+						<SchemaTab
+							schemaType={ fields.schemaType }
+							postType={ postType }
+							onChange={ ( schemaType ) =>
+								patch( { schemaType } )
+							}
+							schemaDefaults={ schemaDefaults }
+							schemaSettingsUrl={ schemaSettingsUrl }
+							productSchemaEnabled={ productSchemaEnabled }
+							fieldId={ fieldId }
+						/>
 					) }
 
 					{ tab === 'advanced' && (

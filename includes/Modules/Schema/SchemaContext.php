@@ -182,6 +182,13 @@ final class SchemaContext {
 	public array $faqs = [];
 
 	/**
+	 * HowTo steps in display order.
+	 *
+	 * @var list<array{name: string, text: string}>
+	 */
+	public array $howto_steps = [];
+
+	/**
 	 * WooCommerce (or manual) product snapshot.
 	 *
 	 * @var array<string, mixed>|null

@@ -14,6 +14,7 @@ use RankMySEO\Database\Migrator;
 use RankMySEO\Modules\Chat\LocalAssistant;
 use RankMySEO\Modules\Chat\SiteHealth;
 use RankMySEO\Modules\Chat\SiteIndex;
+use RankMySEO\Modules\Cloud\TokenVault;
 use RankMySEO\Modules\Links\LinkIndexer;
 use RankMySEO\Modules\ModuleManager;
 use WP_REST_Response;
@@ -66,6 +67,13 @@ final class DashboardController extends AbstractController {
 	private ?LinkIndexer $links;
 
 	/**
+	 * Cloud connection, the same vault /rankmyseo/v1/status reads.
+	 *
+	 * @var TokenVault
+	 */
+	private TokenVault $vault;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param LocalAssistant   $assistant  Local assistant.
@@ -74,6 +82,7 @@ final class DashboardController extends AbstractController {
 	 * @param ModuleManager    $modules    Module manager.
 	 * @param Migrator         $migrator   Database migrator.
 	 * @param LinkIndexer|null $links     Optional link index.
+	 * @param TokenVault|null  $vault     Optional cloud vault. A new vault reads the saved connection.
 	 */
 	public function __construct(
 		LocalAssistant $assistant,
@@ -81,7 +90,8 @@ final class DashboardController extends AbstractController {
 		OnboardingStore $onboarding,
 		ModuleManager $modules,
 		Migrator $migrator,
-		?LinkIndexer $links = null
+		?LinkIndexer $links = null,
+		?TokenVault $vault = null
 	) {
 		$this->assistant  = $assistant;
 		$this->index      = $index;
@@ -89,6 +99,7 @@ final class DashboardController extends AbstractController {
 		$this->modules    = $modules;
 		$this->migrator   = $migrator;
 		$this->links      = $links;
+		$this->vault      = $vault ?? new TokenVault();
 	}
 
 	/**
@@ -143,12 +154,23 @@ final class DashboardController extends AbstractController {
 					'tables'           => $tables,
 					'sitemaps_enabled' => $signals['sitemaps_enabled'],
 				],
-				'cloud'                => [
-					'connected' => false,
-					'tier'      => 'local',
-				],
+				'cloud'                => $this->cloud_status(),
 			]
 		);
+	}
+
+	/**
+	 * Cloud connection fields shared with GET /rankmyseo/v1/status.
+	 *
+	 * @return array{connected: bool, tier: string}
+	 */
+	private function cloud_status(): array {
+		$connected = $this->vault->is_connected();
+
+		return [
+			'connected' => $connected,
+			'tier'      => $connected ? 'cloud' : 'local',
+		];
 	}
 
 	/**

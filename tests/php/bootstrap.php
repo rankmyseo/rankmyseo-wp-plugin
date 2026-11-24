@@ -242,6 +242,12 @@ final class RankMySEO_Test_State {
 	public static int $shop_page_id = 0;
 
 	/** @var string */
+	public static string $home_url = 'https://example.com/';
+
+	/** @var array<string, object> */
+	public static array $post_type_objects = [];
+
+	/** @var string */
 	public static string $search_query = '';
 
 	/** @var object|null */
@@ -333,6 +339,8 @@ final class RankMySEO_Test_State {
 		self::$is_product_category  = false;
 		self::$is_product_tag       = false;
 		self::$shop_page_id         = 0;
+		self::$home_url             = 'https://example.com/';
+		self::$post_type_objects    = [];
 		self::$search_query         = '';
 		self::$queried_object       = null;
 		self::$post_terms           = [];
@@ -963,7 +971,11 @@ if ( ! function_exists( 'get_bloginfo' ) ) {
 
 if ( ! function_exists( 'home_url' ) ) {
 	function home_url( string $path = '' ): string {
-		return 'https://example.com/' . ltrim( $path, '/' );
+		$base = RankMySEO_Test_State::$home_url;
+		if ( '' === $base ) {
+			$base = 'https://example.com/';
+		}
+		return rtrim( $base, '/' ) . '/' . ltrim( $path, '/' );
 	}
 }
 
@@ -1616,8 +1628,34 @@ if ( ! function_exists( 'is_date' ) ) {
 }
 
 if ( ! function_exists( 'is_post_type_archive' ) ) {
-	function is_post_type_archive(): bool {
-		return RankMySEO_Test_State::$is_post_type_archive;
+	/**
+	 * @param string|array<int, string> $post_types Post type or list of post types.
+	 */
+	function is_post_type_archive( $post_types = '' ): bool {
+		if ( ! RankMySEO_Test_State::$is_post_type_archive ) {
+			return false;
+		}
+		if ( null === $post_types || '' === $post_types || array() === $post_types ) {
+			return true;
+		}
+
+		$current = RankMySEO_Test_State::$query_vars['post_type'] ?? '';
+		if ( is_array( $current ) ) {
+			$current = (string) reset( $current );
+		}
+		$current = (string) $current;
+		if ( '' === $current ) {
+			return false;
+		}
+
+		$wanted = is_array( $post_types ) ? $post_types : array( $post_types );
+		foreach ( $wanted as $type ) {
+			if ( (string) $type === $current ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
 
@@ -1699,9 +1737,13 @@ if ( ! function_exists( 'get_post_type_object' ) ) {
 		if ( '' === $post_type ) {
 			return null;
 		}
+		if ( isset( RankMySEO_Test_State::$post_type_objects[ $post_type ] ) ) {
+			return RankMySEO_Test_State::$post_type_objects[ $post_type ];
+		}
 		return (object) [
-			'name'   => $post_type,
-			'labels' => (object) [ 'name' => ucfirst( $post_type ) ],
+			'name'        => $post_type,
+			'has_archive' => false,
+			'labels'      => (object) [ 'name' => ucfirst( $post_type ) ],
 		];
 	}
 }
@@ -1831,6 +1873,34 @@ if ( ! function_exists( 'get_post_meta' ) ) {
 			return $single ? '' : [];
 		}
 		return $single ? $all[ $key ] : [ $all[ $key ] ];
+	}
+}
+
+if ( ! function_exists( 'wp_date' ) ) {
+	function wp_date( string $format, ?int $timestamp = null ): string {
+		return gmdate( $format, $timestamp ?? time() );
+	}
+}
+
+if ( ! function_exists( 'mysql2date' ) ) {
+	function mysql2date( string $format, string $date, bool $translate = true ): string {
+		unset( $translate );
+		$time = strtotime( $date . ' UTC' );
+		if ( false === $time ) {
+			return '';
+		}
+		if ( 'c' === $format ) {
+			return gmdate( 'c', $time );
+		}
+		return gmdate( $format, $time );
+	}
+}
+
+if ( ! function_exists( 'get_post_thumbnail_id' ) ) {
+	/** @param mixed $post */
+	function get_post_thumbnail_id( $post = null ): int {
+		unset( $post );
+		return 0;
 	}
 }
 

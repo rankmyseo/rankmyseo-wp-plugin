@@ -129,6 +129,20 @@ MD;
 		$this->assertContains( '^llms\\.txt$', $patterns );
 	}
 
+	public function test_canonical_preserves_a_non_default_port_on_the_homepage_link(): void {
+		$settings = new SitemapSettings();
+		$llms     = new LlmsTxt( $settings, $this->catalog() );
+
+		$this->assertSame( 'http://127.0.0.1:8080/', $llms->canonical( 'http://127.0.0.1:8080/' ) );
+		$this->assertSame( 'http://127.0.0.1:8080/shop', $llms->canonical( 'http://127.0.0.1:8080/shop/' ) );
+		$this->assertSame( 'https://example.com/', $llms->canonical( 'https://example.com/' ) );
+
+		RankMySEO_Test_State::$home_url = 'http://127.0.0.1:8080/';
+		$body                           = ( new LlmsTxt( $settings, $this->catalog() ) )->render();
+		$this->assertStringContainsString( '- [Acme](http://127.0.0.1:8080/)', $body );
+		$this->assertStringNotContainsString( 'http://127.0.0.1/)', $body );
+	}
+
 	public function test_intro_cannot_inject_a_heading_and_bad_urls_are_dropped(): void {
 		$settings = new SitemapSettings();
 		$settings->update(

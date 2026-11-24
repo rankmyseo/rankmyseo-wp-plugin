@@ -14,7 +14,10 @@ const variables = [
 	{ token: '%sitename%', label: 'Site name' },
 ];
 
-function renderPanel( mode: 'simple' | 'advanced' = 'simple' ) {
+function renderPanel(
+	mode: 'simple' | 'advanced' = 'simple',
+	postType = 'post'
+) {
 	const onAskAi = jest.fn();
 	const onModeChange = jest.fn();
 	const onChange = jest.fn();
@@ -37,7 +40,10 @@ function renderPanel( mode: 'simple' | 'advanced' = 'simple' ) {
 			separator="|"
 			permalink="https://example.com/pricing"
 			postTitle="Pricing"
+			postType={ postType }
 			postExcerpt="Plans for teams"
+			schemaDefaults={ { product: 'Product' } }
+			schemaSettingsUrl="admin.php?page=rankmyseo-schema"
 			variables={ variables }
 			onAskAi={ onAskAi }
 		/>
@@ -116,6 +122,42 @@ describe( 'editor search panel', () => {
 		fireEvent.click( screen.getByRole( 'tab', { name: 'Social' } ) );
 		expect(
 			screen.getByRole( 'article', { name: 'X preview' } )
+		).toBeInTheDocument();
+	} );
+
+	it( 'lets a page override its schema type and links to the site defaults', () => {
+		const panel = renderPanel( 'advanced', 'post' );
+		fireEvent.click( screen.getByRole( 'tab', { name: 'Schema' } ) );
+
+		expect(
+			document.getElementById( 'rankmyseo-schema-slot' )
+		).toBeInTheDocument();
+		expect( screen.queryByText( /placeholder/i ) ).not.toBeInTheDocument();
+		expect(
+			document.querySelector( '.rms-schema-effective' )
+		).toHaveTextContent( 'Blog post' );
+		expect(
+			screen.getByRole( 'link', { name: 'Site-wide schema defaults' } )
+		).toHaveAttribute( 'href', 'admin.php?page=rankmyseo-schema' );
+
+		fireEvent.change( screen.getByLabelText( 'Schema type' ), {
+			target: { value: 'Article' },
+		} );
+		expect( panel.onChange ).toHaveBeenCalledWith(
+			expect.objectContaining( { schemaType: 'Article' } )
+		);
+
+		panel.unmount();
+		renderPanel( 'advanced', 'product' );
+		fireEvent.click( screen.getByRole( 'tab', { name: 'Schema' } ) );
+		expect(
+			document.querySelector( '.rms-schema-effective' )
+		).toHaveTextContent( 'Product' );
+		expect(
+			screen.getByRole( 'option', { name: 'How-to' } )
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole( 'option', { name: 'None' } )
 		).toBeInTheDocument();
 	} );
 } );

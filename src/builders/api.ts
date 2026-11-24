@@ -53,6 +53,7 @@ export function restPayloadFromFields(
 		twitter_description: fields.twitterDescription,
 		twitter_image: fields.twitterImage,
 		twitter_card: fields.twitterCard,
+		schema_type: fields.schemaType,
 	};
 	if ( score ) {
 		payload.seo_score = score.score;

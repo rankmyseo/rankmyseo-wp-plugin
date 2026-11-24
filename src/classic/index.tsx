@@ -27,6 +27,9 @@ interface ClassicConfig {
 	askAiEvent?: string;
 	locale?: string;
 	product?: ProductSignals;
+	schemaDefaults?: Record< string, string >;
+	schemaSettingsUrl?: string;
+	productSchemaEnabled?: boolean;
 }
 
 interface TinyEditor {
@@ -48,6 +51,7 @@ const FORM_IDS: Record< string, keyof SeoFields | 'robots' | 'keywords' > = {
 	rankmyseo_twitter_description: 'twitterDescription',
 	rankmyseo_twitter_image: 'twitterImage',
 	rankmyseo_twitter_card: 'twitterCard',
+	rankmyseo_schema_type: 'schemaType',
 };
 
 function writeHidden( fields: SeoFields ): void {
@@ -223,6 +227,9 @@ function ClassicApp( { settings }: { settings: ClassicConfig } ): JSX.Element {
 			postId={ settings.postId || 0 }
 			postType={ settings.postType || 'post' }
 			locale={ settings.locale || 'en' }
+			schemaDefaults={ settings.schemaDefaults }
+			schemaSettingsUrl={ settings.schemaSettingsUrl }
+			productSchemaEnabled={ settings.productSchemaEnabled }
 			onInsertLink={ insertClassicLink }
 			product={ product }
 			onAskAi={ () => {

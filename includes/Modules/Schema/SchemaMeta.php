@@ -58,6 +58,7 @@ final class SchemaMeta {
 		'Product',
 		'LocalBusiness',
 		'FAQPage',
+		'HowTo',
 		'none',
 	];
 
@@ -163,6 +164,36 @@ final class SchemaMeta {
 		}
 
 		return '';
+	}
+
+	/**
+	 * Stored schema type override for one post.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return string Allowed type, or an empty string when the post uses the default.
+	 */
+	public static function read_type( int $post_id ): string {
+		$raw = get_post_meta( $post_id, self::META_TYPE, true );
+		return is_string( $raw ) ? self::sanitize_type( $raw ) : '';
+	}
+
+	/**
+	 * Store or clear a per-post schema type override.
+	 *
+	 * An empty or unknown value removes the override so the post-type default applies.
+	 *
+	 * @param int   $post_id Post ID.
+	 * @param mixed $value   Raw type.
+	 * @return void
+	 */
+	public static function write_type( int $post_id, $value ): void {
+		$type = self::sanitize_type( $value );
+		if ( '' === $type ) {
+			delete_post_meta( $post_id, self::META_TYPE );
+			return;
+		}
+
+		update_post_meta( $post_id, self::META_TYPE, $type );
 	}
 
 	/**

@@ -24,7 +24,27 @@ export interface SeoFields {
 	twitterDescription: string;
 	twitterImage: string;
 	twitterCard: 'summary' | 'summary_large_image';
+	schemaType: string;
 }
+
+export const SCHEMA_TYPE_VALUES = [
+	'Article',
+	'BlogPosting',
+	'NewsArticle',
+	'WebPage',
+	'AboutPage',
+	'ContactPage',
+	'CollectionPage',
+	'ProfilePage',
+	'SearchResultsPage',
+	'Product',
+	'LocalBusiness',
+	'FAQPage',
+	'HowTo',
+	'none',
+] as const;
+
+const SCHEMA_TYPES = new Set< string >( SCHEMA_TYPE_VALUES );
 
 export interface TemplateVariable {
 	token: string;
@@ -61,11 +81,17 @@ export function emptyFields(): SeoFields {
 		twitterDescription: '',
 		twitterImage: '',
 		twitterCard: 'summary_large_image',
+		schemaType: '',
 	};
 }
 
 function asString( value: unknown ): string {
 	return typeof value === 'string' ? value : '';
+}
+
+export function schemaTypeFromUnknown( value: unknown ): string {
+	const type = asString( value );
+	return SCHEMA_TYPES.has( type ) ? type : '';
 }
 
 function asBool( value: unknown ): boolean {
@@ -165,6 +191,9 @@ export function fieldsFromRecord(
 			pick( record, 'twitter_image', '_rankmyseo_twitter_image' )
 		),
 		twitterCard: card === 'summary' ? 'summary' : 'summary_large_image',
+		schemaType: schemaTypeFromUnknown(
+			pick( record, 'schema_type', '_rankmyseo_schema_type' )
+		),
 	};
 }
 
@@ -186,5 +215,6 @@ export function metaPatchFromFields(
 		_rankmyseo_twitter_description: fields.twitterDescription,
 		_rankmyseo_twitter_image: fields.twitterImage,
 		_rankmyseo_twitter_card: fields.twitterCard,
+		_rankmyseo_schema_type: fields.schemaType,
 	};
 }

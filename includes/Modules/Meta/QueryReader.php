@@ -86,6 +86,16 @@ final class QueryReader {
 			return $this->finish( $snapshot );
 		}
 
+		$shop_id = $this->woocommerce_shop_page_id();
+		if ( $shop_id > 0 ) {
+			$shop = get_post( $shop_id );
+			if ( $shop instanceof \WP_Post ) {
+				$snapshot->kind = 'singular';
+				$this->fill_post( $snapshot, $shop );
+				return $this->finish( $snapshot );
+			}
+		}
+
 		if ( is_post_type_archive() ) {
 			$snapshot->kind = 'post_type_archive';
 			$this->fill_post_type_archive( $snapshot );
@@ -170,6 +180,33 @@ final class QueryReader {
 		}
 
 		return trailingslashit( $permalink ) . user_trailingslashit( (string) $page, 'single_paged' );
+	}
+
+	/**
+	 * Shop page WooCommerce serves at the product archive.
+	 *
+	 * That URL is not singular, so the generic archive branch would ignore the
+	 * Shop page's title, description, robots, canonical, and social meta.
+	 *
+	 * @return int Shop page ID, or 0 when this request is not that archive.
+	 */
+	private function woocommerce_shop_page_id(): int {
+		if ( ! function_exists( 'wc_get_page_id' ) ) {
+			return 0;
+		}
+
+		$shop_id = (int) wc_get_page_id( 'shop' );
+		if ( $shop_id <= 0 ) {
+			return 0;
+		}
+
+		$is_shop            = function_exists( 'is_shop' ) && is_shop();
+		$is_product_archive = function_exists( 'is_post_type_archive' ) && is_post_type_archive( 'product' );
+		if ( ! $is_shop && ! $is_product_archive ) {
+			return 0;
+		}
+
+		return $shop_id;
 	}
 
 	/**
