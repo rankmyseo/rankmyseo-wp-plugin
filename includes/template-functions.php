@@ -7,6 +7,10 @@
 
 declare(strict_types=1);
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 if ( ! function_exists( 'rankmyseo_breadcrumbs' ) ) {
 	/**
 	 * Print or return the visible breadcrumb trail.
