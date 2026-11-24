@@ -9,4 +9,5 @@ parameters:
 		- includes
 	bootstrapFiles:
 		- phpstan-bootstrap.php
+		- phpstan-elementor-stub.php
 	treatPhpDocTypesAsCertain: false

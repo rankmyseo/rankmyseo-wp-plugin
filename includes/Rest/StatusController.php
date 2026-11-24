@@ -12,6 +12,7 @@ namespace RankMySEO\Rest;
 use RankMySEO\Core\Capabilities;
 use RankMySEO\Core\Settings;
 use RankMySEO\Database\Migrator;
+use RankMySEO\Modules\Builders\BuilderDetector;
 use RankMySEO\Modules\Cloud\TokenVault;
 use RankMySEO\Modules\ModuleManager;
 use WP_REST_Response;
@@ -43,16 +44,25 @@ final class StatusController extends AbstractController {
 	private Migrator $migrator;
 
 	/**
+	 * Page builder detector.
+	 *
+	 * @var BuilderDetector
+	 */
+	private BuilderDetector $builders;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param Settings      $settings Settings repository.
-	 * @param ModuleManager $modules  Module manager.
-	 * @param Migrator      $migrator Database migrator.
+	 * @param Settings             $settings Settings repository.
+	 * @param ModuleManager        $modules  Module manager.
+	 * @param Migrator             $migrator Database migrator.
+	 * @param BuilderDetector|null $builders Optional builder detector.
 	 */
-	public function __construct( Settings $settings, ModuleManager $modules, Migrator $migrator ) {
+	public function __construct( Settings $settings, ModuleManager $modules, Migrator $migrator, ?BuilderDetector $builders = null ) {
 		$this->settings = $settings;
 		$this->modules  = $modules;
 		$this->migrator = $migrator;
+		$this->builders = $builders ?? new BuilderDetector();
 	}
 
 	/**
@@ -136,6 +146,7 @@ final class StatusController extends AbstractController {
 					'can_manage'     => Capabilities::current_user_can_manage(),
 					'can_approve_ai' => Capabilities::current_user_can_approve_ai(),
 				],
+				'builders'       => $this->builders->status(),
 			]
 		);
 	}

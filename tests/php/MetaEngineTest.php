@@ -317,6 +317,7 @@ final class MetaEngineTest extends TestCase {
 			'edit_posts'       => true,
 			'rankmyseo_manage' => true,
 		];
+		$request->set_header( 'X-WP-Nonce', wp_create_nonce( 'wp_rest' ) );
 		$this->assertTrue( $controller->check_post_permission( $request ) );
 
 		$post     = new WP_Post();
