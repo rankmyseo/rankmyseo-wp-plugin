@@ -27,7 +27,7 @@ The public front end prints titles, meta tags, canonical links, and JSON-LD. It 
 * One main keyword plus up to five secondary keywords, a cornerstone flag for the pages that matter most, and a local on-page SEO score from 0 to 100. The score warns when another page targets the same keyword.
 * Local internal-link suggestions in the editor, and an orphan-page list on the home screen. Both are built from pages already published on this site.
 * A Missing details screen for published posts, pages, products, and images that lack a title, description, main keyword, or image description. Empty titles and descriptions can be filled from local templates after a preview. WordPress Bulk Edit can apply those templates or clear a custom title and description.
-* Schema.org JSON-LD in one `@graph`, including site identity, articles, breadcrumbs, FAQ content, and WooCommerce products (variation offers, return policy, and shipping details when WooCommerce is active).
+* Schema.org JSON-LD in one `@graph`, including site identity, articles, breadcrumbs, FAQ content, and WooCommerce products (variation offers, return policy, and shipping details when WooCommerce is active). The block editor Schema tab can set the type for that page, including a how-to, or turn structured data off for that page.
 * WooCommerce store tools, used only while WooCommerce is active: brand, GTIN/EAN/UPC/ISBN, and MPN on the product, GTIN and MPN on each variation, merchant shipping and returns details, product share tags, shorter product and category addresses, filtered shop links pointed at the main shop page, and sold-out products left out of search. Catalog address changes stay off until an administrator opts in.
 * A visible breadcrumb block, shortcode, template tag, and Elementor breadcrumbs widget. They use the same trail as the breadcrumb structured data.
 * A visible FAQ block whose questions and answers are included in the page structured data.
@@ -107,7 +107,7 @@ Yes, when WooCommerce is active. You can store a brand, a GTIN/EAN/UPC/ISBN, and
 
 = Does this work with Elementor or Divi? =
 
-Yes. Each editor gets a RankMySEO panel, loaded only while that editor is open. Elementor also has a breadcrumbs widget that uses the same trail as the structured data. The block editor has Breadcrumbs and FAQ blocks.
+Yes. Each editor gets a RankMySEO panel, loaded only while that editor is open. Elementor also has a breadcrumbs widget that uses the same trail as the structured data. The block editor has Breadcrumbs and FAQ blocks, and a Schema tab for the structured data on that page.
 
 = What is the llms.txt page? =
 
@@ -181,7 +181,7 @@ The optional diagnostics switch in Settings is stored in WordPress. Version 1.0.
 * Missing details screen: filter published posts, pages, products, and images, fill empty fields from local templates, or queue RankMySEO suggestions for approval. Image descriptions can be queued and undone.
 * Bulk edit can apply title and description templates or clear custom search details, alongside the existing search-visibility control.
 * Elementor breadcrumbs widget, a visible breadcrumb block, shortcode, and template tag, and a visible FAQ block. The visible content and the JSON-LD stay in sync.
-* Schema.org JSON-LD `@graph`, including site identity, articles, breadcrumbs, FAQ, and WooCommerce products.
+* Schema.org JSON-LD `@graph`, including site identity, articles, breadcrumbs, FAQ, and WooCommerce products. The block editor Schema tab can set the type for one page.
 * WooCommerce store tools: brand, GTIN/EAN/UPC/ISBN, MPN on the product and on each variation, variation offers, return and shipping details, product share tags, and optional catalog URL rules. Nothing is sent off the site.
 * XML sitemaps, robots.txt controls, an optional llms.txt guide, and optional IndexNow.
 * Redirects, slug-change protection, and a 404 log.

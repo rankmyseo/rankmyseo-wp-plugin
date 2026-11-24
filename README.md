@@ -15,6 +15,24 @@ Version 1.0.0. Works with WordPress 6.4 or newer and PHP 8.0 or newer. Tested up
 
 You do not need to write code, use a terminal, or create an account to use the plugin.
 
+## What it looks like
+
+Simple Mode opens on a home screen that says what to fix next, in plain English.
+
+![Simple Mode home screen, with a site score and the next best actions](.github/screenshots/dashboard-simple.png)
+
+In the block editor, the sidebar scores the page, takes one main keyword plus secondary keywords, and has a Schema tab for the structured data on that page.
+
+![Block editor sidebar with the page score, secondary keywords, and a Schema tab](.github/screenshots/editor-multi-keyword.png)
+
+On a WooCommerce product, the SEO tab holds the brand, barcode, manufacturer number, and return details. Those stay on your site.
+
+![WooCommerce product SEO tab with brand, barcode, and return policy](.github/screenshots/woocommerce-product-seo.png)
+
+Advanced Mode shows the same data with the full set of switches. After you connect RankMySEO Cloud, the home screen says rankings are available.
+
+![Advanced Mode home screen after RankMySEO Cloud is connected](.github/screenshots/connected-dashboard.png)
+
 ## Simple Mode and Advanced Mode
 
 Every screen has two ways to look at the same settings. Switching does not delete anything. The choice is saved for each person who logs in.
@@ -76,6 +94,7 @@ Those address changes stay off until you opt in, so existing shop links keep wor
 - Elementor and Divi each get a RankMySEO panel inside that editor. The panel loads only while the editor is open.
 - Elementor also has a RankMySEO breadcrumbs widget.
 - The block editor has a **Breadcrumbs** block and an **FAQ** block. The visible trail and the questions are the same ones written into the page’s structured data.
+- The block editor **Schema** tab picks the structured-data type for that page, including a how-to, or turns it off for that page. The site-wide Schema screen is still where you set the default.
 - A theme can also show the trail with the `[rankmyseo_breadcrumbs]` shortcode.
 
 A small stylesheet is added only on pages that actually show the breadcrumb or FAQ block.

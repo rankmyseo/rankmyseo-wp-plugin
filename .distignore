@@ -2,6 +2,7 @@
 # Patterns match .gitignore. build/, vendor/, languages/, and includes/ stay.
 
 /.git
+# Workflows and README screenshots. Kept out of the WordPress.org zip.
 /.github
 /.cursor
 /.wp-env

@@ -82,6 +82,8 @@ forbidden=(
 	rankmyseo/phpstan-elementor-stub.php
 	rankmyseo/phpstan.neon.dist
 	rankmyseo/phpunit.xml.dist
+	rankmyseo/.github/
+	rankmyseo/.github/screenshots/
 )
 for file in "${forbidden[@]}"; do
 	if unzip -l "$root/dist/rankmyseo.zip" | grep -q "$file"; then
