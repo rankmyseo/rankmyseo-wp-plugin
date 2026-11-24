@@ -127,6 +127,11 @@ final class QuickBulkEdit {
 			echo '<span class="rankmyseo-noindex">' . esc_html__( 'Hidden', 'rankmyseo' ) . '</span>';
 		}
 
+		$cornerstone = get_post_meta( $post_id, MetaKeys::CORNERSTONE, true );
+		if ( true === $cornerstone || 1 === $cornerstone || '1' === (string) $cornerstone ) {
+			echo '<span class="rankmyseo-cornerstone">' . esc_html__( 'Cornerstone', 'rankmyseo' ) . '</span>';
+		}
+
 		printf(
 			'<span class="hidden rankmyseo-inline-data" data-title="%1$s" data-description="%2$s" data-focus="%3$s" data-noindex="%4$s"></span>',
 			esc_attr( (string) $meta['title'] ),

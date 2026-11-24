@@ -19,6 +19,7 @@ final class MetaKeys {
 	public const ROBOTS              = '_rankmyseo_robots';
 	public const FOCUS_KEYWORD       = '_rankmyseo_focus_keyword';
 	public const SECONDARY_KEYWORDS  = '_rankmyseo_secondary_keywords';
+	public const CORNERSTONE         = '_rankmyseo_cornerstone';
 	public const OG_TITLE            = '_rankmyseo_og_title';
 	public const OG_DESCRIPTION      = '_rankmyseo_og_description';
 	public const OG_IMAGE            = '_rankmyseo_og_image';
@@ -46,6 +47,7 @@ final class MetaKeys {
 			self::ROBOTS,
 			self::FOCUS_KEYWORD,
 			self::SECONDARY_KEYWORDS,
+			self::CORNERSTONE,
 			self::OG_TITLE,
 			self::OG_DESCRIPTION,
 			self::OG_IMAGE,

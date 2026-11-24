@@ -6,19 +6,23 @@ import type {
 	CheckMetrics,
 	CheckResult,
 	CheckStatus,
+	KeywordAssessment,
 	ScoreBand,
 } from './types';
 import {
-	containsPhrase,
-	countPhrase,
 	estimatePixelWidth,
 	isEnglishLocale,
-	keywordNearStart,
 	roundDensity,
 	normalizeWords,
-	slugContains,
 	wordTargetFor,
 } from './text';
+import {
+	limitSecondary,
+	phraseMatch,
+	phraseNearStart,
+	slugMatches,
+	type PhraseHit,
+} from './wordForms';
 
 const TITLE_FONT = 20;
 const DESCRIPTION_FONT = 14;
@@ -115,9 +119,154 @@ function flesch(
 	};
 }
 
+function keywordStatus( items: CheckResult[] ): CheckStatus {
+	if ( items.some( ( item ) => item.status === 'critical' ) ) {
+		return 'critical';
+	}
+	if (
+		items.length > 0 &&
+		items.every( ( item ) => item.status === 'pass' )
+	) {
+		return 'pass';
+	}
+	return 'improve';
+}
+
+function secondaryAssessment( input: {
+	phrase: string;
+	title: string;
+	description: string;
+	intro: string;
+	headingText: string;
+	plain: string;
+	wordCount: number;
+	english: boolean;
+} ): KeywordAssessment {
+	const hit = phraseMatch( input.plain, input.phrase, input.english );
+	const words = Math.max(
+		normalizeWords( input.phrase ).split( ' ' ).filter( Boolean ).length,
+		1
+	);
+	const density =
+		input.wordCount > 0
+			? roundDensity( ( ( hit.count * words ) / input.wordCount ) * 100 )
+			: 0;
+	const stuffing = density > 2.5;
+	const checks: CheckResult[] = [
+		check(
+			'secondary_in_content',
+			'keyword',
+			hit.found ? 40 : 0,
+			40,
+			'critical',
+			{ present: hit.found, keyword: input.phrase, count: hit.count }
+		),
+		check(
+			'secondary_in_title',
+			'keyword',
+			phraseMatch( input.title, input.phrase, input.english ).found
+				? 20
+				: 0,
+			20,
+			'improve',
+			{
+				present: phraseMatch( input.title, input.phrase, input.english )
+					.found,
+				keyword: input.phrase,
+			}
+		),
+		check(
+			'secondary_in_description',
+			'keyword',
+			phraseMatch( input.description, input.phrase, input.english ).found
+				? 15
+				: 0,
+			15,
+			'improve',
+			{
+				present: phraseMatch(
+					input.description,
+					input.phrase,
+					input.english
+				).found,
+				keyword: input.phrase,
+			}
+		),
+		check(
+			'secondary_in_headings',
+			'keyword',
+			phraseMatch( input.headingText, input.phrase, input.english )
+				.found ||
+				phraseMatch( input.intro, input.phrase, input.english ).found
+				? 15
+				: 0,
+			15,
+			'improve',
+			{
+				present:
+					phraseMatch(
+						input.headingText,
+						input.phrase,
+						input.english
+					).found ||
+					phraseMatch( input.intro, input.phrase, input.english )
+						.found,
+				keyword: input.phrase,
+			}
+		),
+		check(
+			'secondary_density',
+			'keyword',
+			hit.found && ! stuffing ? 10 : 0,
+			10,
+			stuffing ? 'critical' : 'improve',
+			{
+				density,
+				count: hit.count,
+				stuffing,
+				keyword: input.phrase,
+			}
+		),
+	];
+	const score = checks.reduce( ( total, item ) => total + item.score, 0 );
+	let status: CheckStatus = 'critical';
+	if ( stuffing ) {
+		status = 'critical';
+	} else if ( score >= 70 ) {
+		status = 'pass';
+	} else if ( score >= 40 ) {
+		status = 'improve';
+	}
+	return {
+		keyword: input.phrase,
+		role: 'secondary',
+		status,
+		score,
+		checks,
+	};
+}
+
+function internalLinkPoints(
+	count: number,
+	cornerstone: boolean
+): { score: number; empty: CheckStatus } {
+	if ( ! cornerstone ) {
+		return { score: count > 0 ? 3 : 0, empty: 'improve' };
+	}
+	if ( count >= 3 ) {
+		return { score: 3, empty: 'critical' };
+	}
+	if ( count >= 1 ) {
+		return { score: 1, empty: 'critical' };
+	}
+	return { score: 0, empty: 'critical' };
+}
+
 export function analyze( input: AnalyzerInput ): AnalysisResult {
 	const keyword = input.focusKeyword.trim();
 	const hasKeyword = keyword !== '';
+	const secondary = limitSecondary( keyword, input.secondaryKeywords );
+	const cornerstone = Boolean( input.cornerstone );
 	const title = input.seoTitle.trim();
 	const description = input.metaDescription.trim();
 	const facts = inspectContent(
@@ -127,7 +276,11 @@ export function analyze( input: AnalyzerInput ): AnalysisResult {
 	const wordCount = facts.words.length;
 	const sentenceCount = facts.sentences.length;
 	const paragraphCount = facts.paragraphs.length;
-	const keywordCount = hasKeyword ? countPhrase( facts.plain, keyword ) : 0;
+	const english = isEnglishLocale( input.locale );
+	const keywordHit: PhraseHit = hasKeyword
+		? phraseMatch( facts.plain, keyword, english )
+		: { found: false, offset: -1, count: 0 };
+	const keywordCount = keywordHit.count;
 	const keywordWords = hasKeyword
 		? normalizeWords( keyword ).split( ' ' ).filter( Boolean ).length
 		: 0;
@@ -151,15 +304,28 @@ export function analyze( input: AnalyzerInput ): AnalysisResult {
 	).length;
 	const keywordInAlt =
 		hasKeyword &&
-		facts.images.some( ( image ) => containsPhrase( image.alt, keyword ) );
+		facts.images.some(
+			( image ) => phraseMatch( image.alt, keyword, english ).found
+		);
 	const intro = facts.words.slice( 0, 100 ).join( ' ' );
 	const headingText = facts.headings
 		.filter( ( heading ) => heading.level <= 3 )
 		.map( ( heading ) => heading.text )
 		.join( ' ' );
-	const english = isEnglishLocale( input.locale );
+	const titleHit = hasKeyword
+		? phraseMatch( title, keyword, english )
+		: { found: false, offset: -1, count: 0 };
+	const descriptionHit = hasKeyword
+		? phraseMatch( description, keyword, english )
+		: { found: false, offset: -1, count: 0 };
+	const introHit = hasKeyword
+		? phraseMatch( intro, keyword, english )
+		: { found: false, offset: -1, count: 0 };
+	const headingHit = hasKeyword
+		? phraseMatch( headingText, keyword, english )
+		: { found: false, offset: -1, count: 0 };
+	const slugHit = hasKeyword && slugMatches( input.slug, keyword, english );
 	const reading = flesch( wordCount, sentenceCount, facts.syllables );
-	const target = wordTargetFor( input.postType );
 	const averageSentence =
 		sentenceCount > 0
 			? Math.round( ( wordCount / sentenceCount ) * 10 ) / 10
@@ -178,8 +344,8 @@ export function analyze( input: AnalyzerInput ): AnalysisResult {
 	).length;
 
 	let titleScore = 0;
-	if ( hasKeyword && containsPhrase( title, keyword ) ) {
-		titleScore = keywordNearStart( title, keyword ) ? 6 : 4;
+	if ( titleHit.found ) {
+		titleScore = phraseNearStart( titleHit ) ? 6 : 4;
 	}
 	let densityScore = 0;
 	let densityEmpty: CheckStatus = 'improve';
@@ -194,12 +360,17 @@ export function analyze( input: AnalyzerInput ): AnalysisResult {
 
 	const titleLength = titlePoints( title );
 	const descriptionLength = descriptionPoints( description );
+	const target = wordTargetFor( input.postType ) * ( cornerstone ? 3 : 1 );
 	let wordScore = 0;
 	if ( wordCount >= target ) {
 		wordScore = 8;
 	} else if ( wordCount >= Math.ceil( target / 2 ) ) {
 		wordScore = 4;
 	}
+	const internalPoints = internalLinkPoints(
+		facts.internalLinks,
+		cornerstone
+	);
 
 	let headingScore = 0;
 	if ( h1Count === 1 ) {
@@ -265,41 +436,32 @@ export function analyze( input: AnalyzerInput ): AnalysisResult {
 		check(
 			'keyword_in_description',
 			'keyword',
-			hasKeyword && containsPhrase( description, keyword ) ? 5 : 0,
+			descriptionHit.found ? 5 : 0,
 			5,
 			'improve',
-			{
-				present: hasKeyword && containsPhrase( description, keyword ),
-			}
+			{ present: descriptionHit.found }
 		),
-		check(
-			'keyword_in_slug',
-			'keyword',
-			hasKeyword && slugContains( input.slug, keyword ) ? 5 : 0,
-			5,
-			'improve',
-			{
-				present: hasKeyword && slugContains( input.slug, keyword ),
-				slug: input.slug,
-			}
-		),
+		check( 'keyword_in_slug', 'keyword', slugHit ? 5 : 0, 5, 'improve', {
+			present: slugHit,
+			slug: input.slug,
+		} ),
 		check(
 			'keyword_in_intro',
 			'keyword',
-			hasKeyword && containsPhrase( intro, keyword ) ? 5 : 0,
+			introHit.found ? 5 : 0,
 			5,
 			'improve',
-			{ present: hasKeyword && containsPhrase( intro, keyword ) }
+			{
+				present: introHit.found,
+			}
 		),
 		check(
 			'keyword_in_headings',
 			'keyword',
-			hasKeyword && containsPhrase( headingText, keyword ) ? 5 : 0,
+			headingHit.found ? 5 : 0,
 			5,
 			'improve',
-			{
-				present: hasKeyword && containsPhrase( headingText, keyword ),
-			}
+			{ present: headingHit.found }
 		),
 		check(
 			'keyword_in_alt',
@@ -372,10 +534,14 @@ export function analyze( input: AnalyzerInput ): AnalysisResult {
 		check(
 			'internal_links',
 			'content',
-			facts.internalLinks > 0 ? 3 : 0,
+			internalPoints.score,
 			3,
-			'improve',
-			{ count: facts.internalLinks }
+			internalPoints.empty,
+			{
+				count: facts.internalLinks,
+				cornerstone,
+				minimum: cornerstone ? 3 : 1,
+			}
 		),
 		check(
 			'external_links',
@@ -416,19 +582,68 @@ export function analyze( input: AnalyzerInput ): AnalysisResult {
 		} ),
 	];
 
-	const score = Math.max(
+	const primaryScore = Math.max(
 		0,
 		Math.min(
 			100,
 			checks.reduce( ( total, item ) => total + item.score, 0 )
 		)
 	);
+	const keywordChecks = checks.filter(
+		( item ) => item.category === 'keyword'
+	);
+	const keywords: KeywordAssessment[] = [
+		{
+			keyword,
+			role: 'primary',
+			status: hasKeyword ? keywordStatus( keywordChecks ) : 'critical',
+			score: keywordChecks.reduce(
+				( total, item ) => total + item.score,
+				0
+			),
+			checks: keywordChecks,
+		},
+	];
+	const secondaryScores: number[] = [];
+	for ( const phrase of secondary ) {
+		const assessment = secondaryAssessment( {
+			phrase,
+			title,
+			description,
+			intro,
+			headingText,
+			plain: facts.plain,
+			wordCount,
+			english,
+		} );
+		keywords.push( assessment );
+		secondaryScores.push( assessment.score );
+	}
+	const averageSecondary =
+		secondaryScores.length > 0
+			? secondaryScores.reduce( ( total, value ) => total + value, 0 ) /
+			  secondaryScores.length
+			: primaryScore;
+	const score =
+		secondaryScores.length > 0
+			? Math.max(
+					0,
+					Math.min(
+						100,
+						Math.round(
+							primaryScore * 0.8 + averageSecondary * 0.2
+						)
+					)
+			  )
+			: primaryScore;
 
 	return {
 		score,
+		primaryScore,
 		band: scoreBand( score, hasKeyword ),
 		hasFocusKeyword: hasKeyword,
 		checks,
+		keywords,
 		summary: {
 			wordCount,
 			keywordCount,

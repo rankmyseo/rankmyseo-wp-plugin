@@ -121,7 +121,58 @@ export function simpleTip( check: CheckResult ): string {
 		case 'image_alts':
 			return __( 'Add a short description to every image.', 'rankmyseo' );
 		case 'internal_links':
-			return __( 'Link to another page on this site.', 'rankmyseo' );
+			return check.metrics.cornerstone &&
+				metricNumber( check, 'count' ) < 3
+				? __(
+						'Cornerstone pages should link to at least 3 other pages on this site.',
+						'rankmyseo'
+				  )
+				: __( 'Link to another page on this site.', 'rankmyseo' );
+		case 'secondary_in_content':
+			return sprintf(
+				/* translators: %s: secondary keyword. */
+				__( 'Use “%s” in the page text.', 'rankmyseo' ),
+				String( check.metrics.keyword ?? '' )
+			);
+		case 'secondary_in_title':
+			return sprintf(
+				/* translators: %s: secondary keyword. */
+				__( 'Use “%s” in the search title.', 'rankmyseo' ),
+				String( check.metrics.keyword ?? '' )
+			);
+		case 'secondary_in_description':
+			return sprintf(
+				/* translators: %s: secondary keyword. */
+				__( 'Use “%s” in the search description.', 'rankmyseo' ),
+				String( check.metrics.keyword ?? '' )
+			);
+		case 'secondary_in_headings':
+			return sprintf(
+				/* translators: %s: secondary keyword. */
+				__(
+					'Use “%s” in a heading or the opening paragraph.',
+					'rankmyseo'
+				),
+				String( check.metrics.keyword ?? '' )
+			);
+		case 'secondary_density':
+			return check.metrics.stuffing
+				? sprintf(
+						/* translators: %s: secondary keyword. */
+						__(
+							'“%s” appears too often. Use it more naturally.',
+							'rankmyseo'
+						),
+						String( check.metrics.keyword ?? '' )
+				  )
+				: sprintf(
+						/* translators: %s: secondary keyword. */
+						__(
+							'Mention “%s” a few times in the page text.',
+							'rankmyseo'
+						),
+						String( check.metrics.keyword ?? '' )
+				  );
 		case 'external_links':
 			return __(
 				'Link to a useful page on another site when it helps the reader.',
@@ -192,9 +243,26 @@ export function checkDetail( check: CheckResult ): string {
 				metricNumber( check, 'images' )
 			);
 		case 'internal_links':
+			return check.metrics.cornerstone
+				? sprintf(
+						/* translators: 1: number of internal links, 2: links a cornerstone page should have. */
+						__(
+							'%1$d links to this site. Cornerstone pages should have at least %2$d.',
+							'rankmyseo'
+						),
+						metricNumber( check, 'count' ),
+						metricNumber( check, 'minimum' ) || 3
+				  )
+				: sprintf(
+						/* translators: %d: number of internal links. */
+						__( '%d links to this site.', 'rankmyseo' ),
+						metricNumber( check, 'count' )
+				  );
+		case 'secondary_density':
 			return sprintf(
-				/* translators: %d: number of internal links. */
-				__( '%d links to this site.', 'rankmyseo' ),
+				/* translators: 1: keyword density percentage, 2: number of mentions. */
+				__( 'Density %1$s%% from %2$d mentions.', 'rankmyseo' ),
+				String( check.metrics.density ?? 0 ),
 				metricNumber( check, 'count' )
 			);
 		case 'external_links':

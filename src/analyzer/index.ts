@@ -14,5 +14,15 @@ export type {
 	CheckCategory,
 	CheckResult,
 	CheckStatus,
+	KeywordAssessment,
 	ScoreBand,
 } from './types';
+export {
+	limitSecondary,
+	overlapCount,
+	phraseMatch,
+	samePhrase,
+	slugMatches,
+	tokenKeys,
+	tokensMatch,
+} from './wordForms';

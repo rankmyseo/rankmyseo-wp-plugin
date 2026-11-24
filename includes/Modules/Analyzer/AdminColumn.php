@@ -80,6 +80,11 @@ final class AdminColumn {
 			selected( $current, 'missing_keyword', false ),
 			esc_html__( 'Missing focus keyword', 'rankmyseo' )
 		);
+		printf(
+			'<option value="cornerstone"%1$s>%2$s</option>',
+			selected( $current, 'cornerstone', false ),
+			esc_html__( 'Cornerstone content', 'rankmyseo' )
+		);
 		echo '</select>';
 	}
 
@@ -105,6 +110,17 @@ final class AdminColumn {
 						'value'   => 80,
 						'compare' => '<',
 						'type'    => 'NUMERIC',
+					],
+				]
+			);
+		} elseif ( 'cornerstone' === $filter ) {
+			$query->set(
+				'meta_query',
+				[
+					[
+						'key'     => MetaKeys::CORNERSTONE,
+						'value'   => '1',
+						'compare' => '=',
 					],
 				]
 			);
@@ -149,6 +165,7 @@ final class AdminColumn {
 		echo '.rankmyseo-score-pill.is-poor{background:#fdecec;}';
 		echo '.rankmyseo-score-pill.is-no-keyword{background:#f1f2f4;}';
 		echo '.rankmyseo-focus{display:block;color:#1b1e24;}';
+		echo '.rankmyseo-cornerstone{display:inline-flex;margin-top:4px;padding:1px 8px;border-radius:999px;background:#ff5c22;color:#1b1e24;font-size:11px;font-weight:600;}';
 		echo '</style>';
 	}
 
@@ -160,7 +177,7 @@ final class AdminColumn {
 	public function requested_filter(): string {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only list table filter.
 		$filter = isset( $_GET['rankmyseo_seo_filter'] ) ? sanitize_key( wp_unslash( (string) $_GET['rankmyseo_seo_filter'] ) ) : '';
-		return in_array( $filter, [ 'needs_work', 'missing_keyword' ], true ) ? $filter : '';
+		return in_array( $filter, [ 'needs_work', 'missing_keyword', 'cornerstone' ], true ) ? $filter : '';
 	}
 
 	/**

@@ -106,6 +106,16 @@ final class MetaSanitizer {
 	}
 
 	/**
+	 * Store a checkbox as a real boolean.
+	 *
+	 * @param mixed $value Raw value.
+	 * @return bool
+	 */
+	public static function sanitize_bool( $value ): bool {
+		return true === $value || 1 === $value || '1' === $value || 'true' === $value;
+	}
+
+	/**
 	 * Sanitize the Twitter card type.
 	 *
 	 * @param mixed $value Raw card type.
@@ -144,6 +154,7 @@ final class MetaSanitizer {
 			'robots'              => Robots::sanitize( $pick( $input, 'robots', MetaKeys::ROBOTS ) ?? [] ),
 			'focus_keyword'       => self::sanitize_keyword( $pick( $input, 'focus_keyword', MetaKeys::FOCUS_KEYWORD ) ?? '' ),
 			'secondary_keywords'  => self::sanitize_keywords( $pick( $input, 'secondary_keywords', MetaKeys::SECONDARY_KEYWORDS ) ?? [] ),
+			'cornerstone'         => self::sanitize_bool( $pick( $input, 'cornerstone', MetaKeys::CORNERSTONE ) ?? false ),
 			'og_title'            => self::sanitize_title( $pick( $input, 'og_title', MetaKeys::OG_TITLE ) ?? '' ),
 			'og_description'      => self::sanitize_description( $pick( $input, 'og_description', MetaKeys::OG_DESCRIPTION ) ?? '' ),
 			'og_image'            => self::sanitize_image( $pick( $input, 'og_image', MetaKeys::OG_IMAGE ) ?? '' ),

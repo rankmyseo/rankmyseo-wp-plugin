@@ -19,6 +19,7 @@ import {
 } from '../metrics';
 import { replaceTemplate, type TemplateVars } from '../template';
 import { AnalyzerPanel, type CannibalizationMatch } from './AnalyzerPanel';
+import { linkHtml, LinkSuggestions } from './LinkSuggestions';
 import { AskAiButton } from './AskAiButton';
 import { LengthMeter } from './LengthMeter';
 import { SerpPreview } from './SerpPreview';
@@ -46,6 +47,7 @@ export interface EditorPanelProps {
 	locale?: string;
 	cannibalizationMatches?: CannibalizationMatch[];
 	onAnalysis?: ( result: AnalysisResult, signature: string ) => void;
+	onInsertLink?: ( html: string ) => void;
 }
 
 function slugFromPermalink( permalink: string ): string {
@@ -86,6 +88,7 @@ export function EditorPanel( {
 	locale = 'en',
 	cannibalizationMatches,
 	onAnalysis,
+	onInsertLink,
 }: EditorPanelProps ): JSX.Element {
 	const [ tab, setTab ] = useState< AdvancedTab >( 'general' );
 	const fieldId = useId();
@@ -113,6 +116,8 @@ export function EditorPanel( {
 	const analyzerInput = useMemo< AnalyzerInput >(
 		() => ( {
 			focusKeyword: fields.focusKeyword,
+			secondaryKeywords: fields.secondaryKeywords,
+			cornerstone: fields.cornerstone,
 			seoTitle: resolvedTitle,
 			metaDescription: resolvedDescription,
 			slug: slug || slugFromPermalink( permalink ),
@@ -124,6 +129,8 @@ export function EditorPanel( {
 		} ),
 		[
 			fields.focusKeyword,
+			fields.secondaryKeywords,
+			fields.cornerstone,
 			fields.robots.noindex,
 			resolvedTitle,
 			resolvedDescription,
@@ -229,6 +236,23 @@ export function EditorPanel( {
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom
 			/>
+			<label className="rms-check" htmlFor={ `${ fieldId }-cornerstone` }>
+				<input
+					id={ `${ fieldId }-cornerstone` }
+					type="checkbox"
+					checked={ fields.cornerstone }
+					onChange={ ( event ) =>
+						patch( { cornerstone: event.target.checked } )
+					}
+				/>
+				<span>{ __( 'This is a cornerstone page', 'rankmyseo' ) }</span>
+			</label>
+			<p className="rms-muted">
+				{ __(
+					'Cornerstone pages should be longer and link to at least 3 other pages on this site.',
+					'rankmyseo'
+				) }
+			</p>
 
 			<div
 				id="rankmyseo-analyzer-slot"
@@ -242,6 +266,20 @@ export function EditorPanel( {
 					onAnalysis={ onAnalysis }
 				/>
 			</div>
+
+			<LinkSuggestions
+				postId={ postId }
+				focusKeyword={ fields.focusKeyword }
+				secondaryKeywords={ fields.secondaryKeywords }
+				title={ postTitle }
+				slug={ slug || slugFromPermalink( permalink ) }
+				onInsert={
+					onInsertLink
+						? ( url, label ) =>
+								onInsertLink( linkHtml( url, label ) )
+						: undefined
+				}
+			/>
 
 			{ mode === 'simple' ? (
 				<details className="rms-social-fold">

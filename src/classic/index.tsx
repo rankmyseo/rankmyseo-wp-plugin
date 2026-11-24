@@ -28,6 +28,7 @@ interface ClassicConfig {
 
 interface TinyEditor {
 	getContent: () => string;
+	insertContent: ( html: string ) => void;
 	on: ( event: string, callback: () => void ) => void;
 	off: ( event: string, callback: () => void ) => void;
 }
@@ -65,6 +66,26 @@ function writeHidden( fields: SeoFields ): void {
 	const robots = document.getElementById( 'rankmyseo_robots' );
 	if ( robots instanceof HTMLInputElement ) {
 		robots.value = JSON.stringify( fields.robots );
+	}
+	const cornerstone = document.getElementById( 'rankmyseo_cornerstone' );
+	if ( cornerstone instanceof HTMLInputElement ) {
+		cornerstone.value = fields.cornerstone ? '1' : '0';
+	}
+}
+
+function insertClassicLink( html: string ): void {
+	const tiny = (
+		window as Window & {
+			tinymce?: { get?: ( id: string ) => TinyEditor | null };
+		}
+	 ).tinymce?.get?.( 'content' );
+	if ( tiny ) {
+		tiny.insertContent( html );
+		return;
+	}
+	const contentField = document.getElementById( 'content' );
+	if ( contentField instanceof HTMLTextAreaElement ) {
+		contentField.value = `${ contentField.value }\n${ html }`;
 	}
 }
 
@@ -160,6 +181,7 @@ function ClassicApp( { settings }: { settings: ClassicConfig } ): JSX.Element {
 			postId={ settings.postId || 0 }
 			postType={ settings.postType || 'post' }
 			locale={ settings.locale || 'en' }
+			onInsertLink={ insertClassicLink }
 			onAskAi={ () => {
 				document.dispatchEvent(
 					new CustomEvent(

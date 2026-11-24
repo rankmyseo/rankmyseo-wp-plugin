@@ -192,6 +192,69 @@
 	gap: 12px;
 }
 
+.rms-keyword-pills {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.rms-keyword-pill {
+	display: inline-flex;
+	align-items: center;
+	border-radius: 999px;
+	padding: 2px 10px;
+	font-size: 12px;
+	line-height: 1.6;
+	color: #1b1e24;
+	background: #f3f4f6;
+}
+
+.rms-keyword-pill.is-pass {
+	background: #e8f7f0;
+}
+
+.rms-keyword-pill.is-improve {
+	background: #fef3c7;
+}
+
+.rms-keyword-pill.is-critical {
+	background: #fdecec;
+}
+
+.rms-link-suggestions ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.rms-link-suggestions li {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	align-items: center;
+	border: 1px solid var(--rms-line, #e6e8ee);
+	border-radius: var(--rms-radius-sm, 8px);
+	padding: 8px 10px;
+}
+
+.rms-link-suggestions li > div:first-child {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.rms-link-actions {
+	display: flex;
+	gap: 6px;
+	flex: 0 0 auto;
+}
+
 .rms-score-ring {
 	position: relative;
 	width: 44px;

@@ -23,6 +23,8 @@ use RankMySEO\Modules\Cloud\CloudServices;
 use RankMySEO\Modules\ModuleManager;
 use RankMySEO\Modules\AiActions\AiQueueModule;
 use RankMySEO\Modules\Importer\ImporterModule;
+use RankMySEO\Modules\Links\LinkIndexer;
+use RankMySEO\Modules\Links\LinkRepository;
 use RankMySEO\Modules\Meta\ConflictGuard;
 use RankMySEO\Modules\Meta\DocumentBuilder;
 use RankMySEO\Modules\Meta\MetaModule;
@@ -370,6 +372,14 @@ final class Plugin {
 		);
 
 		$this->container->singleton(
+			LinkIndexer::class,
+			static function (): LinkIndexer {
+				global $wpdb;
+				return new LinkIndexer( new LinkRepository( $wpdb ) );
+			}
+		);
+
+		$this->container->singleton(
 			LocalAssistant::class,
 			static function ( Container $container ): LocalAssistant {
 				$index = $container->get( WordPressSiteIndex::class );
@@ -380,7 +390,9 @@ final class Plugin {
 				assert( $onboarding instanceof OnboardingStore );
 				$migrator = $container->get( Migrator::class );
 				assert( $migrator instanceof Migrator );
-				return new LocalAssistant( $index, $settings, $onboarding, $migrator );
+				$links = $container->get( LinkIndexer::class );
+				assert( $links instanceof LinkIndexer );
+				return new LocalAssistant( $index, $settings, $onboarding, $migrator, $links );
 			}
 		);
 
@@ -410,7 +422,9 @@ final class Plugin {
 				assert( $modules instanceof ModuleManager );
 				$migrator = $container->get( Migrator::class );
 				assert( $migrator instanceof Migrator );
-				return new DashboardController( $assistant, $index, $onboarding, $modules, $migrator );
+				$links = $container->get( LinkIndexer::class );
+				assert( $links instanceof LinkIndexer );
+				return new DashboardController( $assistant, $index, $onboarding, $modules, $migrator, $links );
 			}
 		);
 

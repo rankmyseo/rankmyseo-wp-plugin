@@ -11,7 +11,9 @@ namespace RankMySEO\Modules\Analyzer;
 
 use RankMySEO\Core\Settings;
 use RankMySEO\Modules\AbstractModule;
+use RankMySEO\Modules\Links\LinkIndexer;
 use RankMySEO\Modules\Meta\TitleSettings;
+use RankMySEO\Rest\LinksController;
 use RankMySEO\Rest\RestRegistry;
 
 /**
@@ -55,15 +57,29 @@ final class AnalyzerModule extends AbstractModule {
 		( new AdminColumn() )->register();
 
 		$controller = new CannibalizationController();
+		$links      = null;
+		if ( $this->container->has( LinkIndexer::class ) ) {
+			$resolved = $this->container->get( LinkIndexer::class );
+			if ( $resolved instanceof LinkIndexer ) {
+				$resolved->register();
+				$links = new LinksController( $resolved );
+			}
+		}
 		if ( $this->container->has( RestRegistry::class ) ) {
 			$rest = $this->container->get( RestRegistry::class );
 			if ( $rest instanceof RestRegistry ) {
 				$rest->add( $controller );
+				if ( $links instanceof LinksController ) {
+					$rest->add( $links );
+				}
 				return;
 			}
 		}
 
 		add_action( 'rest_api_init', [ $controller, 'register_routes' ] );
+		if ( $links instanceof LinksController ) {
+			add_action( 'rest_api_init', [ $links, 'register_routes' ] );
+		}
 	}
 
 	/**

@@ -120,6 +120,28 @@ function EditorBody(): JSX.Element {
 		[ setMeta ]
 	);
 
+	const insertLink = ( html: string ): void => {
+		const wp = window as Window & {
+			wp?: {
+				blocks?: {
+					createBlock?: (
+						name: string,
+						attrs: { content: string }
+					) => unknown;
+				};
+				data?: {
+					dispatch?: ( store: string ) => {
+						insertBlocks?: ( blocks: unknown ) => void;
+					};
+				};
+			};
+		};
+		const block = wp.wp?.blocks?.createBlock?.( 'core/paragraph', {
+			content: html,
+		} );
+		wp.wp?.data?.dispatch?.( 'core/block-editor' )?.insertBlocks?.( block );
+	};
+
 	const ask = (): void => {
 		const eventName = settings.askAiEvent || 'rankmyseo:ask-ai';
 		document.dispatchEvent(
@@ -170,6 +192,7 @@ function EditorBody(): JSX.Element {
 			postType={ editor.postType }
 			locale={ settings.locale || 'en' }
 			onAnalysis={ persistAnalysis }
+			onInsertLink={ insertLink }
 		/>
 	);
 }

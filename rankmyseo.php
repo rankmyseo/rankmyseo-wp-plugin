@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'RANKMYSEO_VERSION', '1.0.0' );
-define( 'RANKMYSEO_DB_VERSION', 1 );
+define( 'RANKMYSEO_DB_VERSION', 2 );
 define( 'RANKMYSEO_FILE', __FILE__ );
 define( 'RANKMYSEO_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RANKMYSEO_URL', plugin_dir_url( __FILE__ ) );

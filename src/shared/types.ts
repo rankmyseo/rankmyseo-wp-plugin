@@ -396,9 +396,18 @@ export interface DashboardSummary {
 		thin_posts: number;
 		low_scores: number;
 		open_404s: number;
+		orphans?: number;
+		cornerstone?: number;
 		redirects_total: number;
 		redirects_active: number;
 	};
+	orphans?: Array< {
+		id: number;
+		title: string;
+		edit_link?: string;
+		url?: string;
+		type?: string;
+	} >;
 	fixes: DashboardFix[];
 	modules: ModuleDescriptor[];
 	audit: {

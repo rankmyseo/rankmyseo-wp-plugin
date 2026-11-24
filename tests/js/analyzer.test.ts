@@ -171,4 +171,106 @@ describe( 'on-page analyzer', () => {
 			result.checks.find( ( check ) => check.id === 'word_count' )?.status
 		).toBe( 'pass' );
 	} );
+
+	it( 'scores every secondary keyword and keeps the primary in charge', () => {
+		const primary = analyze( strongInput() );
+		const blended = analyze( {
+			...strongInput(),
+			secondaryKeywords: [ 'unrelated quartz mineral' ],
+		} );
+		expect( blended.primaryScore ).toBe( primary.score );
+		expect( blended.keywords ).toHaveLength( 2 );
+		expect( blended.keywords[ 0 ]?.role ).toBe( 'primary' );
+		expect( blended.keywords[ 1 ]?.status ).toBe( 'critical' );
+		expect( blended.score ).toBe(
+			Math.round( primary.score * 0.8 + 0 * 0.2 )
+		);
+		expect( blended.checks ).toHaveLength( primary.checks.length );
+	} );
+
+	it( 'matches English word forms and leaves other languages exact', () => {
+		const english = analyze( {
+			...strongInput(),
+			focusKeyword: 'running shoes',
+			seoTitle: 'Run shoe guide for city trails today',
+			slug: 'running-shoes',
+			contentHtml: `<h1>Running shoes</h1><p>${ words(
+				320,
+				'Running shoes make weekend miles easier.'
+			) }</p><h2>Care</h2><p>Buy a spare pair.</p>`,
+		} );
+		expect(
+			english.checks.find( ( check ) => check.id === 'keyword_in_title' )
+				?.status
+		).toBe( 'pass' );
+
+		const synonym = analyze( {
+			focusKeyword: 'buy',
+			seoTitle: 'Purchase garden tools today',
+			metaDescription: description,
+			slug: 'buy',
+			locale: 'en_US',
+			contentHtml: '<p>Purchase one set.</p>',
+		} );
+		expect(
+			synonym.checks.find( ( check ) => check.id === 'keyword_in_title' )
+				?.metrics.present
+		).toBe( true );
+
+		const indonesian = analyze( {
+			focusKeyword: 'buy',
+			seoTitle: 'Purchase garden tools today',
+			metaDescription: '',
+			slug: 'buy',
+			locale: 'id_ID',
+			contentHtml: '<p>Purchase one set. Buy stays exact.</p>',
+		} );
+		expect(
+			indonesian.checks.find(
+				( check ) => check.id === 'keyword_in_title'
+			)?.metrics.present
+		).toBe( false );
+		expect(
+			indonesian.checks.find(
+				( check ) => check.id === 'keyword_in_intro'
+			)?.metrics.present
+		).toBe( true );
+	} );
+
+	it( 'asks cornerstone pages for more words and three internal links', () => {
+		const base = {
+			...strongInput(),
+			contentHtml: `<h1>Garden tools</h1><p>${ words(
+				320,
+				'Garden tools make weekend planting easier.'
+			) }</p>`,
+		};
+		const normal = analyze( base );
+		const pillar = analyze( { ...base, cornerstone: true } );
+		expect(
+			normal.checks.find( ( check ) => check.id === 'word_count' )
+				?.metrics.target
+		).toBe( 300 );
+		expect(
+			pillar.checks.find( ( check ) => check.id === 'word_count' )
+				?.metrics.target
+		).toBe( 900 );
+		expect(
+			pillar.checks.find( ( check ) => check.id === 'internal_links' )
+				?.status
+		).toBe( 'critical' );
+		expect(
+			pillar.checks.find( ( check ) => check.id === 'internal_links' )
+				?.score
+		).toBe( 0 );
+
+		const linked = analyze( {
+			...base,
+			cornerstone: true,
+			contentHtml: `${ base.contentHtml }<p><a href="/a">A</a> <a href="/b">B</a> <a href="/c">C</a></p>`,
+		} );
+		expect(
+			linked.checks.find( ( check ) => check.id === 'internal_links' )
+		).toMatchObject( { score: 3, status: 'pass' } );
+	} );
 } );

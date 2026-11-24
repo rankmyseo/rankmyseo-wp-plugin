@@ -111,6 +111,23 @@ export function AnalyzerPanel( {
 			<p className="rms-sr-only" aria-live="polite">
 				{ live }
 			</p>
+			<ul className="rms-keyword-pills">
+				{ analysis.keywords.map( ( item ) => (
+					<li key={ `${ item.role }-${ item.keyword }` }>
+						<span
+							className={ `rms-keyword-pill is-${ item.status }` }
+						>
+							{ item.role === 'primary'
+								? __( 'Focus', 'rankmyseo' )
+								: __( 'Also', 'rankmyseo' ) }
+							{ ': ' }
+							{ item.keyword || __( 'None', 'rankmyseo' ) }
+							{ ' · ' }
+							{ statusLabel( item.status ) }
+						</span>
+					</li>
+				) ) }
+			</ul>
 
 			{ matches.length > 0 && (
 				<div className="rms-analyzer-banner" role="status">
