@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-24T03:31:47+00:00\n"
+"POT-Creation-Date: 2026-11-24T04:27:37+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: rankmyseo\n"
@@ -27,7 +27,7 @@ msgid "Connected assistant replies will appear here."
 msgstr ""
 
 #: src/admin/components/AskAiDrawer.tsx:148
-#: src/admin/components/InlineActionCard.tsx:169
+#: src/admin/components/InlineActionCard.tsx:171
 #: src/admin/views/MissingMetadataView.tsx:375
 msgid "Edit"
 msgstr ""
@@ -217,15 +217,15 @@ msgstr ""
 #. Plugin Name of the plugin
 #. Author of the plugin
 #: src/admin/components/Header.tsx:24
-#: src/builders/mount.tsx:170
-#: src/builders/mount.tsx:56
-#: src/editor/index.tsx:338
-#: src/editor/index.tsx:346
+#: src/builders/mount.tsx:167
+#: src/builders/mount.tsx:287
+#: src/editor/index.tsx:344
+#: src/editor/index.tsx:352
 #: rankmyseo.php:3
 #: rankmyseo.php:9
 #: includes/Admin/AdminMenu.php:153
 #: includes/Admin/AdminMenu.php:154
-#: includes/Modules/Meta/ClassicMetabox.php:80
+#: includes/Modules/Meta/ClassicMetabox.php:81
 #: includes/Modules/Schema/ContentBlocks.php:49
 msgid "RankMySEO"
 msgstr ""
@@ -250,107 +250,107 @@ msgstr ""
 msgid "Ask AI"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:121
-#: src/admin/components/InlineActionCardSlot.tsx:59
+#: src/admin/components/InlineActionCard.tsx:123
+#: src/admin/components/InlineActionCardSlot.tsx:66
 msgid "(empty)"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:141
+#: src/admin/components/InlineActionCard.tsx:143
 msgid "Edit the suggestion"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:161
+#: src/admin/components/InlineActionCard.tsx:163
 msgid "Confirm apply"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:162
-#: src/admin/components/InlineActionCardSlot.tsx:86
+#: src/admin/components/InlineActionCard.tsx:164
+#: src/admin/components/InlineActionCardSlot.tsx:93
 msgid "Approve & Apply"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:176
-#: src/admin/components/InlineActionCardSlot.tsx:93
+#: src/admin/components/InlineActionCard.tsx:178
+#: src/admin/components/InlineActionCardSlot.tsx:100
 msgid "Reject"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:186
+#: src/admin/components/InlineActionCard.tsx:188
 msgid "Undo / Rollback"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:191
-#: src/admin/components/InlineActionCardSlot.tsx:100
+#: src/admin/components/InlineActionCard.tsx:193
+#: src/admin/components/InlineActionCardSlot.tsx:107
 #: src/admin/views/AiQueueView.tsx:160
 msgid "Applied"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:196
-#: src/admin/components/InlineActionCardSlot.tsx:113
+#: src/admin/components/InlineActionCard.tsx:198
+#: src/admin/components/InlineActionCardSlot.tsx:120
 #: src/admin/views/AiQueueView.tsx:163
 msgid "Rejected"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:201
-#: src/admin/components/InlineActionCardSlot.tsx:118
+#: src/admin/components/InlineActionCard.tsx:203
+#: src/admin/components/InlineActionCardSlot.tsx:125
 #: src/admin/views/AiQueueView.tsx:166
 msgid "Rolled back"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:27
+#: src/admin/components/InlineActionCard.tsx:28
 msgid "Low"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:28
+#: src/admin/components/InlineActionCard.tsx:29
 msgid "Medium"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:29
+#: src/admin/components/InlineActionCard.tsx:30
 msgid "High"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:74
+#: src/admin/components/InlineActionCard.tsx:76
 #: src/admin/views/ConnectView.tsx:375
 msgid "This site"
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:84
+#: src/admin/components/InlineActionCard.tsx:86
 msgid "Review the before and after, then decide."
 msgstr ""
 
-#: src/admin/components/InlineActionCard.tsx:92
+#: src/admin/components/InlineActionCard.tsx:94
 msgid "Before and after"
 msgstr ""
 
-#: src/admin/components/InlineActionCardSlot.tsx:107
+#: src/admin/components/InlineActionCardSlot.tsx:114
 msgid "Undo"
 msgstr ""
 
-#: src/admin/components/InlineActionCardSlot.tsx:29
+#: src/admin/components/InlineActionCardSlot.tsx:30
 msgid "Low risk"
 msgstr ""
 
-#: src/admin/components/InlineActionCardSlot.tsx:30
+#: src/admin/components/InlineActionCardSlot.tsx:31
 msgid "Medium risk"
 msgstr ""
 
-#: src/admin/components/InlineActionCardSlot.tsx:31
+#: src/admin/components/InlineActionCardSlot.tsx:32
 msgid "High risk"
 msgstr ""
 
-#: src/admin/components/InlineActionCardSlot.tsx:53
+#: src/admin/components/InlineActionCardSlot.tsx:56
 #: src/admin/views/ImporterView.tsx:428
 msgid "Before"
 msgstr ""
 
-#: src/admin/components/InlineActionCardSlot.tsx:57
+#: src/admin/components/InlineActionCardSlot.tsx:61
 msgid "Removed:"
 msgstr ""
 
-#: src/admin/components/InlineActionCardSlot.tsx:64
+#: src/admin/components/InlineActionCardSlot.tsx:71
 #: src/admin/views/ImporterView.tsx:431
 msgid "After"
 msgstr ""
 
-#: src/admin/components/InlineActionCardSlot.tsx:68
+#: src/admin/components/InlineActionCardSlot.tsx:75
 msgid "Added:"
 msgstr ""
 
@@ -390,7 +390,7 @@ msgid "Missing details"
 msgstr ""
 
 #: src/admin/components/Navigation.tsx:33
-#: src/editor/components/EditorPanel.tsx:330
+#: src/editor/components/EditorPanel.tsx:337
 #: includes/Admin/AdminMenu.php:89
 msgid "Schema"
 msgstr ""
@@ -403,7 +403,7 @@ msgstr ""
 #: src/admin/components/Navigation.tsx:40
 #: src/admin/views/store/StoreView.tsx:135
 #: includes/Admin/AdminMenu.php:96
-#: includes/Modules/Schema/SchemaController.php:387
+#: includes/Modules/Schema/SchemaController.php:388
 #: includes/Modules/WooCommerce/WooCommerceModule.php:47
 msgid "Store"
 msgstr ""
@@ -1199,7 +1199,7 @@ msgstr ""
 
 #: src/admin/views/DashboardView.tsx:316
 #: includes/Modules/Chat/LocalAssistant.php:869
-#: includes/Rest/DashboardController.php:281
+#: includes/Rest/DashboardController.php:303
 msgid "Show orphan pages"
 msgstr ""
 
@@ -1392,7 +1392,7 @@ msgstr ""
 
 #: src/admin/views/DashboardView.tsx:674
 #: includes/Modules/Chat/LocalAssistant.php:834
-#: includes/Rest/DashboardController.php:200
+#: includes/Rest/DashboardController.php:222
 msgid "Find posts missing meta descriptions"
 msgstr ""
 
@@ -1430,7 +1430,7 @@ msgstr ""
 
 #: src/admin/views/DashboardView.tsx:762
 #: includes/Modules/Chat/LocalAssistant.php:854
-#: includes/Rest/DashboardController.php:260
+#: includes/Rest/DashboardController.php:282
 msgid "Show recent unresolved 404s"
 msgstr ""
 
@@ -1684,7 +1684,7 @@ msgid "Saved."
 msgstr ""
 
 #: src/admin/views/MissingMetadataView.tsx:83
-#: src/editor/components/EditorPanel.tsx:204
+#: src/editor/components/EditorPanel.tsx:211
 #: includes/Modules/Meta/QuickBulkEdit.php:173
 #: includes/Modules/Meta/QuickBulkEdit.php:205
 #: includes/Modules/Meta/TermFields.php:69
@@ -1698,7 +1698,7 @@ msgid "SEO title"
 msgstr ""
 
 #: src/admin/views/MissingMetadataView.tsx:88
-#: src/editor/components/EditorPanel.tsx:221
+#: src/editor/components/EditorPanel.tsx:228
 #: includes/Modules/Meta/QuickBulkEdit.php:175
 #: includes/Modules/Meta/QuickBulkEdit.php:211
 #: includes/Modules/Meta/TermFields.php:70
@@ -1716,7 +1716,7 @@ msgid "Main phrase"
 msgstr ""
 
 #: src/admin/views/MissingMetadataView.tsx:94
-#: src/editor/components/EditorPanel.tsx:241
+#: src/editor/components/EditorPanel.tsx:248
 #: src/shared/glossary.ts:76
 #: includes/Modules/Importer/MetaCatalog.php:79
 #: includes/Modules/Meta/QuickBulkEdit.php:177
@@ -2183,6 +2183,7 @@ msgid "Preview is not available yet."
 msgstr ""
 
 #: src/admin/views/SchemaView.tsx:57
+#: src/editor/schemaOptions.ts:13
 #: includes/Modules/Schema/SchemaController.php:361
 msgid "Blog post"
 msgstr ""
@@ -2192,6 +2193,7 @@ msgid "Schema type by content type"
 msgstr ""
 
 #: src/admin/views/SchemaView.tsx:58
+#: src/editor/schemaOptions.ts:12
 #: includes/Modules/Schema/SchemaController.php:362
 msgid "Article"
 msgstr ""
@@ -2202,23 +2204,28 @@ msgid "Content type"
 msgstr ""
 
 #: src/admin/views/SchemaView.tsx:585
+#: src/editor/components/SchemaTab.tsx:60
 msgid "Schema type"
 msgstr ""
 
 #: src/admin/views/SchemaView.tsx:59
+#: src/editor/schemaOptions.ts:15
 #: includes/Modules/Schema/SchemaController.php:364
 msgid "Web page"
 msgstr ""
 
 #: src/admin/views/SchemaView.tsx:60
 #: src/analyzer/messages.ts:37
+#: src/editor/schemaOptions.ts:27
 #: includes/Modules/Schema/SchemaController.php:370
 msgid "Product"
 msgstr ""
 
 #: src/admin/views/SchemaView.tsx:61
 #: src/editor/components/AnalyzerPanel.tsx:134
-#: includes/Modules/Schema/SchemaController.php:373
+#: src/editor/schemaOptions.ts:31
+#: src/editor/schemaOptions.ts:68
+#: includes/Modules/Schema/SchemaController.php:374
 msgid "None"
 msgstr ""
 
@@ -2231,9 +2238,10 @@ msgid "Business type"
 msgstr ""
 
 #: src/admin/views/SchemaView.tsx:647
+#: src/editor/schemaOptions.ts:28
 #: src/shared/glossary.ts:111
 #: includes/Modules/Schema/SchemaController.php:371
-#: includes/Modules/Schema/SchemaController.php:384
+#: includes/Modules/Schema/SchemaController.php:385
 msgid "Local business"
 msgstr ""
 
@@ -3525,23 +3533,23 @@ msgstr ""
 msgid "Breadcrumbs"
 msgstr ""
 
-#: src/builders/BuilderSeoApp.tsx:171
+#: src/builders/BuilderSeoApp.tsx:174
 msgid "Open a page to edit its search settings."
 msgstr ""
 
-#: src/builders/BuilderSeoApp.tsx:210
+#: src/builders/BuilderSeoApp.tsx:216
 msgid "Saving search settings…"
 msgstr ""
 
-#: src/builders/BuilderSeoApp.tsx:212
+#: src/builders/BuilderSeoApp.tsx:218
 msgid "Search settings saved."
 msgstr ""
 
-#: src/builders/BuilderSeoApp.tsx:214
+#: src/builders/BuilderSeoApp.tsx:220
 msgid "Could not save search settings. Try again."
 msgstr ""
 
-#: src/builders/mount.tsx:161
+#: src/builders/mount.tsx:278
 msgid "RankMySEO search settings"
 msgstr ""
 
@@ -3598,125 +3606,121 @@ msgstr ""
 msgid "Open approval queue"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:175
-#: src/editor/index.tsx:297
-#: src/editor/index.tsx:357
+#: src/editor/components/EditorPanel.tsx:182
+#: src/editor/index.tsx:303
+#: src/editor/index.tsx:363
 msgid "Search preview"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:181
+#: src/editor/components/EditorPanel.tsx:188
 msgid "This page is hidden from search. Switch to Advanced to change that."
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:212
+#: src/editor/components/EditorPanel.tsx:219
 msgid "Search title length"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:229
+#: src/editor/components/EditorPanel.tsx:236
 msgid "Search description length"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:242
+#: src/editor/components/EditorPanel.tsx:249
 msgid "The main phrase you want this page to be found for."
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:260
+#: src/editor/components/EditorPanel.tsx:267
 msgid "This is a cornerstone page"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:263
+#: src/editor/components/EditorPanel.tsx:270
 msgid "Cornerstone pages should be longer and link to at least 3 other pages on this site."
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:304
+#: src/editor/components/EditorPanel.tsx:311
 #: includes/Modules/Importer/MetaCatalog.php:83
 msgid "Social image"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:306
+#: src/editor/components/EditorPanel.tsx:313
 msgid "Image address"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:324
+#: src/editor/components/EditorPanel.tsx:331
 msgid "SEO details"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:328
+#: src/editor/components/EditorPanel.tsx:335
 msgid "General"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:329
+#: src/editor/components/EditorPanel.tsx:336
 msgid "Social"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:331
+#: src/editor/components/EditorPanel.tsx:338
 #: src/shared/components/ModeToggle.tsx:47
 msgid "Advanced"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:360
+#: src/editor/components/EditorPanel.tsx:367
 #: includes/Modules/Importer/MetaCatalog.php:80
 msgid "Secondary keywords"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:388
+#: src/editor/components/EditorPanel.tsx:395
 msgid "Facebook title"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:397
+#: src/editor/components/EditorPanel.tsx:404
 msgid "Facebook description"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:408
+#: src/editor/components/EditorPanel.tsx:415
 msgid "Facebook image"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:424
+#: src/editor/components/EditorPanel.tsx:431
 #: includes/Modules/Importer/MetaCatalog.php:84
 msgid "X title"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:433
+#: src/editor/components/EditorPanel.tsx:440
 #: includes/Modules/Importer/MetaCatalog.php:85
 msgid "X description"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:441
+#: src/editor/components/EditorPanel.tsx:448
 #: includes/Modules/Importer/MetaCatalog.php:86
 msgid "X image"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:453
+#: src/editor/components/EditorPanel.tsx:460
 #: includes/Modules/Importer/MetaCatalog.php:87
 msgid "X card"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:467
+#: src/editor/components/EditorPanel.tsx:474
 msgid "Large image"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:470
+#: src/editor/components/EditorPanel.tsx:477
 msgid "Small image"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:495
-msgid "Structured data for this page will appear here."
-msgstr ""
-
-#: src/editor/components/EditorPanel.tsx:507
+#: src/editor/components/EditorPanel.tsx:511
 #: src/shared/glossary.ts:41
 #: includes/Modules/Importer/MetaCatalog.php:77
 msgid "Canonical URL"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:533
+#: src/editor/components/EditorPanel.tsx:537
 #: includes/Modules/Meta/QuickBulkEdit.php:180
 #: includes/Modules/Meta/QuickBulkEdit.php:203
 #: includes/Modules/Meta/TermFields.php:73
 msgid "Hide from search"
 msgstr ""
 
-#: src/editor/components/EditorPanel.tsx:554
+#: src/editor/components/EditorPanel.tsx:558
 msgid "Do not follow links"
 msgstr ""
 
@@ -3794,6 +3798,26 @@ msgstr ""
 msgid "No incoming links"
 msgstr ""
 
+#: src/editor/components/SchemaTab.tsx:46
+msgid "Automatic. This page uses the site default for its content type."
+msgstr ""
+
+#: src/editor/components/SchemaTab.tsx:50
+msgid "This page uses a schema type chosen here."
+msgstr ""
+
+#: src/editor/components/SchemaTab.tsx:66
+msgid "Automatic"
+msgstr ""
+
+#: src/editor/components/SchemaTab.tsx:75
+msgid "Automatic follows the site default. None leaves out article, product, FAQ, and how-to markup for this page."
+msgstr ""
+
+#: src/editor/components/SchemaTab.tsx:82
+msgid "Site-wide schema defaults"
+msgstr ""
+
 #: src/editor/components/SerpPreview.tsx:29
 msgid "Untitled page"
 msgstr ""
@@ -3844,6 +3868,46 @@ msgstr ""
 
 #: src/editor/components/VariablePicker.tsx:38
 msgid "Insert"
+msgstr ""
+
+#: src/editor/schemaOptions.ts:14
+#: includes/Modules/Schema/SchemaController.php:363
+msgid "News article"
+msgstr ""
+
+#: src/editor/schemaOptions.ts:16
+#: includes/Modules/Schema/SchemaController.php:365
+msgid "About page"
+msgstr ""
+
+#: src/editor/schemaOptions.ts:17
+#: includes/Modules/Schema/SchemaController.php:366
+msgid "Contact page"
+msgstr ""
+
+#: src/editor/schemaOptions.ts:20
+#: includes/Modules/Schema/SchemaController.php:367
+msgid "Collection page"
+msgstr ""
+
+#: src/editor/schemaOptions.ts:22
+#: includes/Modules/Schema/SchemaController.php:368
+msgid "Profile page"
+msgstr ""
+
+#: src/editor/schemaOptions.ts:25
+#: includes/Modules/Schema/SchemaController.php:369
+msgid "Search results page"
+msgstr ""
+
+#: src/editor/schemaOptions.ts:29
+#: includes/Modules/Schema/SchemaController.php:372
+msgid "FAQ page"
+msgstr ""
+
+#: src/editor/schemaOptions.ts:30
+#: includes/Modules/Schema/SchemaController.php:373
+msgid "How-to"
 msgstr ""
 
 #: src/shared/components/ModeToggle.tsx:19
@@ -4236,7 +4300,7 @@ msgstr[1] ""
 msgid "Suggested for this page. Review the difference before approving it."
 msgstr ""
 
-#: includes/Modules/AiActions/PayloadSanitizer.php:175
+#: includes/Modules/AiActions/PayloadSanitizer.php:179
 msgid "FAQ structured data"
 msgstr ""
 
@@ -4600,7 +4664,7 @@ msgid "Missing SEO titles"
 msgstr ""
 
 #: includes/Modules/Chat/LocalAssistant.php:839
-#: includes/Rest/DashboardController.php:220
+#: includes/Rest/DashboardController.php:242
 msgid "Find posts missing SEO titles"
 msgstr ""
 
@@ -4609,7 +4673,7 @@ msgid "Low SEO scores"
 msgstr ""
 
 #: includes/Modules/Chat/LocalAssistant.php:844
-#: includes/Rest/DashboardController.php:301
+#: includes/Rest/DashboardController.php:323
 msgid "Show low SEO score posts"
 msgstr ""
 
@@ -4618,7 +4682,7 @@ msgid "Thin posts"
 msgstr ""
 
 #: includes/Modules/Chat/LocalAssistant.php:849
-#: includes/Rest/DashboardController.php:240
+#: includes/Rest/DashboardController.php:262
 msgid "Show thin posts"
 msgstr ""
 
@@ -4900,7 +4964,7 @@ msgstr ""
 msgid "Social description"
 msgstr ""
 
-#: includes/Modules/Meta/ClassicMetabox.php:153
+#: includes/Modules/Meta/ClassicMetabox.php:155
 msgid "JavaScript is off, so the live preview is hidden. The saved search title and description above stay attached to this page."
 msgstr ""
 
@@ -5263,88 +5327,60 @@ msgstr ""
 msgid "This JSON-LD is valid and safe to store on a page."
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:363
-msgid "News article"
-msgstr ""
-
-#: includes/Modules/Schema/SchemaController.php:365
-msgid "About page"
-msgstr ""
-
-#: includes/Modules/Schema/SchemaController.php:366
-msgid "Contact page"
-msgstr ""
-
-#: includes/Modules/Schema/SchemaController.php:367
-msgid "Collection page"
-msgstr ""
-
-#: includes/Modules/Schema/SchemaController.php:368
-msgid "Profile page"
-msgstr ""
-
-#: includes/Modules/Schema/SchemaController.php:369
-msgid "Search results page"
-msgstr ""
-
-#: includes/Modules/Schema/SchemaController.php:372
-msgid "FAQ page"
-msgstr ""
-
-#: includes/Modules/Schema/SchemaController.php:385
+#: includes/Modules/Schema/SchemaController.php:386
 msgid "Dentist"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:386
+#: includes/Modules/Schema/SchemaController.php:387
 msgid "Restaurant"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:388
+#: includes/Modules/Schema/SchemaController.php:389
 msgid "Medical business"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:389
+#: includes/Modules/Schema/SchemaController.php:390
 msgid "Legal service"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:390
+#: includes/Modules/Schema/SchemaController.php:391
 msgid "Professional service"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:391
+#: includes/Modules/Schema/SchemaController.php:392
 msgid "Health and beauty"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:392
+#: includes/Modules/Schema/SchemaController.php:393
 msgid "Home and construction"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:393
+#: includes/Modules/Schema/SchemaController.php:394
 msgid "Automotive business"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:394
+#: includes/Modules/Schema/SchemaController.php:395
 msgid "Food establishment"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaController.php:395
+#: includes/Modules/Schema/SchemaController.php:396
 msgid "Lodging"
 msgstr ""
 
-#: includes/Modules/Schema/SchemaMeta.php:202
+#: includes/Modules/Schema/SchemaMeta.php:233
 msgid "Custom JSON-LD is too large (maximum 50,000 characters)."
 msgstr ""
 
-#: includes/Modules/Schema/SchemaMeta.php:209
-#: includes/Modules/Schema/SchemaMeta.php:215
+#: includes/Modules/Schema/SchemaMeta.php:240
+#: includes/Modules/Schema/SchemaMeta.php:246
 msgid "Custom JSON-LD must be a JSON object or array."
 msgstr ""
 
-#: includes/Modules/Schema/SchemaMeta.php:223
+#: includes/Modules/Schema/SchemaMeta.php:254
 msgid "Custom JSON-LD did not contain any usable fields."
 msgstr ""
 
-#: includes/Modules/Schema/SchemaMeta.php:231
+#: includes/Modules/Schema/SchemaMeta.php:262
 msgid "Custom JSON-LD could not be encoded."
 msgstr ""
 
@@ -5518,108 +5554,108 @@ msgstr ""
 msgid "Type a question to check your site."
 msgstr ""
 
-#: includes/Rest/DashboardController.php:166
+#: includes/Rest/DashboardController.php:188
 msgid "Finish guided setup"
 msgstr ""
 
-#: includes/Rest/DashboardController.php:167
+#: includes/Rest/DashboardController.php:189
 msgid "Save your site name, brand, and which SEO tools stay on. It takes a minute and stays on this site."
 msgstr ""
 
-#: includes/Rest/DashboardController.php:169
+#: includes/Rest/DashboardController.php:191
 msgid "What should I fix first?"
 msgstr ""
 
-#: includes/Rest/DashboardController.php:177
+#: includes/Rest/DashboardController.php:199
 msgid "Allow search engines to index this site"
 msgstr ""
 
-#: includes/Rest/DashboardController.php:178
+#: includes/Rest/DashboardController.php:200
 msgid "WordPress is set to discourage search engines. Uncheck that under Settings → Reading when the site is ready."
 msgstr ""
 
-#: includes/Rest/DashboardController.php:180
-#: includes/Rest/DashboardController.php:312
+#: includes/Rest/DashboardController.php:202
+#: includes/Rest/DashboardController.php:334
 msgid "How is my site SEO?"
 msgstr ""
 
 #. translators: %d: number of published posts or pages.
-#: includes/Rest/DashboardController.php:190
+#: includes/Rest/DashboardController.php:212
 #, php-format
 msgid "%d published item is missing a search description"
 msgid_plural "%d published items are missing a search description"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/Rest/DashboardController.php:198
+#: includes/Rest/DashboardController.php:220
 msgid "A short description under the title helps searchers decide to click."
 msgstr ""
 
 #. translators: %d: number of published posts or pages.
-#: includes/Rest/DashboardController.php:210
+#: includes/Rest/DashboardController.php:232
 #, php-format
 msgid "%d published item is missing an SEO title"
 msgid_plural "%d published items are missing an SEO title"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/Rest/DashboardController.php:218
+#: includes/Rest/DashboardController.php:240
 msgid "A custom SEO title can lead with the topic instead of repeating only the page name."
 msgstr ""
 
 #. translators: %d: number of thin published posts or pages.
-#: includes/Rest/DashboardController.php:230
+#: includes/Rest/DashboardController.php:252
 #, php-format
 msgid "%d published item looks thin"
 msgid_plural "%d published items look thin"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/Rest/DashboardController.php:238
+#: includes/Rest/DashboardController.php:260
 msgid "Pages with very little text give searchers less to land on. Add a section that answers their question."
 msgstr ""
 
 #. translators: %d: number of unresolved broken links.
-#: includes/Rest/DashboardController.php:250
+#: includes/Rest/DashboardController.php:272
 #, php-format
 msgid "%d broken link needs a redirect"
 msgid_plural "%d broken links need a redirect"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/Rest/DashboardController.php:258
+#: includes/Rest/DashboardController.php:280
 msgid "Visitors hitting these addresses get a missing page. Send them to a live page instead."
 msgstr ""
 
 #. translators: %d: number of published posts or pages with no incoming links.
-#: includes/Rest/DashboardController.php:271
+#: includes/Rest/DashboardController.php:293
 #, php-format
 msgid "%d published page has no incoming links"
 msgid_plural "%d published pages have no incoming links"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/Rest/DashboardController.php:279
+#: includes/Rest/DashboardController.php:301
 msgid "Other pages on this site do not link to these. A link from a related page helps visitors find them."
 msgstr ""
 
 #. translators: %d: number of low-scoring published items.
-#: includes/Rest/DashboardController.php:291
+#: includes/Rest/DashboardController.php:313
 #, php-format
 msgid "%d published item has a low SEO score"
 msgid_plural "%d published items have a low SEO score"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/Rest/DashboardController.php:299
+#: includes/Rest/DashboardController.php:321
 msgid "Scores under 60 usually mean the title, description, or content still needs a pass."
 msgstr ""
 
-#: includes/Rest/DashboardController.php:309
+#: includes/Rest/DashboardController.php:331
 msgid "No urgent on-page gaps"
 msgstr ""
 
-#: includes/Rest/DashboardController.php:310
+#: includes/Rest/DashboardController.php:332
 msgid "Local checks did not find missing descriptions, thin pages, or open broken links."
 msgstr ""
 
@@ -5631,25 +5667,25 @@ msgstr ""
 msgid "The import could not continue."
 msgstr ""
 
-#: includes/Rest/MetaController.php:239
-#: includes/Rest/MetaController.php:262
+#: includes/Rest/MetaController.php:240
+#: includes/Rest/MetaController.php:263
 msgid "That page could not be found."
 msgstr ""
 
-#: includes/Rest/MetaController.php:290
-#: includes/Rest/MetaController.php:313
+#: includes/Rest/MetaController.php:292
+#: includes/Rest/MetaController.php:315
 msgid "That archive could not be found."
 msgstr ""
 
-#: includes/Rest/MetaController.php:347
+#: includes/Rest/MetaController.php:349
 msgid "You do not have permission to edit SEO fields for this page."
 msgstr ""
 
-#: includes/Rest/MetaController.php:372
+#: includes/Rest/MetaController.php:374
 msgid "You do not have permission to edit SEO fields for this archive."
 msgstr ""
 
-#: includes/Rest/MetaController.php:398
+#: includes/Rest/MetaController.php:400
 msgid "The security check for this SEO save failed. Reload the editor and try again."
 msgstr ""
 
