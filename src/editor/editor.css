@@ -384,3 +384,56 @@
 	flex-wrap: wrap;
 	gap: 8px;
 }
+
+.rms-cloud-insight {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 8px 0 0;
+	color: var(--rms-ink);
+}
+
+.rms-cloud-insight-rank,
+.rms-cloud-insight-action,
+.rms-cloud-insight-links {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+}
+
+.rms-position-badge,
+.rms-verdict {
+	display: inline-flex;
+	align-items: center;
+	border-radius: var(--rms-radius-pill);
+	padding: 2px 8px;
+	background: var(--rms-accent-soft);
+	color: var(--rms-ink);
+	font-size: 12px;
+	font-weight: 700;
+}
+
+.rms-position-badge.is-outside,
+.rms-verdict.is-rewrite,
+.rms-verdict.is-merge {
+	background: var(--rms-signal-warn-bg);
+	color: var(--rms-ink);
+}
+
+.rms-position-delta {
+	color: var(--rms-ink-muted);
+	font-size: 12px;
+}
+
+.rms-cloud-insight-links a,
+.rms-link-button {
+	border: 0;
+	background: transparent;
+	color: var(--rms-ink);
+	font: inherit;
+	text-decoration: underline;
+	cursor: pointer;
+	padding: 0;
+}

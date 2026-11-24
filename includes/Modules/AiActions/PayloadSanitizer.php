@@ -23,10 +23,12 @@ final class PayloadSanitizer {
 	public const META_FOCUS       = '_rankmyseo_focus_keyword';
 	public const META_SCHEMA_TYPE = '_rankmyseo_schema_type';
 	public const META_SCHEMA_DATA = '_rankmyseo_schema_data';
+	public const META_IMAGE_ALT   = '_wp_attachment_image_alt';
 
 	public const TITLE_MAX       = 255;
 	public const DESCRIPTION_MAX = 500;
 	public const KEYWORD_MAX     = 200;
+	public const ALT_MAX         = 300;
 
 	/**
 	 * Plain text with shortcodes and markup removed.
@@ -162,6 +164,8 @@ final class PayloadSanitizer {
 				'canonical',
 				'schemaType',
 				'schema_type',
+				'imageAlt',
+				'alt',
 			)
 		);
 		if ( '' !== $text ) {

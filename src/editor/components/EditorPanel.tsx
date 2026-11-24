@@ -18,9 +18,11 @@ import {
 	TITLE_MIN_CHARS,
 } from '../metrics';
 import { replaceTemplate, type TemplateVars } from '../template';
+import type { EditorInsight } from '../insights';
 import { AnalyzerPanel, type CannibalizationMatch } from './AnalyzerPanel';
 import { linkHtml, LinkSuggestions } from './LinkSuggestions';
 import { AskAiButton } from './AskAiButton';
+import { CloudInsights } from './CloudInsights';
 import { LengthMeter } from './LengthMeter';
 import { SerpPreview } from './SerpPreview';
 import { SocialPreview } from './SocialPreview';
@@ -48,6 +50,7 @@ export interface EditorPanelProps {
 	cannibalizationMatches?: CannibalizationMatch[];
 	onAnalysis?: ( result: AnalysisResult, signature: string ) => void;
 	onInsertLink?: ( html: string ) => void;
+	insight?: EditorInsight | null;
 }
 
 function slugFromPermalink( permalink: string ): string {
@@ -89,6 +92,7 @@ export function EditorPanel( {
 	cannibalizationMatches,
 	onAnalysis,
 	onInsertLink,
+	insight = null,
 }: EditorPanelProps ): JSX.Element {
 	const [ tab, setTab ] = useState< AdvancedTab >( 'general' );
 	const fieldId = useId();
@@ -264,6 +268,12 @@ export function EditorPanel( {
 					mode={ mode }
 					matches={ matches }
 					onAnalysis={ onAnalysis }
+					aside={
+						<CloudInsights
+							insight={ insight }
+							onAskAi={ onAskAi }
+						/>
+					}
 				/>
 			</div>
 

@@ -59,7 +59,8 @@ final class MetaModule extends AbstractModule {
 		$guard->register();
 		( new Frontend( $titles, $store, new DocumentBuilder(), $guard, new QueryReader() ) )->register();
 		( new ClassicMetabox( $store, $this->settings(), $titles ) )->register();
-		( new QuickBulkEdit( $store ) )->register();
+		$query = new MissingMetadataQuery( $store );
+		( new QuickBulkEdit( $store, new TemplateFill( $titles, new TemplateEngine(), $query ) ) )->register();
 		( new TermFields( $store ) )->register();
 		( new EditorAssets( $this->settings(), $titles, $store ) )->register();
 		( new PageBuilderBridge(

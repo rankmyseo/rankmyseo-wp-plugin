@@ -145,7 +145,7 @@ final class ActionExecutor {
 			}
 		}
 
-		$snapshot_doc = $this->capture( $action, $post_id );
+		$snapshot_doc = $this->capture( $action, $post_id, $after );
 		$snapshot_id  = $this->snapshots->insert( $id, $snapshot_doc, $post_id > 0 ? $post_id : null );
 		if ( $snapshot_id <= 0 ) {
 			return $this->fail_result( __( 'The previous version could not be saved, so nothing was changed.', 'rankmyseo' ), 500 );
@@ -288,9 +288,10 @@ final class ActionExecutor {
 	 *
 	 * @param array<string, mixed> $action  Hydrated action.
 	 * @param int                  $post_id Post ID.
+	 * @param array<string, mixed> $after   Proposed payload, including edits.
 	 * @return array<string, mixed>
 	 */
-	private function capture( array $action, int $post_id ): array {
+	private function capture( array $action, int $post_id, array $after ): array {
 		$type = ActionCatalog::canonical( (string) $action['action_type'] );
 		$doc  = array(
 			'object_type' => ActionCatalog::ADD_REDIRECT === $type ? 'redirect' : 'post',
@@ -310,8 +311,19 @@ final class ActionExecutor {
 				'post_status'  => (string) $post->post_status,
 			);
 		}
-		foreach ( $this->meta_keys_for( (string) $action['action_type'], is_array( $action['after'] ) ? $action['after'] : array() ) as $key ) {
+		foreach ( $this->meta_keys_for( (string) $action['action_type'], $after ) as $key ) {
 			$doc['meta'][ $key ] = metadata_exists( 'post', $post_id, $key ) ? get_post_meta( $post_id, $key, true ) : null;
+		}
+		if ( ActionCatalog::IMAGE_ALT === $type ) {
+			$target = $this->image_target( $post_id, $after );
+			$value  = null;
+			if ( $target > 0 && metadata_exists( 'post', $target, PayloadSanitizer::META_IMAGE_ALT ) ) {
+				$value = get_post_meta( $target, PayloadSanitizer::META_IMAGE_ALT, true );
+			}
+			$doc['image_alt'] = array(
+				'post_id' => $target,
+				'value'   => $value,
+			);
 		}
 		return $doc;
 	}
@@ -348,10 +360,69 @@ final class ActionExecutor {
 				'message' => __( 'That page is not on this site.', 'rankmyseo' ),
 			);
 		}
+		if ( ActionCatalog::IMAGE_ALT === $canonical ) {
+			return $this->write_image_alt( $post_id, $after );
+		}
 		if ( ActionCatalog::CONTENT_PATCH === $canonical || ActionCatalog::ADD_INTERNAL_LINK === $canonical ) {
 			return $this->patch_content( $post_id, $canonical, $after );
 		}
 		return $this->write_meta( $post_id, $type, $after );
+	}
+
+	/**
+	 * Write one image description onto an attachment.
+	 *
+	 * @param int                  $post_id Post or attachment ID.
+	 * @param array<string, mixed> $after   Proposed payload.
+	 * @return array<string, mixed>
+	 */
+	private function write_image_alt( int $post_id, array $after ): array {
+		$target = $this->image_target( $post_id, $after );
+		if ( $target <= 0 || ! is_object( get_post( $target ) ) ) {
+			return array(
+				'ok'      => false,
+				'message' => __( 'That image is not on this site.', 'rankmyseo' ),
+			);
+		}
+		if ( get_current_user_id() > 0 && ! current_user_can( 'edit_post', $target ) ) {
+			return array(
+				'ok'      => false,
+				'message' => __( 'You cannot edit that image.', 'rankmyseo' ),
+			);
+		}
+		$alt = PayloadSanitizer::plain(
+			PayloadSanitizer::text_field( $after, array( 'imageAlt', 'alt', 'suggested' ) ),
+			PayloadSanitizer::ALT_MAX
+		);
+		if ( '' === $alt ) {
+			return array(
+				'ok'      => false,
+				'message' => __( 'That suggestion did not include a value to save.', 'rankmyseo' ),
+			);
+		}
+		update_post_meta( $target, PayloadSanitizer::META_IMAGE_ALT, $alt );
+		return array( 'ok' => true );
+	}
+
+	/**
+	 * Attachment that should receive an image description.
+	 *
+	 * @param int                  $post_id Post ID.
+	 * @param array<string, mixed> $after   Proposed payload.
+	 * @return int
+	 */
+	private function image_target( int $post_id, array $after ): int {
+		foreach ( array( 'attachmentId', 'attachment_id' ) as $key ) {
+			if ( isset( $after[ $key ] ) && is_numeric( $after[ $key ] ) && (int) $after[ $key ] > 0 ) {
+				return (int) $after[ $key ];
+			}
+		}
+		$post = get_post( $post_id );
+		if ( is_object( $post ) && 'attachment' === (string) $post->post_type ) {
+			return $post_id;
+		}
+		$thumb = (int) get_post_meta( $post_id, '_thumbnail_id', true );
+		return $thumb > 0 ? $thumb : 0;
 	}
 
 	/**
@@ -604,6 +675,21 @@ final class ActionExecutor {
 			}
 		}
 
+		if ( isset( $document['image_alt'] ) && is_array( $document['image_alt'] ) ) {
+			$alt_id = isset( $document['image_alt']['post_id'] ) ? (int) $document['image_alt']['post_id'] : 0;
+			if ( $alt_id > 0 ) {
+				if ( ! array_key_exists( 'value', $document['image_alt'] ) || null === $document['image_alt']['value'] ) {
+					delete_post_meta( $alt_id, PayloadSanitizer::META_IMAGE_ALT );
+				} else {
+					update_post_meta(
+						$alt_id,
+						PayloadSanitizer::META_IMAGE_ALT,
+						PayloadSanitizer::plain( (string) $document['image_alt']['value'], PayloadSanitizer::ALT_MAX )
+					);
+				}
+			}
+		}
+
 		$post_id = 0;
 		if ( isset( $document['post'] ) && is_array( $document['post'] ) ) {
 			$post_fields = $document['post'];
@@ -685,6 +771,19 @@ final class ActionExecutor {
 			$body['errorMessage'] = substr( $error, 0, 500 );
 		}
 		$this->client->ack_action( $cloud_id, $body );
+	}
+
+	/**
+	 * SHA-256 of the fields a suggestion might have been based on.
+	 *
+	 * Public so a locally queued suggestion can store the same hash the
+	 * apply step checks, without writing the page.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return string
+	 */
+	public function base_hash( int $post_id ): string {
+		return $this->current_hash( $post_id );
 	}
 
 	/**

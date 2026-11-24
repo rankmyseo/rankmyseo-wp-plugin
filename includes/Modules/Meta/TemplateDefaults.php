@@ -95,6 +95,11 @@ final class TemplateDefaults {
 				'label'       => __( 'Post type plural', 'rankmyseo' ),
 				'description' => __( 'The plural label of the post type.', 'rankmyseo' ),
 			],
+			[
+				'token'       => '%filename%',
+				'label'       => __( 'File name', 'rankmyseo' ),
+				'description' => __( 'The image file name, without the extension.', 'rankmyseo' ),
+			],
 		];
 	}
 
@@ -169,6 +174,7 @@ final class TemplateDefaults {
 				'default_image' => '',
 				'twitter_card'  => 'summary_large_image',
 			],
+			'image_alt'         => '%title%',
 			'force_head_output' => false,
 		];
 	}

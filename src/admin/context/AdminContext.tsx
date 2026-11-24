@@ -84,6 +84,7 @@ const DEFAULT_BOOTSTRAP: BootstrapConfig = {
 const PAGE_TO_SLUG: Record< NavPageId, string > = {
 	dashboard: 'rankmyseo',
 	meta: 'rankmyseo-meta',
+	missing: 'rankmyseo-missing',
 	schema: 'rankmyseo-schema',
 	sitemaps: 'rankmyseo-sitemaps',
 	redirects: 'rankmyseo-redirects',

@@ -5,6 +5,7 @@ export type SiteType = 'organization' | 'person';
 export type NavPageId =
 	| 'dashboard'
 	| 'meta'
+	| 'missing'
 	| 'schema'
 	| 'sitemaps'
 	| 'redirects'

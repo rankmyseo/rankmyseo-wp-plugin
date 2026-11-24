@@ -188,10 +188,53 @@ final class TitleSettings {
 				'default_image' => MetaSanitizer::sanitize_image( $social_in['default_image'] ?? '' ),
 				'twitter_card'  => MetaSanitizer::sanitize_twitter_card( $social_in['twitter_card'] ?? 'summary_large_image' ),
 			],
+			'image_alt'         => $this->image_alt_value( $input['image_alt'] ?? ( $defaults['image_alt'] ?? '%title%' ) ),
 			'force_head_output' => $this->to_bool( $input['force_head_output'] ?? $defaults['force_head_output'] ),
 		];
 
 		return $document;
+	}
+
+	/**
+	 * Site-wide image description pattern.
+	 *
+	 * @return string
+	 */
+	public function image_alt_pattern(): string {
+		$all     = $this->all();
+		$pattern = isset( $all['image_alt'] ) ? (string) $all['image_alt'] : '%title%';
+		return '' !== $pattern ? $pattern : '%title%';
+	}
+
+	/**
+	 * Title and description patterns for one post type.
+	 *
+	 * @param string $post_type Post type name.
+	 * @return array{title: string, description: string}
+	 */
+	public function patterns_for( string $post_type ): array {
+		$all   = $this->all();
+		$types = isset( $all['post_types'] ) && is_array( $all['post_types'] ) ? $all['post_types'] : [];
+		$row   = isset( $types[ $post_type ] ) && is_array( $types[ $post_type ] ) ? $types[ $post_type ] : TemplateDefaults::post_type_template();
+
+		return [
+			'title'       => (string) ( $row['title'] ?? '%title% %sep% %sitename%' ),
+			'description' => (string) ( $row['description'] ?? '%excerpt%' ),
+		];
+	}
+
+	/**
+	 * Keep an image description pattern as a single plain line.
+	 *
+	 * @param mixed $value Raw pattern.
+	 * @return string
+	 */
+	private function image_alt_value( $value ): string {
+		if ( ! is_string( $value ) || '' === trim( $value ) ) {
+			return '%title%';
+		}
+
+		return MetaSanitizer::sanitize_title( $value );
 	}
 
 	/**

@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useEffect, useMemo, useState } from '@wordpress/element';
+import type { ReactNode } from 'react';
 import {
 	analyze,
 	categoryLabel,
@@ -63,12 +64,14 @@ export function AnalyzerPanel( {
 	debounceMs = 300,
 	matches = [],
 	onAnalysis,
+	aside = null,
 }: {
 	input: AnalyzerInput;
 	mode: 'simple' | 'advanced';
 	debounceMs?: number;
 	matches?: CannibalizationMatch[];
 	onAnalysis?: ( result: AnalysisResult, signature: string ) => void;
+	aside?: ReactNode;
 } ): JSX.Element {
 	const signature = JSON.stringify( input );
 	const debouncedSignature = useDebouncedValue( signature, debounceMs );
@@ -108,6 +111,7 @@ export function AnalyzerPanel( {
 					</p>
 				</div>
 			</div>
+			{ aside }
 			<p className="rms-sr-only" aria-live="polite">
 				{ live }
 			</p>

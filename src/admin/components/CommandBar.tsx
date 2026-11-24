@@ -13,6 +13,7 @@ interface CommandItem {
 const PAGE_COMMANDS: Array< { id: NavPageId; label: string } > = [
 	{ id: 'dashboard', label: __( 'Go to Dashboard', 'rankmyseo' ) },
 	{ id: 'meta', label: __( 'Go to Search Previews', 'rankmyseo' ) },
+	{ id: 'missing', label: __( 'Go to Missing details', 'rankmyseo' ) },
 	{ id: 'schema', label: __( 'Go to Schema', 'rankmyseo' ) },
 	{ id: 'sitemaps', label: __( 'Go to Sitemaps', 'rankmyseo' ) },
 	{ id: 'redirects', label: __( 'Go to Redirects', 'rankmyseo' ) },

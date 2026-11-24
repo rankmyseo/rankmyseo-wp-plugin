@@ -24,6 +24,7 @@ import { useAdmin } from '../context/AdminContext';
 const POLICY_TYPES = [
 	'update_title',
 	'update_meta_description',
+	'image_alt',
 	'update_canonical',
 	'update_schema',
 	'add_redirect',
