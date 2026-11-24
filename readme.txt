@@ -23,7 +23,8 @@ RankMySEO helps WordPress beginners and experienced SEO professionals optimize a
 
 * SEO titles, meta descriptions, canonical URLs, robots directives, and Open Graph / social previews in the block editor, the classic editor, quick edit, Elementor, and Divi. The Elementor and Divi panels load only while those editors are open.
 * A local on-page SEO score from 0 to 100, including a warning when another page targets the same keyword.
-* Schema.org JSON-LD in one `@graph`, including site identity, articles, breadcrumbs, and WooCommerce products when WooCommerce is active. Elementor can also place a visible RankMySEO breadcrumbs widget.
+* Schema.org JSON-LD in one `@graph`, including site identity, articles, breadcrumbs, and WooCommerce products (variation offers, return policy, and shipping details when WooCommerce is active). Elementor can also place a visible RankMySEO breadcrumbs widget.
+* Optional catalog URL controls for WooCommerce: cleaner shop links, shorter product and category addresses, and sold-out products left out of search.
 * XML sitemaps, a robots.txt editor, an optional llms.txt guide, and optional IndexNow pings.
 * A visible breadcrumb block, shortcode, and template tag that use the same trail as the breadcrumb structured data and the Elementor breadcrumbs widget.
 * A visible FAQ block whose questions and answers are included in the page structured data.
@@ -126,6 +127,7 @@ This plugin works entirely on your site until an administrator turns on an optio
 * Elementor breadcrumbs widget, using the same trail as the schema breadcrumb list.
 * On-page SEO score and a same-keyword warning.
 * Schema.org JSON-LD `@graph`.
+* WooCommerce store tools: product identifiers, variation offers, return and shipping details, catalog URL rules, and product share tags. Nothing is sent off the site.
 * XML sitemaps, robots.txt controls, an optional llms.txt guide, and optional IndexNow.
 * Visible breadcrumbs (block, shortcode, and template tag) and a visible FAQ block that fills FAQ structured data.
 * Redirects, slug-change protection, and a 404 log.

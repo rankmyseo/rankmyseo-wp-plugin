@@ -181,6 +181,7 @@ function settingsFixture(): {
 			importer: true,
 			cloud: false,
 			ai_queue: false,
+			woocommerce: true,
 		},
 	};
 

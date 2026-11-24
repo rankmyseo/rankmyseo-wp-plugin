@@ -273,4 +273,57 @@ describe( 'on-page analyzer', () => {
 			linked.checks.find( ( check ) => check.id === 'internal_links' )
 		).toMatchObject( { score: 3, status: 'pass' } );
 	} );
+
+	it( 'adds product checks for sku, short description, and gallery alt text', () => {
+		const missing = analyze( {
+			focusKeyword: '',
+			seoTitle: 'Hat',
+			metaDescription: '',
+			slug: 'hat',
+			postType: 'product',
+			contentHtml: '<p>Hat</p>',
+			product: {
+				sku: '',
+				gtin: '',
+				shortDescription: '',
+				galleryAlts: [ '', 'Side view' ],
+			},
+		} );
+		expect(
+			missing.checks.find(
+				( check ) => check.id === 'product_identifier'
+			)?.status
+		).toBe( 'critical' );
+		expect(
+			missing.checks.find(
+				( check ) => check.id === 'product_short_description'
+			)?.status
+		).toBe( 'critical' );
+		expect(
+			missing.checks.find(
+				( check ) => check.id === 'product_gallery_alt'
+			)?.status
+		).toBe( 'improve' );
+		expect(
+			missing.checks.some( ( check ) => check.category === 'product' )
+		).toBe( true );
+		expect( missing.score ).toBeLessThanOrEqual( 100 );
+
+		const ready = analyze( {
+			...strongInput(),
+			postType: 'product',
+			product: {
+				sku: 'HAT-1',
+				gtin: '',
+				shortDescription:
+					'A wool hat for cold mornings, with a folded brim and a soft lining.',
+				galleryAlts: [ 'Red wool hat', 'Hat brim' ],
+			},
+		} );
+		expect(
+			ready.checks
+				.filter( ( check ) => check.category === 'product' )
+				.every( ( check ) => check.status === 'pass' )
+		).toBe( true );
+	} );
 } );

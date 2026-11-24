@@ -50,6 +50,7 @@ use RankMySEO\Modules\Sitemaps\SitemapSettings;
 use RankMySEO\Modules\Sitemaps\SitemapsModule;
 use RankMySEO\Modules\Sitemaps\WordPressSitemapSource;
 use RankMySEO\Modules\Sitemaps\WpIndexNowTransport;
+use RankMySEO\Modules\WooCommerce\WooCommerceModule;
 use RankMySEO\Rest\AiActionsController;
 use RankMySEO\Rest\ChatController;
 use RankMySEO\Rest\CloudController;
@@ -582,6 +583,7 @@ final class Plugin {
 			new ImporterModule( $this->container ),
 			new CloudModule( $this->container ),
 			new AiQueueModule( $this->container ),
+			new WooCommerceModule( $this->container ),
 		];
 
 		/**
@@ -595,6 +597,9 @@ final class Plugin {
 		foreach ( $modules as $module ) {
 			$manager->add( $module );
 			if ( $module instanceof SchemaModule ) {
+				$module->register_integrations();
+			}
+			if ( $module instanceof WooCommerceModule ) {
 				$module->register_integrations();
 			}
 		}

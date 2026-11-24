@@ -12,6 +12,7 @@ import { DashboardView } from './views/DashboardView';
 import { ImporterView } from './views/ImporterView';
 import { RedirectsView } from './views/redirects/RedirectsView';
 import { SchemaView } from './views/SchemaView';
+import { StoreView } from './views/store/StoreView';
 import { SettingsView } from './views/SettingsView';
 import { SitemapsView } from './views/SitemapsView';
 import { MissingMetadataView } from './views/MissingMetadataView';
@@ -40,6 +41,9 @@ function AdminShell(): JSX.Element {
 		}
 		if ( activePage === 'schema' ) {
 			return <SchemaView />;
+		}
+		if ( activePage === 'store' ) {
+			return <StoreView />;
 		}
 		if ( activePage === 'redirects' ) {
 			return <RedirectsView />;

@@ -90,6 +90,13 @@ final class AdminMenu {
 				'capability' => Capabilities::CAP_MANAGE,
 			],
 			[
+				'slug'       => 'rankmyseo-store',
+				'page_id'    => 'store',
+				'title'      => __( 'Store — RankMySEO', 'rankmyseo' ),
+				'menu_title' => __( 'Store', 'rankmyseo' ),
+				'capability' => Capabilities::CAP_MANAGE,
+			],
+			[
 				'slug'       => 'rankmyseo-sitemaps',
 				'page_id'    => 'sitemaps',
 				'title'      => __( 'Sitemaps — RankMySEO', 'rankmyseo' ),

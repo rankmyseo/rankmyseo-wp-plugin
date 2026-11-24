@@ -86,6 +86,7 @@ const PAGE_TO_SLUG: Record< NavPageId, string > = {
 	meta: 'rankmyseo-meta',
 	missing: 'rankmyseo-missing',
 	schema: 'rankmyseo-schema',
+	store: 'rankmyseo-store',
 	sitemaps: 'rankmyseo-sitemaps',
 	redirects: 'rankmyseo-redirects',
 	import: 'rankmyseo-import',

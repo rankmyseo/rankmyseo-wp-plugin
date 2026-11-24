@@ -15,6 +15,7 @@ const PAGE_COMMANDS: Array< { id: NavPageId; label: string } > = [
 	{ id: 'meta', label: __( 'Go to Search Previews', 'rankmyseo' ) },
 	{ id: 'missing', label: __( 'Go to Missing details', 'rankmyseo' ) },
 	{ id: 'schema', label: __( 'Go to Schema', 'rankmyseo' ) },
+	{ id: 'store', label: __( 'Go to Store', 'rankmyseo' ) },
 	{ id: 'sitemaps', label: __( 'Go to Sitemaps', 'rankmyseo' ) },
 	{ id: 'redirects', label: __( 'Go to Redirects', 'rankmyseo' ) },
 	{ id: 'import', label: __( 'Go to Import', 'rankmyseo' ) },

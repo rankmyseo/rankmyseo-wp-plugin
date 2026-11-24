@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace RankMySEO\Modules\Schema;
 
+use RankMySEO\Modules\WooCommerce\OfferPolicy;
 use WP_Comment;
 
 /**
@@ -30,14 +31,32 @@ final class WooProductReader {
 	private $loader;
 
 	/**
+	 * Return and shipping policy builder. Null leaves existing snapshots unchanged.
+	 *
+	 * @var OfferPolicy|null
+	 */
+	private ?OfferPolicy $policies;
+
+	/**
+	 * Whether a variable product should list one offer per option.
+	 *
+	 * @var bool
+	 */
+	private bool $variation_offers;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param string        $currency Fallback currency when WooCommerce has none.
-	 * @param callable|null $loader   Optional loader `(int $post_id): ?object`.
+	 * @param string           $currency         Fallback currency when WooCommerce has none.
+	 * @param callable|null    $loader           Optional loader `(int $post_id): ?object`.
+	 * @param OfferPolicy|null $policies         Optional return and shipping policies.
+	 * @param bool             $variation_offers Whether to emit one offer per variation.
 	 */
-	public function __construct( string $currency = 'USD', ?callable $loader = null ) {
-		$this->currency = $currency;
-		$this->loader   = $loader;
+	public function __construct( string $currency = 'USD', ?callable $loader = null, ?OfferPolicy $policies = null, bool $variation_offers = false ) {
+		$this->currency         = $currency;
+		$this->loader           = $loader;
+		$this->policies         = $policies;
+		$this->variation_offers = $variation_offers;
 	}
 
 	/**
@@ -79,17 +98,194 @@ final class WooProductReader {
 			'offer_count'  => 0,
 		];
 
+		if ( 'variable' === $this->call_string( $product, 'get_type' ) && $this->variation_offers ) {
+			$children = $this->variation_offers( $product, (string) $snapshot['availability'] );
+			if ( count( $children ) > 1 ) {
+				$prices                   = $this->offer_prices( $children );
+				$snapshot['low_price']    = (string) min( $prices );
+				$snapshot['high_price']   = (string) max( $prices );
+				$snapshot['offer_count']  = count( $children );
+				$snapshot['variations']   = $children;
+				$snapshot['availability'] = $this->summarize_availability( $children, (string) $snapshot['availability'] );
+				return $this->with_policies( $snapshot, $product );
+			}
+			if ( 1 === count( $children ) ) {
+				$snapshot['price']        = (string) $children[0]['price'];
+				$snapshot['availability'] = (string) $children[0]['availability'];
+				$snapshot['variations']   = $children;
+				return $this->with_policies( $snapshot, $product );
+			}
+		}
+
 		if ( 'variable' === $this->call_string( $product, 'get_type' ) ) {
 			$prices = $this->variation_prices( $product );
 			if ( count( $prices ) > 1 ) {
 				$snapshot['low_price']   = (string) min( $prices );
 				$snapshot['high_price']  = (string) max( $prices );
 				$snapshot['offer_count'] = count( $prices );
-				return $snapshot;
+				return $this->with_policies( $snapshot, $product );
 			}
 		}
 
 		$snapshot['price'] = $this->call_string( $product, 'get_price' );
+
+		return $this->with_policies( $snapshot, $product );
+	}
+
+	/**
+	 * One offer per variation, capped so a huge catalog cannot bloat the page.
+	 *
+	 * @param object $product              Variable product.
+	 * @param string $parent_availability  Parent availability URL.
+	 * @return list<array<string, string>>
+	 */
+	private function variation_offers( object $product, string $parent_availability ): array {
+		if ( ! method_exists( $product, 'get_children' ) ) {
+			return [];
+		}
+
+		$children = $product->get_children();
+		if ( ! is_array( $children ) ) {
+			return [];
+		}
+
+		$parent_id = $this->call_int( $product, 'get_id' );
+		$forced    = str_contains( $parent_availability, 'OutOfStock' );
+		$offers    = [];
+		foreach ( $children as $child ) {
+			if ( count( $offers ) >= 50 ) {
+				break;
+			}
+			$variation = is_object( $child ) ? $child : $this->load_product( (int) $child );
+			if ( ! is_object( $variation ) ) {
+				continue;
+			}
+			$variation_id = $this->call_int( $variation, 'get_id' );
+			if ( $variation_id > 0 && $variation_id === $parent_id ) {
+				continue;
+			}
+			$price = $this->call_string( $variation, 'get_price' );
+			if ( '' === $price || ! is_numeric( $price ) ) {
+				continue;
+			}
+
+			$gtin = $this->gtin( $variation );
+			if ( '' === $gtin ) {
+				$gtin = $this->gtin( $product );
+			}
+			$mpn = $this->first_meta( $variation, [ '_rankmyseo_mpn', '_mpn' ] );
+			if ( '' === $mpn ) {
+				$mpn = $this->first_meta( $product, [ '_rankmyseo_mpn', '_mpn' ] );
+			}
+
+			$offers[] = [
+				'price'        => $price,
+				'sku'          => $this->call_string( $variation, 'get_sku' ),
+				'gtin'         => $gtin,
+				'mpn'          => $mpn,
+				'availability' => $forced ? 'https://schema.org/OutOfStock' : $this->availability( $variation ),
+				'url'          => $this->permalink( $variation ),
+			];
+		}
+
+		return $offers;
+	}
+
+	/**
+	 * Numeric prices from variation offers.
+	 *
+	 * @param list<array<string, string>> $offers Variation offers.
+	 * @return list<float>
+	 */
+	private function offer_prices( array $offers ): array {
+		$prices = [];
+		foreach ( $offers as $offer ) {
+			if ( isset( $offer['price'] ) && is_numeric( $offer['price'] ) ) {
+				$prices[] = (float) $offer['price'];
+			}
+		}
+
+		return [] !== $prices ? $prices : [ 0.0 ];
+	}
+
+	/**
+	 * In stock when any option can be bought, otherwise backorder, otherwise sold out.
+	 *
+	 * @param list<array<string, string>> $offers   Variation offers.
+	 * @param string                      $fallback Parent availability.
+	 * @return string
+	 */
+	private function summarize_availability( array $offers, string $fallback ): string {
+		$in_stock   = false;
+		$back_order = false;
+		foreach ( $offers as $offer ) {
+			$value = (string) ( $offer['availability'] ?? '' );
+			if ( str_contains( $value, 'OutOfStock' ) ) {
+				continue;
+			}
+			if ( str_contains( $value, 'BackOrder' ) ) {
+				$back_order = true;
+				continue;
+			}
+			if ( str_contains( $value, 'InStock' ) ) {
+				$in_stock = true;
+			}
+		}
+
+		if ( $in_stock ) {
+			return 'https://schema.org/InStock';
+		}
+		if ( $back_order ) {
+			return 'https://schema.org/BackOrder';
+		}
+		if ( [] !== $offers ) {
+			return 'https://schema.org/OutOfStock';
+		}
+
+		return $fallback;
+	}
+
+	/**
+	 * Variation permalink.
+	 *
+	 * @param object $variation Variation product.
+	 * @return string
+	 */
+	private function permalink( object $variation ): string {
+		if ( method_exists( $variation, 'get_permalink' ) ) {
+			$url = $variation->get_permalink();
+			if ( is_string( $url ) ) {
+				return $url;
+			}
+		}
+
+		if ( function_exists( 'get_permalink' ) ) {
+			$url = get_permalink( $variation );
+			return is_string( $url ) ? $url : '';
+		}
+
+		return '';
+	}
+
+	/**
+	 * Attach return and shipping nodes when a policy builder was provided.
+	 *
+	 * @param array<string, mixed> $snapshot Product snapshot.
+	 * @param object               $product  Product object.
+	 * @return array<string, mixed>
+	 */
+	private function with_policies( array $snapshot, object $product ): array {
+		if ( null === $this->policies ) {
+			return $snapshot;
+		}
+
+		$nodes = $this->policies->for_product( $product );
+		if ( isset( $nodes['return_policy'] ) && is_array( $nodes['return_policy'] ) && isset( $nodes['return_policy']['@type'] ) ) {
+			$snapshot['return_policy'] = $nodes['return_policy'];
+		}
+		if ( isset( $nodes['shipping_details'] ) && is_array( $nodes['shipping_details'] ) && isset( $nodes['shipping_details']['@type'] ) ) {
+			$snapshot['shipping_details'] = $nodes['shipping_details'];
+		}
 
 		return $snapshot;
 	}

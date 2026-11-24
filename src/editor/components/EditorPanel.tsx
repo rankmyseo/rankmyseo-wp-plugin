@@ -1,7 +1,11 @@
 import { TextareaControl, TextControl } from '@wordpress/components';
 import { useId, useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import type { AnalysisResult, AnalyzerInput } from '../../analyzer';
+import type {
+	AnalysisResult,
+	AnalyzerInput,
+	ProductSignals,
+} from '../../analyzer';
 import { ModeToggle } from '../../shared/components/ModeToggle';
 import type { UiMode } from '../../shared/types';
 import { useCannibalization } from '../useCannibalization';
@@ -47,6 +51,7 @@ export interface EditorPanelProps {
 	postId?: number;
 	postType?: string;
 	locale?: string;
+	product?: ProductSignals;
 	cannibalizationMatches?: CannibalizationMatch[];
 	onAnalysis?: ( result: AnalysisResult, signature: string ) => void;
 	onInsertLink?: ( html: string ) => void;
@@ -89,6 +94,7 @@ export function EditorPanel( {
 	postId = 0,
 	postType = 'post',
 	locale = 'en',
+	product,
 	cannibalizationMatches,
 	onAnalysis,
 	onInsertLink,
@@ -130,6 +136,7 @@ export function EditorPanel( {
 			locale,
 			noindex: fields.robots.noindex,
 			siteUrl,
+			product,
 		} ),
 		[
 			fields.focusKeyword,
@@ -144,6 +151,7 @@ export function EditorPanel( {
 			postType,
 			locale,
 			siteUrl,
+			product,
 		]
 	);
 	const fetchedMatches = useCannibalization(

@@ -20,7 +20,13 @@ export interface CannibalizationMatch {
 	postType: string;
 }
 
-const CATEGORIES = [ 'keyword', 'snippet', 'content', 'readability' ] as const;
+const CATEGORIES = [
+	'keyword',
+	'snippet',
+	'content',
+	'readability',
+	'product',
+] as const;
 
 function useDebouncedValue< T >( value: T, delay: number ): T {
 	const [ debounced, setDebounced ] = useState( value );
@@ -174,7 +180,11 @@ export function AnalyzerPanel( {
 				</ul>
 			) : (
 				<div className="rms-check-groups">
-					{ CATEGORIES.map( ( category ) => (
+					{ CATEGORIES.filter( ( category ) =>
+						analysis.checks.some(
+							( item ) => item.category === category
+						)
+					).map( ( category ) => (
 						<div key={ category }>
 							<h3>{ categoryLabel( category ) }</h3>
 							<ul className="rms-check-list">

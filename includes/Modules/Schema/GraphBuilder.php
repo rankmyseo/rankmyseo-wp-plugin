@@ -424,11 +424,7 @@ final class GraphBuilder {
 		$piece       = $this->with_text( $piece, 'description', $description, 5000 );
 		$piece       = $this->with_text( $piece, 'sku', (string) ( $product['sku'] ?? '' ), 70 );
 		$piece       = $this->with_text( $piece, 'mpn', (string) ( $product['mpn'] ?? '' ), 70 );
-
-		$gtin = preg_replace( '/\D+/', '', (string) ( $product['gtin'] ?? '' ) ) ?? '';
-		if ( in_array( strlen( $gtin ), [ 8, 12, 13, 14 ], true ) ) {
-			$piece['gtin'] = $gtin;
-		}
+		$piece       = $this->with_identifiers( $piece, (string) ( $product['gtin'] ?? '' ) );
 
 		$image = (string) ( $product['image'] ?? $context->image_url );
 		if ( '' !== $image ) {
@@ -484,19 +480,48 @@ final class GraphBuilder {
 			$availability = 'https://schema.org/InStock';
 		}
 
+		$nested = $this->nested_offers( $context, $product, $currency );
+		if ( count( $nested ) > 1 ) {
+			$prices = [];
+			foreach ( $nested as $index => $node ) {
+				$nested[ $index ] = $this->with_merchant( $node, $product );
+				$prices[]         = (float) $node['price'];
+			}
+
+			return $this->with_merchant(
+				[
+					'@type'         => 'AggregateOffer',
+					'lowPrice'      => $this->price_string( min( $prices ) ),
+					'highPrice'     => $this->price_string( max( $prices ) ),
+					'offerCount'    => count( $nested ),
+					'priceCurrency' => $currency,
+					'availability'  => $this->summarize_offer_availability( $nested, $availability ),
+					'url'           => $context->permalink,
+					'offers'        => $nested,
+				],
+				$product
+			);
+		}
+		if ( 1 === count( $nested ) ) {
+			return $this->with_merchant( $nested[0], $product );
+		}
+
 		$low   = $this->price_string( $product['low_price'] ?? '' );
 		$high  = $this->price_string( $product['high_price'] ?? '' );
 		$count = (int) ( $product['offer_count'] ?? 0 );
 		if ( '' !== $low && '' !== $high && $count > 1 ) {
-			return [
-				'@type'         => 'AggregateOffer',
-				'lowPrice'      => $low,
-				'highPrice'     => $high,
-				'offerCount'    => $count,
-				'priceCurrency' => $currency,
-				'availability'  => $availability,
-				'url'           => $context->permalink,
-			];
+			return $this->with_merchant(
+				[
+					'@type'         => 'AggregateOffer',
+					'lowPrice'      => $low,
+					'highPrice'     => $high,
+					'offerCount'    => $count,
+					'priceCurrency' => $currency,
+					'availability'  => $availability,
+					'url'           => $context->permalink,
+				],
+				$product
+			);
 		}
 
 		$price = $this->price_string( $product['price'] ?? '' );
@@ -511,13 +536,151 @@ final class GraphBuilder {
 			'availability'  => $availability,
 			'url'           => $context->permalink,
 		];
+		$offer = $this->with_offer_identifiers( $offer, $product );
 
-		$sku = $this->text( (string) ( $product['sku'] ?? '' ), 70 );
+		return $this->with_merchant( $offer, $product );
+	}
+
+	/**
+	 * Offer nodes for each priced variation.
+	 *
+	 * @param SchemaContext        $context  Page context.
+	 * @param array<string, mixed> $product  Product snapshot.
+	 * @param string               $currency ISO currency.
+	 * @return list<array<string, mixed>>
+	 */
+	private function nested_offers( SchemaContext $context, array $product, string $currency ): array {
+		$raw = $product['variations'] ?? [];
+		if ( ! is_array( $raw ) || [] === $raw ) {
+			return [];
+		}
+
+		$offers = [];
+		foreach ( $raw as $row ) {
+			if ( count( $offers ) >= 50 || ! is_array( $row ) ) {
+				continue;
+			}
+			$price = $this->price_string( $row['price'] ?? '' );
+			if ( '' === $price ) {
+				continue;
+			}
+			$url          = $this->text( (string) ( $row['url'] ?? '' ), 500 );
+			$availability = (string) ( $row['availability'] ?? '' );
+			if ( '' === $availability ) {
+				$availability = (string) ( $product['availability'] ?? 'https://schema.org/InStock' );
+			}
+			$offers[] = $this->with_offer_identifiers(
+				[
+					'@type'         => 'Offer',
+					'price'         => $price,
+					'priceCurrency' => $currency,
+					'availability'  => $availability,
+					'url'           => '' !== $url ? $url : $context->permalink,
+				],
+				$row
+			);
+		}
+
+		return $offers;
+	}
+
+	/**
+	 * Copy sku, gtin, isbn, and mpn onto an offer.
+	 *
+	 * @param array<string, mixed> $offer  Offer node.
+	 * @param array<string, mixed> $source Identifier source.
+	 * @return array<string, mixed>
+	 */
+	private function with_offer_identifiers( array $offer, array $source ): array {
+		$sku = $this->text( (string) ( $source['sku'] ?? '' ), 70 );
 		if ( '' !== $sku ) {
 			$offer['sku'] = $sku;
 		}
+		$mpn = $this->text( (string) ( $source['mpn'] ?? '' ), 70 );
+		if ( '' !== $mpn ) {
+			$offer['mpn'] = $mpn;
+		}
+
+		return $this->with_identifiers( $offer, (string) ( $source['gtin'] ?? '' ) );
+	}
+
+	/**
+	 * Add gtin and isbn when the identifier has a recognized length.
+	 *
+	 * @param array<string, mixed> $node  Schema node.
+	 * @param string               $raw   Raw identifier.
+	 * @return array<string, mixed>
+	 */
+	private function with_identifiers( array $node, string $raw ): array {
+		$clean = strtoupper( str_replace( [ ' ', '-' ], '', trim( $raw ) ) );
+		if ( 1 === preg_match( '/^\d{9}[\dX]$/', $clean ) ) {
+			$node['isbn'] = $clean;
+		}
+
+		$digits = preg_replace( '/\D+/', '', $clean ) ?? '';
+		if ( in_array( strlen( $digits ), [ 8, 12, 13, 14 ], true ) ) {
+			$node['gtin'] = $digits;
+		}
+		if ( 13 === strlen( $digits ) && ( str_starts_with( $digits, '978' ) || str_starts_with( $digits, '979' ) ) ) {
+			$node['isbn'] = $digits;
+		}
+
+		return $node;
+	}
+
+	/**
+	 * Attach return and shipping details when the snapshot already built them.
+	 *
+	 * @param array<string, mixed> $offer   Offer node.
+	 * @param array<string, mixed> $product Product snapshot.
+	 * @return array<string, mixed>
+	 */
+	private function with_merchant( array $offer, array $product ): array {
+		$return_policy = $product['return_policy'] ?? null;
+		if ( is_array( $return_policy ) && isset( $return_policy['@type'] ) ) {
+			$offer['hasMerchantReturnPolicy'] = $return_policy;
+		}
+
+		$shipping = $product['shipping_details'] ?? null;
+		if ( is_array( $shipping ) && isset( $shipping['@type'] ) ) {
+			$offer['shippingDetails'] = $shipping;
+		}
 
 		return $offer;
+	}
+
+	/**
+	 * Availability for a group of offers. OutOfStock is checked before InStock.
+	 *
+	 * @param list<array<string, mixed>> $offers   Offer nodes.
+	 * @param string                     $fallback Fallback availability.
+	 * @return string
+	 */
+	private function summarize_offer_availability( array $offers, string $fallback ): string {
+		$in_stock   = false;
+		$back_order = false;
+		foreach ( $offers as $offer ) {
+			$value = (string) ( $offer['availability'] ?? '' );
+			if ( str_contains( $value, 'OutOfStock' ) ) {
+				continue;
+			}
+			if ( str_contains( $value, 'BackOrder' ) ) {
+				$back_order = true;
+				continue;
+			}
+			if ( str_contains( $value, 'InStock' ) ) {
+				$in_stock = true;
+			}
+		}
+
+		if ( $in_stock ) {
+			return 'https://schema.org/InStock';
+		}
+		if ( $back_order ) {
+			return 'https://schema.org/BackOrder';
+		}
+
+		return [] !== $offers ? 'https://schema.org/OutOfStock' : $fallback;
 	}
 
 	/**

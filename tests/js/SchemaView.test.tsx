@@ -134,6 +134,7 @@ function installApiMock(): { settings: SchemaSettings } {
 			importer: true,
 			cloud: false,
 			ai_queue: false,
+			woocommerce: true,
 		},
 	};
 

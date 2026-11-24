@@ -35,6 +35,12 @@ const NAV_ITEMS: NavItem[] = [
 		showInSimple: true,
 	},
 	{
+		id: 'store',
+		label: __( 'Store', 'rankmyseo' ),
+		simpleLabel: __( 'Store', 'rankmyseo' ),
+		showInSimple: true,
+	},
+	{
 		id: 'sitemaps',
 		label: __( 'Sitemaps', 'rankmyseo' ),
 		simpleLabel: __( 'Sitemaps', 'rankmyseo' ),

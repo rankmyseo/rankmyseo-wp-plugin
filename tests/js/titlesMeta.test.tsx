@@ -31,6 +31,7 @@ function settingsFixture(): PluginSettings {
 			importer: true,
 			cloud: false,
 			ai_queue: false,
+			woocommerce: true,
 		},
 	};
 }

@@ -315,7 +315,7 @@ final class DocumentBuilder {
 			return $custom;
 		}
 
-		return $snapshot->canonical;
+		return (string) apply_filters( 'rankmyseo/meta/canonical', $snapshot->canonical ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 	}
 
 	/**

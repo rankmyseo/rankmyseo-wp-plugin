@@ -37,6 +37,7 @@ function createDefaultFixtures(): {
 			importer: true,
 			cloud: false,
 			ai_queue: false,
+			woocommerce: true,
 		},
 	};
 
