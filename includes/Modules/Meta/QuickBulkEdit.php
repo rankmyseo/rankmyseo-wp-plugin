@@ -23,12 +23,25 @@ final class QuickBulkEdit {
 	private MetaStore $store;
 
 	/**
+	 * Template fill.
+	 *
+	 * @var TemplateFill
+	 */
+	private TemplateFill $fill;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param MetaStore $store Meta store.
+	 * @param MetaStore    $store Meta store.
+	 * @param TemplateFill $fill  Optional template fill. Built from defaults when omitted.
 	 */
-	public function __construct( MetaStore $store ) {
+	public function __construct( MetaStore $store, ?TemplateFill $fill = null ) {
 		$this->store = $store;
+		$this->fill  = $fill ?? new TemplateFill(
+			new TitleSettings( new \RankMySEO\Core\Settings() ),
+			new TemplateEngine(),
+			new MissingMetadataQuery( $store )
+		);
 	}
 
 	/**
@@ -189,6 +202,23 @@ final class QuickBulkEdit {
 		echo '<option value="0">' . esc_html__( 'Show in search', 'rankmyseo' ) . '</option>';
 		echo '<option value="1">' . esc_html__( 'Hide from search', 'rankmyseo' ) . '</option>';
 		echo '</select></label>';
+		echo '<label><span class="title">' . esc_html__( 'Search title', 'rankmyseo' ) . '</span>';
+		echo '<select name="rankmyseo_bulk_title">';
+		echo '<option value="-1">' . esc_html__( '— No change —', 'rankmyseo' ) . '</option>';
+		echo '<option value="template">' . esc_html__( 'Apply title template', 'rankmyseo' ) . '</option>';
+		echo '<option value="clear">' . esc_html__( 'Clear custom title', 'rankmyseo' ) . '</option>';
+		echo '</select></label>';
+		echo '<label><span class="title">' . esc_html__( 'Search description', 'rankmyseo' ) . '</span>';
+		echo '<select name="rankmyseo_bulk_description">';
+		echo '<option value="-1">' . esc_html__( '— No change —', 'rankmyseo' ) . '</option>';
+		echo '<option value="template">' . esc_html__( 'Apply description template', 'rankmyseo' ) . '</option>';
+		echo '<option value="clear">' . esc_html__( 'Clear custom description', 'rankmyseo' ) . '</option>';
+		echo '</select></label>';
+		echo '<label><span class="title">' . esc_html__( 'Custom search details', 'rankmyseo' ) . '</span>';
+		echo '<select name="rankmyseo_bulk_clear_meta">';
+		echo '<option value="-1">' . esc_html__( '— No change —', 'rankmyseo' ) . '</option>';
+		echo '<option value="1">' . esc_html__( 'Clear custom title, description, and keyword', 'rankmyseo' ) . '</option>';
+		echo '</select></label>';
 		echo '</div></fieldset>';
 	}
 
@@ -257,12 +287,37 @@ final class QuickBulkEdit {
 			return;
 		}
 
-		$value = isset( $_REQUEST['rankmyseo_bulk_noindex'] ) ? sanitize_text_field( wp_unslash( (string) $_REQUEST['rankmyseo_bulk_noindex'] ) ) : '-1';
-		if ( ! in_array( $value, [ '0', '1' ], true ) ) {
+		$noindex = isset( $_REQUEST['rankmyseo_bulk_noindex'] ) ? sanitize_text_field( wp_unslash( (string) $_REQUEST['rankmyseo_bulk_noindex'] ) ) : '-1';
+		if ( in_array( $noindex, [ '0', '1' ], true ) ) {
+			$this->store->set_post_noindex( $post_id, '1' === $noindex );
+		}
+
+		$clear = isset( $_REQUEST['rankmyseo_bulk_clear_meta'] ) ? sanitize_text_field( wp_unslash( (string) $_REQUEST['rankmyseo_bulk_clear_meta'] ) ) : '-1';
+		if ( '1' === $clear ) {
+			$this->fill->clear_custom( $post_id );
 			return;
 		}
 
-		$this->store->set_post_noindex( $post_id, '1' === $value );
+		$this->apply_bulk_field( $post_id, 'rankmyseo_bulk_title', MissingMetadataQuery::MISSING_TITLE );
+		$this->apply_bulk_field( $post_id, 'rankmyseo_bulk_description', MissingMetadataQuery::MISSING_DESCRIPTION );
+	}
+
+	/**
+	 * Apply or clear one bulk-edit template field.
+	 *
+	 * @param int    $post_id Post ID.
+	 * @param string $key     Request key.
+	 * @param string $field   title or description.
+	 * @return void
+	 */
+	private function apply_bulk_field( int $post_id, string $key, string $field ): void {
+		$value = isset( $_REQUEST[ $key ] ) ? sanitize_text_field( wp_unslash( (string) $_REQUEST[ $key ] ) ) : '-1'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Caller verifies the bulk-edit nonce.
+		if ( 'template' === $value ) {
+			$this->fill->apply_pattern( $post_id, $field );
+		}
+		if ( 'clear' === $value ) {
+			$this->fill->clear_field( $post_id, $field );
+		}
 	}
 
 	/**

@@ -103,7 +103,7 @@ This plugin works entirely on your site until an administrator turns on an optio
 = RankMySEO Cloud (optional) =
 
 * **Service**: [RankMySEO](https://rankmyseo.com), API host `https://api.rankmyseo.com`.
-* **When it is used**: Only after an administrator clicks Connect and approves the pairing code, or saves a connection another way from the RankMySEO Cloud screen. Inventory sync, insights, suggested actions, chat, token rotation, and disconnect run only after that. Chat starts when a person sends a message.
+* **When it is used**: Only after an administrator clicks Connect and approves the pairing code, or saves a connection another way from the RankMySEO Cloud screen. Inventory sync, insights, suggested actions, chat, token rotation, and disconnect run only after that. Chat starts when a person sends a message. Drafting missing titles, descriptions, or image descriptions calls `actions/generate` only after Connect and an explicit Draft click. The block editor reads the saved insights cache and does not call RankMySEO on its own.
 * **Endpoints used after connection**: `https://api.rankmyseo.com/wp/v1/pair/start`, `https://api.rankmyseo.com/wp/v1/pair/poll`, `https://api.rankmyseo.com/wp/v1/connection`, `https://api.rankmyseo.com/wp/v1/disconnect`, `https://api.rankmyseo.com/wp/v1/rotate-token`, `https://api.rankmyseo.com/wp/v1/sync/inventory`, `https://api.rankmyseo.com/wp/v1/sync/events`, `https://api.rankmyseo.com/wp/v1/insights`, `https://api.rankmyseo.com/wp/v1/policy`, `https://api.rankmyseo.com/wp/v1/actions`, `https://api.rankmyseo.com/wp/v1/actions/generate`, `https://api.rankmyseo.com/wp/v1/actions/{id}/ack`, `https://api.rankmyseo.com/wp/v1/chat/message`, `https://api.rankmyseo.com/wp/v1/chat/progress`, and `https://api.rankmyseo.com/wp/v1/chat/thread`. The approval page opened in the browser is the address RankMySEO returns with the pairing code.
 * **Data sent**: During pairing, the site URL, site name, and WordPress and plugin versions. During sync, public URLs, titles, meta descriptions, focus keywords, and on-page scores. A chat message can include the question plus the current page URL, title, meta description, focus keyword, and score. Approving, skipping, or undoing a suggestion sends that outcome back. The site token stays encrypted in WordPress and is not shown in the admin screen. The browser never calls `api.rankmyseo.com` and never sees the token.
 * **Terms of Service**: [https://rankmyseo.com/terms](https://rankmyseo.com/terms)
@@ -131,6 +131,9 @@ This plugin works entirely on your site until an administrator turns on an optio
 * Redirects, slug-change protection, and a 404 log.
 * Importer for Yoast SEO, Rank Math, and All in One SEO, with dry run and rollback.
 * Optional RankMySEO Cloud connection, with encrypted tokens, inventory sync, an approval queue, rollback snapshots, and connected chat cards.
+* Missing details screen: filter published posts, pages, products, and images, fill empty fields from local templates, or queue RankMySEO suggestions for approval. Image descriptions can be queued and undone.
+* Block editor shows a tracked keyword's Google position and a page-update verdict from the saved insights cache when the site is connected.
+* Bulk edit can apply title and description templates or clear custom search details, alongside the existing search-visibility control.
 * Data is kept on uninstall unless the administrator enables deletion.
 
 == Upgrade Notice ==

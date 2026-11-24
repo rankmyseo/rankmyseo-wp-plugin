@@ -24,11 +24,13 @@ final class ActionCatalog {
 	public const ADD_INTERNAL_LINK       = 'add_internal_link';
 	public const CONTENT_PATCH           = 'content_patch';
 	public const CREATE_DRAFT            = 'create_draft';
+	public const IMAGE_ALT               = 'image_alt';
 
-	public const ALIAS_META     = 'meta_update';
-	public const ALIAS_SCHEMA   = 'schema_update';
-	public const ALIAS_REDIRECT = 'redirect_create';
-	public const ALIAS_DRAFT    = 'draft_article';
+	public const ALIAS_META      = 'meta_update';
+	public const ALIAS_SCHEMA    = 'schema_update';
+	public const ALIAS_REDIRECT  = 'redirect_create';
+	public const ALIAS_DRAFT     = 'draft_article';
+	public const ALIAS_IMAGE_ALT = 'update_image_alt';
 
 	/**
 	 * Types the cloud API accepts.
@@ -44,6 +46,7 @@ final class ActionCatalog {
 		self::ADD_INTERNAL_LINK,
 		self::CONTENT_PATCH,
 		self::CREATE_DRAFT,
+		self::IMAGE_ALT,
 	);
 
 	/**
@@ -60,10 +63,12 @@ final class ActionCatalog {
 		self::ADD_INTERNAL_LINK,
 		self::CONTENT_PATCH,
 		self::CREATE_DRAFT,
+		self::IMAGE_ALT,
 		self::ALIAS_META,
 		self::ALIAS_SCHEMA,
 		self::ALIAS_REDIRECT,
 		self::ALIAS_DRAFT,
+		self::ALIAS_IMAGE_ALT,
 	);
 
 	/**
@@ -84,9 +89,10 @@ final class ActionCatalog {
 	 */
 	public static function canonical( string $type ): string {
 		$map = array(
-			self::ALIAS_SCHEMA   => self::UPDATE_SCHEMA,
-			self::ALIAS_REDIRECT => self::ADD_REDIRECT,
-			self::ALIAS_DRAFT    => self::CREATE_DRAFT,
+			self::ALIAS_SCHEMA    => self::UPDATE_SCHEMA,
+			self::ALIAS_REDIRECT  => self::ADD_REDIRECT,
+			self::ALIAS_DRAFT     => self::CREATE_DRAFT,
+			self::ALIAS_IMAGE_ALT => self::IMAGE_ALT,
 		);
 		return $map[ $type ] ?? $type;
 	}
@@ -103,7 +109,7 @@ final class ActionCatalog {
 		if ( self::CONTENT_PATCH === $canonical || self::CREATE_DRAFT === $canonical ) {
 			return 'high';
 		}
-		if ( self::UPDATE_TITLE === $canonical || self::UPDATE_META_DESCRIPTION === $canonical ) {
+		if ( self::UPDATE_TITLE === $canonical || self::UPDATE_META_DESCRIPTION === $canonical || self::IMAGE_ALT === $canonical ) {
 			return 'low';
 		}
 		if ( self::ALIAS_META === $type ) {
@@ -161,6 +167,8 @@ final class ActionCatalog {
 				return __( 'Update the page content', 'rankmyseo' );
 			case self::CREATE_DRAFT:
 				return __( 'Create a draft', 'rankmyseo' );
+			case self::IMAGE_ALT:
+				return __( 'Update the image description', 'rankmyseo' );
 			case self::ALIAS_META:
 				return __( 'Update search details', 'rankmyseo' );
 			default:

@@ -76,6 +76,13 @@ final class AdminMenu {
 				'capability' => Capabilities::CAP_MANAGE,
 			],
 			[
+				'slug'       => 'rankmyseo-missing',
+				'page_id'    => 'missing',
+				'title'      => __( 'Missing details — RankMySEO', 'rankmyseo' ),
+				'menu_title' => __( 'Missing details', 'rankmyseo' ),
+				'capability' => Capabilities::CAP_MANAGE,
+			],
+			[
 				'slug'       => 'rankmyseo-schema',
 				'page_id'    => 'schema',
 				'title'      => __( 'Schema — RankMySEO', 'rankmyseo' ),

@@ -13,12 +13,19 @@ use RankMySEO\Admin\AdminMenu;
 use RankMySEO\Core\OnboardingStore;
 use RankMySEO\Core\Settings;
 use RankMySEO\Database\Migrator;
+use RankMySEO\Modules\AiActions\ActionExecutor;
+use RankMySEO\Modules\AiActions\ActionRepository;
 use RankMySEO\Modules\AiActions\AiServices;
+use RankMySEO\Modules\AiActions\MissingMetadataQueue;
 use RankMySEO\Modules\Analyzer\AnalyzerModule;
 use RankMySEO\Modules\Chat\ChatModule;
 use RankMySEO\Modules\Chat\LocalAssistant;
 use RankMySEO\Modules\Chat\WordPressSiteIndex;
+use RankMySEO\Modules\Cloud\CloudClient;
 use RankMySEO\Modules\Cloud\CloudModule;
+use RankMySEO\Modules\Cloud\EditorInsightReader;
+use RankMySEO\Modules\Cloud\InsightsCache;
+use RankMySEO\Modules\Cloud\TokenVault;
 use RankMySEO\Modules\Cloud\CloudServices;
 use RankMySEO\Modules\ModuleManager;
 use RankMySEO\Modules\AiActions\AiQueueModule;
@@ -29,6 +36,9 @@ use RankMySEO\Modules\Meta\ConflictGuard;
 use RankMySEO\Modules\Meta\DocumentBuilder;
 use RankMySEO\Modules\Meta\MetaModule;
 use RankMySEO\Modules\Meta\MetaStore;
+use RankMySEO\Modules\Meta\MissingMetadataQuery;
+use RankMySEO\Modules\Meta\TemplateEngine;
+use RankMySEO\Modules\Meta\TemplateFill;
 use RankMySEO\Modules\Meta\TitleSettings;
 use RankMySEO\Modules\Redirects\RedirectsModule;
 use RankMySEO\Modules\Schema\SchemaModule;
@@ -43,7 +53,9 @@ use RankMySEO\Modules\Sitemaps\WpIndexNowTransport;
 use RankMySEO\Rest\AiActionsController;
 use RankMySEO\Rest\ChatController;
 use RankMySEO\Rest\CloudController;
+use RankMySEO\Rest\EditorInsightsController;
 use RankMySEO\Rest\MetaController;
+use RankMySEO\Rest\MissingMetadataController;
 use RankMySEO\Rest\DashboardController;
 use RankMySEO\Rest\OnboardingController;
 use RankMySEO\Rest\RestRegistry;
@@ -355,6 +367,40 @@ final class Plugin {
 		);
 
 		$this->container->singleton(
+			MissingMetadataController::class,
+			static function ( Container $container ): MissingMetadataController {
+				$titles = $container->get( TitleSettings::class );
+				assert( $titles instanceof TitleSettings );
+				$vault = $container->get( TokenVault::class );
+				assert( $vault instanceof TokenVault );
+				$client = $container->get( CloudClient::class );
+				assert( $client instanceof CloudClient );
+				$actions = $container->get( ActionRepository::class );
+				assert( $actions instanceof ActionRepository );
+				$executor = $container->get( ActionExecutor::class );
+				assert( $executor instanceof ActionExecutor );
+
+				$store = new MetaStore();
+				$query = new MissingMetadataQuery( $store );
+				$fill  = new TemplateFill( $titles, new TemplateEngine(), $query );
+				$queue = new MissingMetadataQueue( $vault, $client, $actions, $executor, $query );
+
+				return new MissingMetadataController( $query, $fill, $queue, $titles, $vault );
+			}
+		);
+
+		$this->container->singleton(
+			EditorInsightsController::class,
+			static function ( Container $container ): EditorInsightsController {
+				$insights = $container->get( InsightsCache::class );
+				assert( $insights instanceof InsightsCache );
+				$actions = $container->get( ActionRepository::class );
+				assert( $actions instanceof ActionRepository );
+				return new EditorInsightsController( new EditorInsightReader( $insights, $actions ) );
+			}
+		);
+
+		$this->container->singleton(
 			OnboardingStore::class,
 			static function ( Container $container ): OnboardingStore {
 				$settings = $container->get( Settings::class );
@@ -478,6 +524,10 @@ final class Plugin {
 				assert( $chat_controller instanceof ChatController );
 				$meta_controller = $container->get( MetaController::class );
 				assert( $meta_controller instanceof MetaController );
+				$missing_controller = $container->get( MissingMetadataController::class );
+				assert( $missing_controller instanceof MissingMetadataController );
+				$editor_insights_controller = $container->get( EditorInsightsController::class );
+				assert( $editor_insights_controller instanceof EditorInsightsController );
 				$cloud_controller = $container->get( CloudController::class );
 				assert( $cloud_controller instanceof CloudController );
 				$ai_controller = $container->get( AiActionsController::class );
@@ -493,6 +543,8 @@ final class Plugin {
 						$dashboard_controller,
 						$chat_controller,
 						$meta_controller,
+						$missing_controller,
+						$editor_insights_controller,
 						$cloud_controller,
 						$ai_controller,
 					]

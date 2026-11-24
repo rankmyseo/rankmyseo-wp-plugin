@@ -60,8 +60,8 @@ final class InsightsCache {
 		}
 
 		if ( ! $refresh ) {
-			$cached = get_transient( self::TRANSIENT );
-			if ( is_array( $cached ) ) {
+			$cached = $this->read_transient();
+			if ( null !== $cached ) {
 				$cached['cached'] = true;
 				$cached['stale']  = false;
 				return $cached;
@@ -70,8 +70,8 @@ final class InsightsCache {
 
 		$result = $this->client->get_insights();
 		if ( ! $result->ok ) {
-			$cached = get_transient( self::TRANSIENT );
-			if ( is_array( $cached ) ) {
+			$cached = $this->read_transient();
+			if ( null !== $cached ) {
 				$cached['cached']  = true;
 				$cached['stale']   = true;
 				$cached['message'] = $result->message;
@@ -85,6 +85,29 @@ final class InsightsCache {
 		$payload = $this->normalize( $result->data );
 		set_transient( self::TRANSIENT, $payload, self::TTL );
 		return $payload;
+	}
+
+	/**
+	 * Return the saved insights without contacting RankMySEO.
+	 *
+	 * Disconnected sites get an empty payload. A connected site with an empty
+	 * cache also gets an empty payload instead of starting a new read.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function peek(): array {
+		if ( ! $this->vault->is_connected() ) {
+			return $this->empty_payload( false );
+		}
+
+		$cached = $this->read_transient();
+		if ( null !== $cached ) {
+			$cached['cached'] = true;
+			$cached['stale']  = false;
+			return $cached;
+		}
+
+		return $this->empty_payload( true );
 	}
 
 	/**
@@ -111,10 +134,21 @@ final class InsightsCache {
 				continue;
 			}
 			$position = $row['position'] ?? null;
-			$rows[]   = array(
-				'keyword'  => $this->line( $row['keyword'] ?? '', 200 ),
-				'position' => is_numeric( $position ) ? (int) $position : null,
-				'url'      => $this->url( $row['url'] ?? '' ),
+			$numeric  = is_numeric( $position ) ? (int) $position : null;
+			$delta    = null;
+			foreach ( array( 'positionsGained', 'positionDelta', 'delta' ) as $delta_key ) {
+				if ( isset( $row[ $delta_key ] ) && is_numeric( $row[ $delta_key ] ) ) {
+					$delta = (int) $row[ $delta_key ];
+					break;
+				}
+			}
+			$rows[] = array(
+				'keyword'          => $this->line( $row['keyword'] ?? '', 200 ),
+				'position'         => $numeric,
+				'outside_top_20'   => null === $numeric && $this->flag( $row['outsideTop20'] ?? false ),
+				'positions_gained' => $delta,
+				'url'              => $this->url( $row['url'] ?? '' ),
+				'wp_post_id'       => isset( $row['wpPostId'] ) && is_numeric( $row['wpPostId'] ) ? (int) $row['wpPostId'] : null,
 			);
 		}
 
@@ -133,19 +167,7 @@ final class InsightsCache {
 			}
 		}
 
-		$page_updates = array();
-		if ( isset( $data['pageUpdates'] ) && is_array( $data['pageUpdates'] ) ) {
-			foreach ( $data['pageUpdates'] as $update ) {
-				if ( ! is_array( $update ) ) {
-					continue;
-				}
-				$page_updates[] = array(
-					'url'     => $this->url( $update['url'] ?? '' ),
-					'action'  => $this->line( $update['action'] ?? '', 40 ),
-					'summary' => $this->line( $update['summary'] ?? '', 400 ),
-				);
-			}
-		}
+		$page_updates = $this->page_rows( $data );
 
 		return array(
 			'connected'    => true,
@@ -160,7 +182,48 @@ final class InsightsCache {
 			),
 			'issues'       => $issues,
 			'page_updates' => $page_updates,
+			'page_actions' => $page_updates,
 		);
+	}
+
+	/**
+	 * Page-update rows from either cloud name. Traffic and volume are not copied.
+	 *
+	 * @param array<string, mixed> $data Decoded JSON.
+	 * @return list<array<string, mixed>>
+	 */
+	private function page_rows( array $data ): array {
+		$lists = array();
+		foreach ( array( 'pageUpdates', 'pageActions', 'page_actions' ) as $key ) {
+			if ( isset( $data[ $key ] ) && is_array( $data[ $key ] ) ) {
+				$lists[] = $data[ $key ];
+			}
+		}
+
+		$rows = array();
+		$seen = array();
+		foreach ( $lists as $list ) {
+			foreach ( $list as $update ) {
+				if ( ! is_array( $update ) ) {
+					continue;
+				}
+				$url    = $this->url( $update['url'] ?? '' );
+				$action = $this->line( $update['action'] ?? '', 40 );
+				$sig    = strtolower( $url . '|' . $action );
+				if ( isset( $seen[ $sig ] ) ) {
+					continue;
+				}
+				$seen[ $sig ] = true;
+				$rows[]       = array(
+					'url'        => $url,
+					'action'     => $action,
+					'summary'    => $this->line( $update['summary'] ?? '', 400 ),
+					'wp_post_id' => isset( $update['wpPostId'] ) && is_numeric( $update['wpPostId'] ) ? (int) $update['wpPostId'] : null,
+				);
+			}
+		}
+
+		return $rows;
 	}
 
 	/**
@@ -183,7 +246,43 @@ final class InsightsCache {
 			),
 			'issues'       => array(),
 			'page_updates' => array(),
+			'page_actions' => array(),
 		);
+	}
+
+	/**
+	 * Read the transient and make sure both page-action names exist.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	private function read_transient(): ?array {
+		$cached = get_transient( self::TRANSIENT );
+		if ( ! is_array( $cached ) ) {
+			return null;
+		}
+		if ( ! isset( $cached['page_actions'] ) || ! is_array( $cached['page_actions'] ) ) {
+			$cached['page_actions'] = isset( $cached['page_updates'] ) && is_array( $cached['page_updates'] ) ? $cached['page_updates'] : array();
+		}
+		if ( ! isset( $cached['page_updates'] ) || ! is_array( $cached['page_updates'] ) ) {
+			$cached['page_updates'] = $cached['page_actions'];
+		}
+		return $cached;
+	}
+
+	/**
+	 * Coerce a cloud boolean without treating the word "false" as true.
+	 *
+	 * @param mixed $value Raw flag.
+	 * @return bool
+	 */
+	private function flag( $value ): bool {
+		if ( is_bool( $value ) ) {
+			return $value;
+		}
+		if ( is_int( $value ) || is_float( $value ) ) {
+			return 1 === (int) $value;
+		}
+		return in_array( strtolower( trim( (string) $value ) ), array( '1', 'true', 'yes' ), true );
 	}
 
 	/**

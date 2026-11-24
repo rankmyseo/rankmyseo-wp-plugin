@@ -23,6 +23,12 @@ const NAV_ITEMS: NavItem[] = [
 		showInSimple: true,
 	},
 	{
+		id: 'missing',
+		label: __( 'Missing metadata', 'rankmyseo' ),
+		simpleLabel: __( 'Missing details', 'rankmyseo' ),
+		showInSimple: true,
+	},
+	{
 		id: 'schema',
 		label: __( 'Schema', 'rankmyseo' ),
 		simpleLabel: __( 'Site Details', 'rankmyseo' ),

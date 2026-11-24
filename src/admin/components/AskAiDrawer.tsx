@@ -41,6 +41,7 @@ export interface AskAiDrawerProps {
 const SCREENS: NavPageId[] = [
 	'dashboard',
 	'meta',
+	'missing',
 	'schema',
 	'sitemaps',
 	'redirects',

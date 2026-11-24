@@ -1742,3 +1742,50 @@
 		transition: none;
 	}
 }
+
+.rms-missing-toolbar,
+.rms-missing-actions,
+.rms-missing-fields {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: end;
+	gap: 12px;
+}
+
+.rms-missing-toolbar label,
+.rms-missing-inline label {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	color: var(--rms-ink);
+	font-size: 13px;
+}
+
+.rms-missing-toolbar select,
+.rms-missing-toolbar input,
+.rms-missing-inline input,
+.rms-missing-inline textarea {
+	min-height: 40px;
+	border: 1px solid var(--rms-rule);
+	border-radius: var(--rms-radius-sm);
+	background: var(--rms-card);
+	color: var(--rms-ink);
+	padding: 6px 8px;
+}
+
+.rms-missing-inline {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 8px;
+	max-width: 420px;
+}
+
+.rms-preview-dialog {
+	margin-top: 16px;
+	padding: 16px;
+	border: 1px solid var(--rms-rule);
+	border-radius: var(--rms-radius-card);
+	background: var(--rms-card);
+	color: var(--rms-ink);
+}

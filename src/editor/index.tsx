@@ -4,6 +4,7 @@ import { useSelect } from '@wordpress/data';
 import {
 	createElement,
 	useCallback,
+	useEffect,
 	useRef,
 	useState,
 	type ComponentType,
@@ -14,6 +15,7 @@ import type { ReactNode } from 'react';
 import { summaryPayload, type AnalysisResult } from '../analyzer';
 import { registerRankMySEOBlocks } from '../blocks/register';
 import type { UiMode } from '../shared/types';
+import type { EditorInsight } from './insights';
 import { EditorPanel } from './components/EditorPanel';
 import {
 	emptyFields,
@@ -94,6 +96,30 @@ function EditorBody(): JSX.Element {
 	const metaRef = useRef( meta );
 	metaRef.current = meta;
 	const initialSignature = useRef< string | null >( null );
+	const [ insight, setInsight ] = useState< EditorInsight | null >( null );
+	useEffect( () => {
+		if ( ! editor.postId ) {
+			setInsight( null );
+			return undefined;
+		}
+		let active = true;
+		void apiFetch( {
+			path: `/rankmyseo/v1/editor/insights?post_id=${ editor.postId }`,
+		} )
+			.then( ( result ) => {
+				if ( active ) {
+					setInsight( result as EditorInsight );
+				}
+			} )
+			.catch( () => {
+				if ( active ) {
+					setInsight( null );
+				}
+			} );
+		return () => {
+			active = false;
+		};
+	}, [ editor.postId ] );
 	const persistAnalysis = useCallback(
 		( result: AnalysisResult, signature: string ) => {
 			if ( initialSignature.current === null ) {
@@ -193,6 +219,7 @@ function EditorBody(): JSX.Element {
 			locale={ settings.locale || 'en' }
 			onAnalysis={ persistAnalysis }
 			onInsertLink={ insertLink }
+			insight={ insight }
 		/>
 	);
 }

@@ -28,6 +28,7 @@ interface TitleDocument {
 	taxonomies: Record< string, TypeRow >;
 	archives: Record< string, TypeRow >;
 	defaultImage: string;
+	imageAltPattern: string;
 	showOnFront: string;
 }
 
@@ -100,6 +101,11 @@ function documentFromResponse( payload: MetaSettingsResponse ): TitleDocument {
 			typeof social.default_image === 'string'
 				? social.default_image
 				: '',
+		imageAltPattern:
+			typeof settings.image_alt === 'string' &&
+			settings.image_alt.trim() !== ''
+				? settings.image_alt
+				: '%title%',
 		showOnFront:
 			typeof reading.show_on_front === 'string'
 				? reading.show_on_front
@@ -242,6 +248,7 @@ export function TitlesMetaView(): JSX.Element {
 					taxonomies: rowsPayload( doc.taxonomies ),
 					archives: rowsPayload( doc.archives ),
 					social: { default_image: doc.defaultImage },
+					image_alt: doc.imageAltPattern,
 				},
 			} );
 			setSaved( true );
@@ -406,6 +413,19 @@ export function TitlesMetaView(): JSX.Element {
 					<h2 className="rms-section-title">
 						{ __( 'Templates', 'rankmyseo' ) }
 					</h2>
+					<TextControl
+						label={ __( 'Image description pattern', 'rankmyseo' ) }
+						help={ __(
+							'Used when filling a missing image description from the local template. The title and filename tokens are available.',
+							'rankmyseo'
+						) }
+						value={ doc.imageAltPattern }
+						onChange={ ( value ) =>
+							setDoc( { ...doc, imageAltPattern: value } )
+						}
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+					/>
 					<p className="rms-muted">
 						{ doc.showOnFront === 'page'
 							? __(
