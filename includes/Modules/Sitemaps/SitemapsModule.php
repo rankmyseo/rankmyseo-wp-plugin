@@ -40,7 +40,7 @@ final class SitemapsModule extends AbstractModule {
 	 * {@inheritDoc}
 	 */
 	public function get_description(): string {
-		return __( 'Paginated XML sitemaps, virtual IndexNow key and async pings, robots.txt editor, and crawl hygiene controls.', 'rankmyseo' );
+		return __( 'Paginated XML sitemaps, virtual IndexNow key and async pings, robots.txt editor, optional llms.txt guide, and crawl hygiene controls.', 'rankmyseo' );
 	}
 
 	/**
@@ -106,6 +106,10 @@ final class SitemapsModule extends AbstractModule {
 		if ( $this->indexnow()->is_enabled() ) {
 			add_rewrite_rule( '^([a-f0-9]{32})\\.txt$', 'index.php?rankmyseo_indexnow_key=$matches[1]', 'top' );
 		}
+
+		if ( $this->llms()->is_enabled() ) {
+			add_rewrite_rule( '^llms\\.txt$', 'index.php?rankmyseo_llms=1', 'top' );
+		}
 	}
 
 	/**
@@ -118,6 +122,7 @@ final class SitemapsModule extends AbstractModule {
 		$vars[] = 'rankmyseo_sitemap';
 		$vars[] = 'rankmyseo_sitemap_page';
 		$vars[] = 'rankmyseo_indexnow_key';
+		$vars[] = 'rankmyseo_llms';
 		return $vars;
 	}
 
@@ -127,6 +132,14 @@ final class SitemapsModule extends AbstractModule {
 	 * @return void
 	 */
 	public function maybe_render(): void {
+		$llms_flag = get_query_var( 'rankmyseo_llms' );
+		if ( '1' === (string) $llms_flag ) {
+			if ( ! $this->llms()->is_enabled() ) {
+				$this->send( '', 'text/plain; charset=UTF-8', 404 );
+			}
+			$this->send( $this->llms()->render(), 'text/plain; charset=UTF-8' );
+		}
+
 		$key = get_query_var( 'rankmyseo_indexnow_key' );
 		if ( is_string( $key ) && '' !== $key ) {
 			$body = $this->indexnow()->virtual_key_body( $key );
@@ -321,6 +334,23 @@ final class SitemapsModule extends AbstractModule {
 		}
 
 		return new IndexNow( $this->sitemap_settings(), new WpIndexNowTransport() );
+	}
+
+	/**
+	 * Virtual llms.txt service.
+	 *
+	 * @return LlmsTxt
+	 */
+	private function llms(): LlmsTxt {
+		if ( $this->container->has( LlmsTxt::class ) ) {
+			$service = $this->container->get( LlmsTxt::class );
+			if ( $service instanceof LlmsTxt ) {
+				return $service;
+			}
+		}
+
+		$settings = $this->sitemap_settings();
+		return new LlmsTxt( $settings, new SitemapLlmsCatalog( new WordPressSitemapSource( $settings ) ) );
 	}
 
 	/**

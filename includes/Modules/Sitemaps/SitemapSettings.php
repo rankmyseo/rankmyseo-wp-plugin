@@ -108,6 +108,11 @@ final class SitemapSettings {
 			'allow_crawl'       => true,
 			'robots_mode'       => 'preset',
 			'robots_preset'     => 'default',
+			'llms_enabled'      => false,
+			'llms_post_types'   => [],
+			'llms_intro'        => '',
+			'llms_include_urls' => [],
+			'llms_exclude_urls' => [],
 			'crawl'             => $crawl,
 		];
 	}
@@ -299,6 +304,54 @@ final class SitemapSettings {
 	public function robots_custom(): string {
 		$stored = get_option( self::ROBOTS_OPTION_KEY, '' );
 		return is_string( $stored ) ? $stored : '';
+	}
+
+	/**
+	 * Whether the virtual llms.txt guide is published.
+	 *
+	 * @return bool
+	 */
+	public function llms_enabled(): bool {
+		return (bool) $this->all()['llms_enabled'];
+	}
+
+	/**
+	 * Explicit llms.txt post-type map. An empty map follows the sitemap.
+	 *
+	 * @return array<string, bool>
+	 */
+	public function llms_post_types(): array {
+		$map = $this->all()['llms_post_types'];
+		return is_array( $map ) ? $map : [];
+	}
+
+	/**
+	 * Optional note printed under the llms.txt summary.
+	 *
+	 * @return string
+	 */
+	public function llms_intro(): string {
+		return (string) $this->all()['llms_intro'];
+	}
+
+	/**
+	 * URLs an admin added to llms.txt by hand.
+	 *
+	 * @return list<string>
+	 */
+	public function llms_include_urls(): array {
+		$urls = $this->all()['llms_include_urls'];
+		return is_array( $urls ) ? array_values( $urls ) : [];
+	}
+
+	/**
+	 * URLs or paths left out of llms.txt.
+	 *
+	 * @return list<string>
+	 */
+	public function llms_exclude_urls(): array {
+		$urls = $this->all()['llms_exclude_urls'];
+		return is_array( $urls ) ? array_values( $urls ) : [];
 	}
 
 	/**
@@ -503,7 +556,7 @@ final class SitemapSettings {
 			$state['max_urls'] = $max;
 		}
 
-		foreach ( [ 'include_images', 'include_authors', 'indexnow_enabled', 'allow_crawl' ] as $bool_key ) {
+		foreach ( [ 'include_images', 'include_authors', 'indexnow_enabled', 'allow_crawl', 'llms_enabled' ] as $bool_key ) {
 			if ( array_key_exists( $bool_key, $input ) ) {
 				$state[ $bool_key ] = $this->to_bool( $input[ $bool_key ] );
 			}
@@ -544,6 +597,22 @@ final class SitemapSettings {
 			if ( in_array( $preset, [ 'default', 'open' ], true ) ) {
 				$state['robots_preset'] = $preset;
 			}
+		}
+
+		if ( array_key_exists( 'llms_post_types', $input ) && is_array( $input['llms_post_types'] ) ) {
+			$state['llms_post_types'] = $this->sanitize_flag_map( $input['llms_post_types'] );
+		}
+
+		if ( array_key_exists( 'llms_intro', $input ) ) {
+			$state['llms_intro'] = $this->sanitize_intro( (string) $input['llms_intro'] );
+		}
+
+		if ( array_key_exists( 'llms_include_urls', $input ) ) {
+			$state['llms_include_urls'] = $this->sanitize_url_list( $input['llms_include_urls'], true );
+		}
+
+		if ( array_key_exists( 'llms_exclude_urls', $input ) ) {
+			$state['llms_exclude_urls'] = $this->sanitize_url_list( $input['llms_exclude_urls'], false );
 		}
 
 		$crawl = is_array( $state['crawl'] ) ? $state['crawl'] : [];
@@ -619,6 +688,68 @@ final class SitemapSettings {
 		}
 
 		return array_values( array_unique( $ids ) );
+	}
+
+	/**
+	 * Sanitize the llms.txt intro note.
+	 *
+	 * @param string $intro Raw note.
+	 * @return string
+	 */
+	private function sanitize_intro( string $intro ): string {
+		$intro = str_replace( [ "\0", "\r\n", "\r" ], [ '', "\n", "\n" ], $intro );
+		if ( function_exists( 'sanitize_textarea_field' ) ) {
+			$intro = sanitize_textarea_field( $intro );
+		}
+		if ( strlen( $intro ) > 2000 ) {
+			$intro = substr( $intro, 0, 2000 );
+		}
+
+		return trim( $intro );
+	}
+
+	/**
+	 * Sanitize a newline-separated or array URL list.
+	 *
+	 * @param mixed $value         Raw list.
+	 * @param bool  $absolute_only Whether every entry must already be an http(s) URL.
+	 * @return list<string>
+	 */
+	private function sanitize_url_list( $value, bool $absolute_only ): array {
+		if ( is_string( $value ) ) {
+			$parts = preg_split( '/\R+/', $value );
+			$value = is_array( $parts ) ? $parts : [];
+		}
+		if ( ! is_array( $value ) ) {
+			return [];
+		}
+
+		$urls = [];
+		foreach ( $value as $item ) {
+			if ( count( $urls ) >= 100 ) {
+				break;
+			}
+			$url = trim( sanitize_text_field( (string) $item ) );
+			if ( '' === $url || strlen( $url ) > 500 || preg_match( '/\s/', $url ) ) {
+				continue;
+			}
+			if ( $absolute_only ) {
+				$parts  = wp_parse_url( $url );
+				$scheme = is_array( $parts ) && isset( $parts['scheme'] ) ? strtolower( (string) $parts['scheme'] ) : '';
+				if ( ! in_array( $scheme, [ 'http', 'https' ], true ) || empty( $parts['host'] ) ) {
+					continue;
+				}
+			} elseif ( ! str_starts_with( $url, '/' ) ) {
+				$parts  = wp_parse_url( $url );
+				$scheme = is_array( $parts ) && isset( $parts['scheme'] ) ? strtolower( (string) $parts['scheme'] ) : '';
+				if ( ! in_array( $scheme, [ 'http', 'https' ], true ) || empty( $parts['host'] ) ) {
+					continue;
+				}
+			}
+			$urls[] = $url;
+		}
+
+		return array_values( array_unique( $urls ) );
 	}
 
 	/**

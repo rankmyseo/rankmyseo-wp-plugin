@@ -15,6 +15,10 @@ namespace RankMySEO\Modules\Chat;
 use RankMySEO\Core\OnboardingStore;
 use RankMySEO\Core\Settings;
 use RankMySEO\Database\Migrator;
+use RankMySEO\Modules\Sitemaps\LlmsTxt;
+use RankMySEO\Modules\Sitemaps\SitemapLlmsCatalog;
+use RankMySEO\Modules\Sitemaps\SitemapSettings;
+use RankMySEO\Modules\Sitemaps\WordPressSitemapSource;
 
 /**
  * Intent router for POST /rankmyseo/v1/chat/local.
@@ -92,6 +96,8 @@ final class LocalAssistant {
 				return $this->reply_404s();
 			case 'redirects':
 				return $this->reply_redirects();
+			case 'llms_txt':
+				return $this->reply_llms();
 			case 'module_health':
 				return $this->reply_module_health();
 			case 'inspect_post':
@@ -149,6 +155,10 @@ final class LocalAssistant {
 
 		if ( str_contains( $normalized, 'redirect' ) ) {
 			return 'redirects';
+		}
+
+		if ( str_contains( $normalized, 'llms' ) ) {
+			return 'llms_txt';
 		}
 
 		if (
@@ -340,6 +350,51 @@ final class LocalAssistant {
 	}
 
 	/**
+	 * Reply describing the optional llms.txt guide.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function reply_llms(): array {
+		$settings = new SitemapSettings();
+		$llms     = new LlmsTxt( $settings, new SitemapLlmsCatalog( new WordPressSitemapSource( $settings ) ) );
+		$enabled  = $llms->is_enabled();
+		$physical = $llms->has_physical_file();
+
+		if ( $physical ) {
+			$explanation = sprintf(
+				/* translators: %s: absolute path of the physical llms.txt file. */
+				__( 'A real llms.txt file is on disk at %s, so the guide inside RankMySEO will not be the one visitors receive. Remove or rename that file, then turn the guide on under Sitemaps.', 'rankmyseo' ),
+				$llms->physical_path()
+			);
+		} elseif ( $enabled ) {
+			$explanation = sprintf(
+				/* translators: 1: public llms.txt URL, 2: number of links in the file. */
+				__( 'The llms.txt guide is on at %1$s. It lists %2$d public links and is built on this site. Nothing is sent anywhere.', 'rankmyseo' ),
+				$llms->public_url(),
+				$llms->link_count()
+			);
+		} else {
+			$explanation = __( 'The llms.txt guide is off. Turn it on under Sitemaps when you want a plain-text list of your public pages for AI tools. It stays on this site and is not written to disk.', 'rankmyseo' );
+		}
+
+		$items = [
+			[
+				'id'        => 0,
+				'title'     => 'llms.txt',
+				'slug'      => 'llms.txt',
+				'type'      => 'crawl',
+				'edit_link' => '',
+				'page'      => 'sitemaps',
+				'tip'       => $enabled
+					? __( 'Open Sitemaps to review the guide, the pages it lists, and any extra links.', 'rankmyseo' )
+					: __( 'Open Sitemaps and turn on the AI site guide.', 'rankmyseo' ),
+			],
+		];
+
+		return $this->envelope( 'llms_txt', $explanation, $items );
+	}
+
+	/**
 	 * Reply describing module and sitemap health.
 	 *
 	 * @return array<string, mixed>
@@ -374,12 +429,17 @@ final class LocalAssistant {
 			? __( 'The sitemap tool is on.', 'rankmyseo' )
 			: __( 'The sitemap tool is off, so WordPress keeps its own default sitemap behavior.', 'rankmyseo' );
 
+		$llms_sentence = ( new SitemapSettings() )->llms_enabled()
+			? __( 'The llms.txt guide is on.', 'rankmyseo' )
+			: __( 'The llms.txt guide is off.', 'rankmyseo' );
+
 		$explanation = sprintf(
-			/* translators: 1: sitemap sentence, 2: active redirect count, 3: open 404 count. */
-			__( 'Module check is local only. %1$s There are %2$d active redirects and %3$d open broken links.', 'rankmyseo' ),
+			/* translators: 1: sitemap sentence, 2: active redirect count, 3: open 404 count, 4: llms.txt sentence. */
+			__( 'Module check is local only. %1$s There are %2$d active redirects and %3$d open broken links. %4$s', 'rankmyseo' ),
 			$sitemap,
 			(int) $redirects['active'],
-			$open_404s
+			$open_404s,
+			$llms_sentence
 		);
 
 		if ( ! $this->tables_healthy() ) {

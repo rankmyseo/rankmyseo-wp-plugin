@@ -77,6 +77,8 @@ final class ContextFactory {
 			$context->title        = '' !== $context->title ? $context->title : __( 'Archive', 'rankmyseo' );
 		}
 
+		$context->breadcrumbs = ( new BreadcrumbTrail() )->for_request();
+
 		return $context;
 	}
 
@@ -149,7 +151,7 @@ final class ContextFactory {
 		}
 		$context->schema_type           = $schema_type;
 		$context->author_is_site_person = 'person' === $context->entity_type && $context->author_name === $context->site_name;
-		$context->faqs                  = SchemaMeta::read_faqs( $post_id );
+		$context->faqs                  = FaqContent::for_post( $post );
 
 		$custom                = get_post_meta( $post_id, SchemaMeta::META_CUSTOM, true );
 		$context->custom_graph = SchemaMeta::decode_graph( is_string( $custom ) ? $custom : '' );
@@ -286,12 +288,13 @@ final class ContextFactory {
 	 * @return list<array{name: string, url: string}>
 	 */
 	private function breadcrumbs( WP_Post $post, SchemaContext $context ): array {
-		$trail = BreadcrumbTrail::for_post( $post, $context->home_url, $context->title, $context->permalink );
-		if ( '' !== $trail['section'] ) {
-			$context->article_section = $trail['section'];
+		$trail   = new BreadcrumbTrail();
+		$section = $trail->article_section( $post );
+		if ( '' !== $section ) {
+			$context->article_section = $section;
 		}
 
-		return $trail['crumbs'];
+		return $trail->for_post( $post );
 	}
 
 	/**

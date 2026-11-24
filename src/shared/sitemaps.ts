@@ -5,6 +5,39 @@ export interface SitemapTypeRow {
 	available: boolean;
 }
 
+export interface LlmsTypeRow extends SitemapTypeRow {
+	sitemap_included: boolean;
+}
+
+export interface LlmsLink {
+	title: string;
+	url: string;
+	description: string;
+}
+
+export interface LlmsGroup {
+	label: string;
+	links: LlmsLink[];
+}
+
+export interface LlmsStatus {
+	enabled: boolean;
+	url: string;
+	intro: string;
+	include_urls: string;
+	exclude_urls: string;
+	post_types: LlmsTypeRow[];
+	site_name: string;
+	summary: string;
+	home_url: string;
+	groups: LlmsGroup[];
+	preview: string;
+	link_count: number;
+	physical_file: boolean;
+	physical_path: string;
+	warnings: SitemapWarning[];
+}
+
 export interface SitemapWarning {
 	code: string;
 	message: string;
@@ -61,6 +94,7 @@ export interface SitemapStatus {
 		physical_path: string;
 		warnings: SitemapWarning[];
 	};
+	llms: LlmsStatus;
 }
 
 export function blocksEntireSite( rules: string ): boolean {

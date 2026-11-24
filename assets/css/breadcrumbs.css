@@ -1,0 +1,30 @@
+.rankmyseo-breadcrumbs {
+	font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+	font-size: 0.95rem;
+	line-height: 1.5;
+	color: currentColor;
+}
+
+.rankmyseo-breadcrumbs ol {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.35rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.rankmyseo-breadcrumbs a {
+	color: currentColor;
+	text-underline-offset: 0.15em;
+}
+
+.rankmyseo-breadcrumbs a:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
+}
+
+.rankmyseo-breadcrumbs__sep {
+	margin-right: 0.35rem;
+}

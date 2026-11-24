@@ -87,6 +87,7 @@ final class SchemaModule extends AbstractModule {
 		$this->integrations_ready = true;
 
 		add_action( 'init', [ $this->meta(), 'register_meta' ] );
+		( new ContentBlocks() )->register();
 
 		$registry = $this->container->get( RestRegistry::class );
 		if ( $registry instanceof RestRegistry ) {

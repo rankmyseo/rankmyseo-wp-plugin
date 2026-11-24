@@ -68,8 +68,9 @@ final class EditorAssets {
 		$this->enqueue_bundle(
 			'editor',
 			'rankmyseo-editor',
-			[ 'wp-plugins', 'wp-editor', 'wp-edit-post', 'wp-data', 'wp-core-data', 'wp-components', 'wp-element', 'wp-i18n', 'wp-api-fetch' ]
+			[ 'wp-plugins', 'wp-editor', 'wp-edit-post', 'wp-data', 'wp-core-data', 'wp-components', 'wp-element', 'wp-i18n', 'wp-api-fetch', 'wp-blocks', 'wp-block-editor' ]
 		);
+		$this->enqueue_public_block_styles();
 		wp_localize_script( 'rankmyseo-editor', 'rankmyseoEditor', $this->editor_config() );
 		if ( function_exists( 'wp_enqueue_media' ) ) {
 			wp_enqueue_media();
@@ -104,6 +105,20 @@ final class EditorAssets {
 		if ( 'rankmyseo-meta' === $page && function_exists( 'wp_enqueue_media' ) ) {
 			wp_enqueue_media();
 		}
+	}
+
+	/**
+	 * Styles used by the breadcrumb and FAQ previews inside the editor.
+	 *
+	 * @return void
+	 */
+	private function enqueue_public_block_styles(): void {
+		if ( ! defined( 'RANKMYSEO_URL' ) || ! defined( 'RANKMYSEO_VERSION' ) ) {
+			return;
+		}
+
+		wp_enqueue_style( 'rankmyseo-breadcrumbs', RANKMYSEO_URL . 'assets/css/breadcrumbs.css', [], RANKMYSEO_VERSION );
+		wp_enqueue_style( 'rankmyseo-faq', RANKMYSEO_URL . 'assets/css/faq.css', [], RANKMYSEO_VERSION );
 	}
 
 	/**

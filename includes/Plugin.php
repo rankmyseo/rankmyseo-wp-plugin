@@ -31,7 +31,9 @@ use RankMySEO\Modules\Meta\TitleSettings;
 use RankMySEO\Modules\Redirects\RedirectsModule;
 use RankMySEO\Modules\Schema\SchemaModule;
 use RankMySEO\Modules\Sitemaps\IndexNow;
+use RankMySEO\Modules\Sitemaps\LlmsTxt;
 use RankMySEO\Modules\Sitemaps\RobotsTxt;
+use RankMySEO\Modules\Sitemaps\SitemapLlmsCatalog;
 use RankMySEO\Modules\Sitemaps\SitemapSettings;
 use RankMySEO\Modules\Sitemaps\SitemapsModule;
 use RankMySEO\Modules\Sitemaps\WordPressSitemapSource;
@@ -252,6 +254,17 @@ final class Plugin {
 		);
 
 		$this->container->singleton(
+			LlmsTxt::class,
+			static function ( Container $container ): LlmsTxt {
+				$sitemap_settings = $container->get( SitemapSettings::class );
+				assert( $sitemap_settings instanceof SitemapSettings );
+				$source = $container->get( WordPressSitemapSource::class );
+				assert( $source instanceof WordPressSitemapSource );
+				return new LlmsTxt( $sitemap_settings, new SitemapLlmsCatalog( $source ) );
+			}
+		);
+
+		$this->container->singleton(
 			WordPressSitemapSource::class,
 			static function ( Container $container ): WordPressSitemapSource {
 				$sitemap_settings = $container->get( SitemapSettings::class );
@@ -271,9 +284,11 @@ final class Plugin {
 				assert( $indexnow instanceof IndexNow );
 				$robots = $container->get( RobotsTxt::class );
 				assert( $robots instanceof RobotsTxt );
+				$llms = $container->get( LlmsTxt::class );
+				assert( $llms instanceof LlmsTxt );
 				$source = $container->get( WordPressSitemapSource::class );
 				assert( $source instanceof WordPressSitemapSource );
-				return new SitemapsController( $settings, $sitemap_settings, $indexnow, $robots, $source );
+				return new SitemapsController( $settings, $sitemap_settings, $indexnow, $robots, $llms, $source );
 			}
 		);
 
