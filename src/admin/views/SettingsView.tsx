@@ -7,6 +7,7 @@ import {
 import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import type { FormEvent } from 'react';
+import { BuilderStatusList } from '../components/BuilderStatus';
 import {
 	SkeletonCard,
 	StatusBadge,
@@ -297,6 +298,31 @@ export function SettingsView(): JSX.Element {
 				</div>
 			</section>
 
+			{ status?.builders && (
+				<section
+					className="rms-card"
+					aria-labelledby="rms-builder-status"
+				>
+					<h2 id="rms-builder-status" className="rms-section-title">
+						{ uiMode === 'simple'
+							? __( 'Page editors', 'rankmyseo' )
+							: __( 'Page builders', 'rankmyseo' ) }
+					</h2>
+					<dl className="rms-kv-grid">
+						<BuilderStatusList
+							elementor={ status.builders.elementor }
+							divi={ status.builders.divi }
+						/>
+					</dl>
+					<p className="rms-muted">
+						{ __(
+							'Search title, description, and social fields stay the same in the block editor, the classic editor, Elementor, and Divi.',
+							'rankmyseo'
+						) }
+					</p>
+				</section>
+			) }
+
 			{ uiMode === 'advanced' && status && (
 				<section className="rms-card rms-diagnostics-card">
 					<h2 className="rms-section-title">
@@ -339,6 +365,12 @@ export function SettingsView(): JSX.Element {
 								) }
 							</dd>
 						</div>
+						{ status.builders && (
+							<BuilderStatusList
+								elementor={ status.builders.elementor }
+								divi={ status.builders.divi }
+							/>
+						) }
 					</dl>
 				</section>
 			) }

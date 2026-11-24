@@ -132,6 +132,10 @@ final class RestControllersTest extends TestCase {
 		$this->assertFalse( $data['cloud']['connected'] );
 		$this->assertSame( 'local', $data['cloud']['tier'] );
 		$this->assertTrue( $data['site']['blog_public'] );
+		$this->assertArrayHasKey( 'elementor', $data['builders'] );
+		$this->assertArrayHasKey( 'divi', $data['builders'] );
+		$this->assertFalse( $data['builders']['elementor']['active'] );
+		$this->assertFalse( $data['builders']['divi']['active'] );
 	}
 
 	public function test_ui_preferences_controller_updates_per_user_mode_and_wizard(): void {

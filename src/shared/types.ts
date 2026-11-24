@@ -93,6 +93,18 @@ export interface StatusResponse {
 		can_manage: boolean;
 		can_approve_ai: boolean;
 	};
+	builders?: {
+		elementor: BuilderIntegrationStatus;
+		divi: BuilderIntegrationStatus;
+	};
+}
+
+export interface BuilderIntegrationStatus {
+	id: string;
+	label: string;
+	detected: boolean;
+	active: boolean;
+	version: string;
 }
 
 export interface UiPreferencesResponse {
@@ -426,6 +438,8 @@ declare global {
 			permalink?: string;
 			fields?: Record< string, unknown >;
 		};
+		rankmyseoElementor?: Window[ 'rankmyseoClassic' ];
+		rankmyseoDivi?: Window[ 'rankmyseoClassic' ];
 		wp?: {
 			editor?: Record< string, unknown >;
 			editPost?: Record< string, unknown >;

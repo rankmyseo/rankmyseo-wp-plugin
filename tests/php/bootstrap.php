@@ -180,6 +180,18 @@ final class RankMySEO_Test_State {
 	/** @var int */
 	public static int $next_post_id = 100;
 
+	/** @var array<string, int> */
+	public static array $did_actions = [];
+
+	/** @var list<array{handle: string, src: string, deps: array<int, mixed>, ver: mixed, in_footer: bool}> */
+	public static array $enqueued_scripts = [];
+
+	/** @var list<array{handle: string, src: string, deps: array<int, mixed>, ver: mixed}> */
+	public static array $enqueued_styles = [];
+
+	/** @var array<string, array{name: string, data: mixed}> */
+	public static array $localized_scripts = [];
+
 	public static function reset(): void {
 		self::$options           = [ 'blog_public' => '1' ];
 		self::$user_meta         = [];
@@ -234,8 +246,12 @@ final class RankMySEO_Test_State {
 			'name'        => 'Test Site',
 			'description' => 'A test site',
 		];
-		self::$next_post_id      = 100;
-		self::$roles             = [
+		self::$next_post_id       = 100;
+		self::$did_actions        = [];
+		self::$enqueued_scripts   = [];
+		self::$enqueued_styles    = [];
+		self::$localized_scripts  = [];
+		self::$roles              = [
 			'administrator' => new WP_Role( 'administrator', [ 'manage_options' => true, 'edit_posts' => true ] ),
 			'editor'        => new WP_Role( 'editor', [ 'edit_posts' => true ] ),
 			'subscriber'    => new WP_Role( 'subscriber', [ 'read' => true ] ),
@@ -1089,6 +1105,7 @@ if ( ! function_exists( 'add_filter' ) ) {
 if ( ! function_exists( 'do_action' ) ) {
 	/** @param mixed ...$args */
 	function do_action( string $hook_name, ...$args ): void {
+		RankMySEO_Test_State::$did_actions[ $hook_name ] = ( RankMySEO_Test_State::$did_actions[ $hook_name ] ?? 0 ) + 1;
 		if ( empty( RankMySEO_Test_State::$actions[ $hook_name ] ) ) {
 			return;
 		}
@@ -1096,6 +1113,63 @@ if ( ! function_exists( 'do_action' ) ) {
 		foreach ( RankMySEO_Test_State::$actions[ $hook_name ] as $callback ) {
 			$callback( ...$args );
 		}
+	}
+}
+
+if ( ! function_exists( 'did_action' ) ) {
+	function did_action( string $hook_name ): int {
+		return RankMySEO_Test_State::$did_actions[ $hook_name ] ?? 0;
+	}
+}
+
+if ( ! function_exists( 'rest_url' ) ) {
+	function rest_url( string $path = '' ): string {
+		return 'https://example.com/wp-json/' . ltrim( $path, '/' );
+	}
+}
+
+if ( ! function_exists( 'wp_enqueue_script' ) ) {
+	/**
+	 * @param mixed $ver
+	 * @param mixed $deps
+	 */
+	function wp_enqueue_script( string $handle, string $src = '', $deps = [], $ver = false, bool $in_footer = false ): void {
+		RankMySEO_Test_State::$enqueued_scripts[] = [
+			'handle'    => $handle,
+			'src'       => $src,
+			'deps'      => is_array( $deps ) ? $deps : [],
+			'ver'       => $ver,
+			'in_footer' => $in_footer,
+		];
+	}
+}
+
+if ( ! function_exists( 'wp_enqueue_style' ) ) {
+	/**
+	 * @param mixed $ver
+	 * @param mixed $deps
+	 */
+	function wp_enqueue_style( string $handle, string $src = '', $deps = [], $ver = false, string $media = 'all' ): void {
+		unset( $media );
+		RankMySEO_Test_State::$enqueued_styles[] = [
+			'handle' => $handle,
+			'src'    => $src,
+			'deps'   => is_array( $deps ) ? $deps : [],
+			'ver'    => $ver,
+		];
+	}
+}
+
+if ( ! function_exists( 'wp_localize_script' ) ) {
+	/**
+	 * @param mixed $l10n
+	 */
+	function wp_localize_script( string $handle, string $object_name, $l10n ): bool {
+		RankMySEO_Test_State::$localized_scripts[ $handle ] = [
+			'name' => $object_name,
+			'data' => $l10n,
+		];
+		return true;
 	}
 }
 

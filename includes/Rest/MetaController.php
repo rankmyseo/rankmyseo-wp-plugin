@@ -10,7 +10,9 @@ declare(strict_types=1);
 namespace RankMySEO\Rest;
 
 use RankMySEO\Core\Settings;
+use RankMySEO\Modules\Analyzer\AnalyzerMeta;
 use RankMySEO\Modules\Meta\ConflictGuard;
+use RankMySEO\Modules\Meta\MetaKeys;
 use RankMySEO\Modules\Meta\DocumentBuilder;
 use RankMySEO\Modules\Meta\MetaStore;
 use RankMySEO\Modules\Meta\TemplateDefaults;
@@ -260,7 +262,9 @@ final class MetaController extends AbstractController {
 			return $this->error_response( 'rankmyseo_not_found', __( 'That page could not be found.', 'rankmyseo' ), 404 );
 		}
 
-		$meta = $this->store->write_post( $post_id, $this->payload( $request ) );
+		$payload = $this->payload( $request );
+		$meta    = $this->store->write_post( $post_id, $payload );
+		$this->persist_analyzer_meta( $post_id, $payload );
 
 		return $this->success_response(
 			[
@@ -328,6 +332,11 @@ final class MetaController extends AbstractController {
 	 * @return bool|\WP_Error
 	 */
 	public function check_post_permission( WP_REST_Request $request ) {
+		$nonce = $this->check_rest_nonce( $request );
+		if ( true !== $nonce ) {
+			return $nonce;
+		}
+
 		$post_id = (int) $request->get_param( 'id' );
 		if ( $post_id > 0 && current_user_can( 'edit_post', $post_id ) ) {
 			return true;
@@ -348,6 +357,11 @@ final class MetaController extends AbstractController {
 	 * @return bool|\WP_Error
 	 */
 	public function check_term_permission( WP_REST_Request $request ) {
+		$nonce = $this->check_rest_nonce( $request );
+		if ( true !== $nonce ) {
+			return $nonce;
+		}
+
 		$term_id = (int) $request->get_param( 'id' );
 		if ( $term_id > 0 && current_user_can( 'edit_term', $term_id ) ) {
 			return true;
@@ -358,6 +372,61 @@ final class MetaController extends AbstractController {
 			__( 'You do not have permission to edit SEO fields for this archive.', 'rankmyseo' ),
 			403
 		);
+	}
+
+	/**
+	 * Require the REST nonce used by the block editor and the builder panels.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @phpstan-param WP_REST_Request<array<string, mixed>> $request
+	 * @return true|\WP_Error
+	 */
+	private function check_rest_nonce( WP_REST_Request $request ) {
+		$nonce = $request->get_header( 'X-WP-Nonce' );
+		if ( ! is_string( $nonce ) || '' === $nonce ) {
+			$param = $request->get_param( '_wpnonce' );
+			$nonce = is_string( $param ) ? $param : '';
+		}
+
+		$verified = '' !== $nonce ? wp_verify_nonce( $nonce, 'wp_rest' ) : false;
+		if ( false !== $verified && 0 !== $verified ) {
+			return true;
+		}
+
+		return $this->error_response(
+			'rankmyseo_invalid_nonce',
+			__( 'The security check for this SEO save failed. Reload the editor and try again.', 'rankmyseo' ),
+			403
+		);
+	}
+
+	/**
+	 * Store the on-page score when a builder panel sends one.
+	 *
+	 * Missing keys are left untouched so a title save does not wipe the score.
+	 *
+	 * @param int                  $post_id Post ID.
+	 * @param array<string, mixed> $payload Request payload.
+	 * @return void
+	 */
+	private function persist_analyzer_meta( int $post_id, array $payload ): void {
+		if ( array_key_exists( 'seo_score', $payload ) || array_key_exists( MetaKeys::SEO_SCORE, $payload ) ) {
+			$raw = array_key_exists( 'seo_score', $payload ) ? $payload['seo_score'] : $payload[ MetaKeys::SEO_SCORE ];
+			update_post_meta( $post_id, MetaKeys::SEO_SCORE, AnalyzerMeta::sanitize_score( $raw ) );
+		}
+
+		if ( ! array_key_exists( 'seo_summary', $payload ) && ! array_key_exists( AnalyzerMeta::SUMMARY, $payload ) ) {
+			return;
+		}
+
+		$summary = array_key_exists( 'seo_summary', $payload ) ? $payload['seo_summary'] : $payload[ AnalyzerMeta::SUMMARY ];
+		$clean   = AnalyzerMeta::sanitize_summary( $summary );
+		if ( '' === $clean ) {
+			delete_post_meta( $post_id, AnalyzerMeta::SUMMARY );
+			return;
+		}
+
+		update_post_meta( $post_id, AnalyzerMeta::SUMMARY, $clean );
 	}
 
 	/**

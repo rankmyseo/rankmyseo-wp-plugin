@@ -11,7 +11,6 @@ namespace RankMySEO\Modules\Schema;
 
 use RankMySEO\Core\Settings;
 use WP_Post;
-use WP_Term;
 
 /**
  * Translates the current request or a specific post into graph-builder input.
@@ -287,44 +286,12 @@ final class ContextFactory {
 	 * @return list<array{name: string, url: string}>
 	 */
 	private function breadcrumbs( WP_Post $post, SchemaContext $context ): array {
-		$crumbs = [
-			[
-				'name' => __( 'Home', 'rankmyseo' ),
-				'url'  => trailingslashit( untrailingslashit( $context->home_url ) ),
-			],
-		];
-
-		if ( 'page' === $post->post_type && function_exists( 'get_post_ancestors' ) ) {
-			$ancestors = array_reverse( get_post_ancestors( $post ) );
-			foreach ( $ancestors as $ancestor_id ) {
-				$ancestor = get_post( (int) $ancestor_id );
-				if ( ! $ancestor instanceof WP_Post ) {
-					continue;
-				}
-				$crumbs[] = [
-					'name' => $this->plain( (string) $ancestor->post_title, 110 ),
-					'url'  => (string) get_permalink( $ancestor ),
-				];
-			}
-		} elseif ( 'post' === $post->post_type && function_exists( 'get_the_category' ) ) {
-			$categories = get_the_category( (int) $post->ID );
-			if ( is_array( $categories ) && isset( $categories[0] ) && $categories[0] instanceof WP_Term ) {
-				$term                     = $categories[0];
-				$context->article_section = $this->plain( (string) $term->name, 80 );
-				$link                     = function_exists( 'get_category_link' ) ? get_category_link( $term ) : '';
-				$crumbs[]                 = [
-					'name' => $context->article_section,
-					'url'  => is_string( $link ) ? $link : '',
-				];
-			}
+		$trail = BreadcrumbTrail::for_post( $post, $context->home_url, $context->title, $context->permalink );
+		if ( '' !== $trail['section'] ) {
+			$context->article_section = $trail['section'];
 		}
 
-		$crumbs[] = [
-			'name' => $this->plain( $context->title, 110 ),
-			'url'  => $context->permalink,
-		];
-
-		return $crumbs;
+		return $trail['crumbs'];
 	}
 
 	/**

@@ -21,9 +21,9 @@ RankMySEO helps WordPress beginners and experienced SEO professionals optimize a
 
 = What works with no account =
 
-* SEO titles, meta descriptions, canonical URLs, robots directives, and Open Graph / social previews in the block editor, the classic editor, and quick edit.
+* SEO titles, meta descriptions, canonical URLs, robots directives, and Open Graph / social previews in the block editor, the classic editor, quick edit, Elementor, and Divi. The Elementor and Divi panels load only while those editors are open.
 * A local on-page SEO score from 0 to 100, including a warning when another page targets the same keyword.
-* Schema.org JSON-LD in one `@graph`, including site identity, articles, breadcrumbs, and WooCommerce products when WooCommerce is active.
+* Schema.org JSON-LD in one `@graph`, including site identity, articles, breadcrumbs, and WooCommerce products when WooCommerce is active. Elementor can also place a visible RankMySEO breadcrumbs widget.
 * XML sitemaps, a robots.txt editor, and optional IndexNow pings.
 * Redirects (301, 302, 307, 410, and 451), slug-change protection, and a 404 log.
 * A non-destructive importer for Yoast SEO, Rank Math, and All in One SEO, with a dry run and rollback.
@@ -35,7 +35,7 @@ RankMySEO helps WordPress beginners and experienced SEO professionals optimize a
 
 When an administrator connects the site to [RankMySEO Cloud](https://rankmyseo.com), the plugin can show tracked keyword rankings and suggested page updates, and it can apply those suggestions only after a person approves them. Connecting is optional. Nothing is sent while the site is disconnected. See External services below.
 
-The public front end prints titles, meta tags, canonical links, and JSON-LD only. It does not load extra JavaScript or CSS.
+The public front end prints titles, meta tags, canonical links, and JSON-LD only. It does not load extra JavaScript or CSS. A breadcrumbs widget prints its own short style block only on pages where that widget is placed. Elementor and Divi load a RankMySEO panel only inside their visual editors.
 
 == Installation ==
 
@@ -120,7 +120,8 @@ This plugin works entirely on your site until an administrator turns on an optio
 = 1.0.0 =
 * First public release.
 * Simple and Advanced modes, a 3-step setup wizard, and an offline Ask AI assistant.
-* Titles, meta descriptions, canonicals, robots, and social previews, including the block editor, classic editor, and quick edit.
+* Titles, meta descriptions, canonicals, robots, and social previews, including the block editor, classic editor, quick edit, Elementor, and Divi.
+* Elementor breadcrumbs widget, using the same trail as the schema breadcrumb list.
 * On-page SEO score and a same-keyword warning.
 * Schema.org JSON-LD `@graph`.
 * XML sitemaps, robots.txt controls, and optional IndexNow.

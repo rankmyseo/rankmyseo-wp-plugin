@@ -10,6 +10,10 @@ declare(strict_types=1);
 namespace RankMySEO\Modules\Meta;
 
 use RankMySEO\Modules\AbstractModule;
+use RankMySEO\Modules\Builders\BuilderAssets;
+use RankMySEO\Modules\Builders\BuilderConfig;
+use RankMySEO\Modules\Builders\BuilderDetector;
+use RankMySEO\Modules\Builders\PageBuilderBridge;
 
 /**
  * Registers the meta engine, editor UI, and front-end head output.
@@ -58,6 +62,11 @@ final class MetaModule extends AbstractModule {
 		( new QuickBulkEdit( $store ) )->register();
 		( new TermFields( $store ) )->register();
 		( new EditorAssets( $this->settings(), $titles, $store ) )->register();
+		( new PageBuilderBridge(
+			new BuilderDetector(),
+			new BuilderAssets(),
+			new BuilderConfig( $this->settings(), $titles, $store )
+		) )->register();
 	}
 
 	/**
