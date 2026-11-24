@@ -38,6 +38,7 @@
 /phpstan.neon
 /phpstan.neon.dist
 /phpstan-bootstrap.php
+/phpstan-elementor-stub.php
 /phpunit.xml
 /phpunit.xml.dist
 /webpack.config.js

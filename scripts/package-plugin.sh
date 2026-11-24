@@ -36,4 +36,59 @@ cp -a "$dest" dist/rankmyseo
 )
 
 echo "Wrote $root/dist/rankmyseo.zip"
+
+required=(
+	rankmyseo/rankmyseo.php
+	rankmyseo/readme.txt
+	rankmyseo/uninstall.php
+	rankmyseo/LICENSE
+	rankmyseo/languages/rankmyseo.pot
+	rankmyseo/includes/template-functions.php
+	rankmyseo/assets/css/breadcrumbs.css
+	rankmyseo/assets/css/faq.css
+	rankmyseo/build/admin.js
+	rankmyseo/build/admin.css
+	rankmyseo/build/admin.asset.php
+	rankmyseo/build/editor.js
+	rankmyseo/build/editor.asset.php
+	rankmyseo/build/classic.js
+	rankmyseo/build/classic.asset.php
+	rankmyseo/build/quick-edit.js
+	rankmyseo/build/quick-edit.asset.php
+	rankmyseo/build/elementor.js
+	rankmyseo/build/elementor.asset.php
+	rankmyseo/build/divi.js
+	rankmyseo/build/divi.asset.php
+	rankmyseo/vendor/autoload.php
+)
+for file in "${required[@]}"; do
+	if ! unzip -l "$root/dist/rankmyseo.zip" "$file" | grep -q "$file"; then
+		echo "Release zip is missing $file" >&2
+		exit 1
+	fi
+done
+
+forbidden=(
+	rankmyseo/node_modules/
+	rankmyseo/src/
+	rankmyseo/tests/
+	rankmyseo/scripts/
+	rankmyseo/package.json
+	rankmyseo/package-lock.json
+	rankmyseo/composer.json
+	rankmyseo/composer.lock
+	rankmyseo/README.md
+	rankmyseo/phpstan-bootstrap.php
+	rankmyseo/phpstan-elementor-stub.php
+	rankmyseo/phpstan.neon.dist
+	rankmyseo/phpunit.xml.dist
+)
+for file in "${forbidden[@]}"; do
+	if unzip -l "$root/dist/rankmyseo.zip" | grep -q "$file"; then
+		echo "Release zip should not contain $file" >&2
+		exit 1
+	fi
+done
+
 find dist/rankmyseo -maxdepth 2 -type d -o -maxdepth 1 -type f | sort
+unzip -l "$root/dist/rankmyseo.zip" | tail -1

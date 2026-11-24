@@ -1,6 +1,7 @@
 {
 	"name": "rankmyseo/rankmyseo-wp-plugin",
 	"description": "Standalone WordPress SEO plugin with Simple and Advanced modes, optional RankMySEO Cloud insights, and safe human-approved AI actions.",
+	"version": "1.0.0",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
 	"homepage": "https://rankmyseo.com",
