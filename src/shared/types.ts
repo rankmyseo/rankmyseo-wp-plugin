@@ -29,6 +29,7 @@ export interface PluginSettings {
 	site_name: string;
 	title_separator: string;
 	keep_data_on_uninstall: boolean;
+	delete_data_on_uninstall?: boolean;
 	telemetry_opt_in: boolean;
 	wizard_completed: boolean;
 	wizard_dismissed: boolean;

@@ -95,7 +95,7 @@ final class PairingService {
 			$site_url,
 			$site_name,
 			$this->version_string( is_string( $wp_version ) ? $wp_version : '' ),
-			$this->version_string( defined( 'RANKMYSEO_VERSION' ) ? (string) RANKMYSEO_VERSION : '0.1.0' )
+			$this->version_string( defined( 'RANKMYSEO_VERSION' ) ? (string) RANKMYSEO_VERSION : '1.0.0' )
 		);
 
 		if ( ! $result->ok ) {

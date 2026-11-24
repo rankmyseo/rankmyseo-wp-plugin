@@ -65,7 +65,7 @@ interface AdminContextValue {
 }
 
 const DEFAULT_BOOTSTRAP: BootstrapConfig = {
-	version: '0.1.0',
+	version: '1.0.0',
 	restUrl: '/wp-json/rankmyseo/v1',
 	nonce: '',
 	adminUrl: '/wp-admin/admin.php',

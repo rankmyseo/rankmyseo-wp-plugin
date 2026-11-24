@@ -118,34 +118,37 @@ final class SettingsController extends AbstractController {
 	 */
 	private function get_update_args(): array {
 		return [
-			'default_ui_mode'        => [
+			'default_ui_mode'          => [
 				'type' => 'string',
 				'enum' => Settings::ALLOWED_UI_MODES,
 			],
-			'site_type'              => [
+			'site_type'                => [
 				'type' => 'string',
 				'enum' => Settings::ALLOWED_SITE_TYPES,
 			],
-			'site_name'              => [
+			'site_name'                => [
 				'type' => 'string',
 			],
-			'title_separator'        => [
+			'title_separator'          => [
 				'type' => 'string',
 				'enum' => Settings::ALLOWED_SEPARATORS,
 			],
-			'keep_data_on_uninstall' => [
+			'keep_data_on_uninstall'   => [
 				'type' => 'boolean',
 			],
-			'telemetry_opt_in'       => [
+			'delete_data_on_uninstall' => [
 				'type' => 'boolean',
 			],
-			'wizard_completed'       => [
+			'telemetry_opt_in'         => [
 				'type' => 'boolean',
 			],
-			'wizard_dismissed'       => [
+			'wizard_completed'         => [
 				'type' => 'boolean',
 			],
-			'modules'                => [
+			'wizard_dismissed'         => [
+				'type' => 'boolean',
+			],
+			'modules'                  => [
 				'type' => 'object',
 			],
 		];

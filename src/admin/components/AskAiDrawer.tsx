@@ -334,6 +334,8 @@ export function AskAiDrawer( {
 			return undefined;
 		}
 
+		const active = inputRef.current?.ownerDocument.activeElement;
+		const returnFocus = active instanceof HTMLElement ? active : null;
 		inputRef.current?.focus();
 
 		const handleKeyDown = ( event: KeyboardEvent ): void => {
@@ -343,7 +345,10 @@ export function AskAiDrawer( {
 		};
 
 		document.addEventListener( 'keydown', handleKeyDown );
-		return () => document.removeEventListener( 'keydown', handleKeyDown );
+		return () => {
+			document.removeEventListener( 'keydown', handleKeyDown );
+			returnFocus?.focus();
+		};
 	}, [ closeChat, isChatOpen ] );
 
 	useEffect( () => {

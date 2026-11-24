@@ -1,0 +1,88 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  package:
+    name: Build, check, and publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install JavaScript dependencies
+        run: npm ci
+
+      - name: Build production JavaScript and CSS
+        run: npm run build
+
+      - name: Install production PHP autoloader
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-progress
+
+      - name: Package rankmyseo.zip
+        run: bash scripts/package-plugin.sh
+
+      - name: WordPress Plugin Check
+        uses: WordPress/plugin-check-action@v1
+        with:
+          build-dir: dist/rankmyseo
+          slug: rankmyseo
+
+      - name: Upload release zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: rankmyseo
+          path: dist/rankmyseo.zip
+          if-no-files-found: error
+
+      - name: Attach zip to the GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/rankmyseo.zip
+
+      - name: Check WordPress.org credentials
+        id: svn
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+        run: |
+          if [ -n "$SVN_USERNAME" ] && [ -n "$SVN_PASSWORD" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "SVN_USERNAME or SVN_PASSWORD is not configured. Skipping WordPress.org deploy."
+          fi
+
+      - name: Deploy to WordPress.org
+        if: steps.svn.outputs.ready == 'true'
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: rankmyseo

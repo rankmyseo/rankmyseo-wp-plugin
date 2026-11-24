@@ -187,6 +187,10 @@ final class EditorAssets {
 			true
 		);
 
+		if ( function_exists( 'wp_set_script_translations' ) ) {
+			wp_set_script_translations( $script_handle, 'rankmyseo', RANKMYSEO_DIR . 'languages' );
+		}
+
 		$style = RANKMYSEO_DIR . 'build/' . $handle . '.css';
 		if ( file_exists( $style ) ) {
 			wp_enqueue_style(

@@ -21,7 +21,7 @@ use RankMySEO\Modules\Chat\WordPressSiteIndex;
 use RankMySEO\Modules\Cloud\CloudModule;
 use RankMySEO\Modules\Cloud\CloudServices;
 use RankMySEO\Modules\ModuleManager;
-use RankMySEO\Modules\Stubs\AiQueueModule;
+use RankMySEO\Modules\AiActions\AiQueueModule;
 use RankMySEO\Modules\Importer\ImporterModule;
 use RankMySEO\Modules\Meta\ConflictGuard;
 use RankMySEO\Modules\Meta\DocumentBuilder;
@@ -484,8 +484,7 @@ final class Plugin {
 	/**
 	 * Register built-in modules.
 	 *
-	 * Subsequent PRs replace stub implementations while preserving module IDs
-	 * and lifecycle contracts.
+	 * Module IDs stay stable so saved settings keep matching the same features.
 	 *
 	 * @return void
 	 */
